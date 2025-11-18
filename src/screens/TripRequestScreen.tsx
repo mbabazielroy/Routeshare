@@ -1,0 +1,202 @@
+import React, { useState } from "react";
+import { View, Text, Pressable, ScrollView, TextInput } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/types";
+import { useAuthStore } from "../state/authStore";
+import { useRiderStore } from "../state/riderStore";
+
+type Props = NativeStackScreenProps<RootStackParamList, "TripRequest">;
+
+export default function TripRequestScreen({ navigation }: Props) {
+  const user = useAuthStore((s) => s.user);
+  const savedLocations = useRiderStore((s) => s.savedLocations);
+  const createTripRequest = useRiderStore((s) => s.createTripRequest);
+  const isSearching = useRiderStore((s) => s.isSearching);
+
+  const [pickupAddress, setPickupAddress] = useState("");
+  const [dropoffAddress, setDropoffAddress] = useState("");
+  const [whenOption, setWhenOption] = useState<"now" | "later">("now");
+  const [passengers, setPassengers] = useState(1);
+
+  const handleFindRides = async () => {
+    if (!pickupAddress || !dropoffAddress) return;
+
+    // Mock locations for demo
+    const pickup = {
+      latitude: 38.8951,
+      longitude: -77.0364,
+      address: pickupAddress || "123 Oak Street, Millville, VA",
+    };
+
+    const dropoff = {
+      latitude: 38.92,
+      longitude: -77.05,
+      address: dropoffAddress || "County Medical Center",
+    };
+
+    await createTripRequest(pickup, dropoff, new Date().toISOString(), passengers);
+    navigation.navigate("DriverSelection");
+  };
+
+  const selectSavedLocation = (address: string, type: "pickup" | "dropoff") => {
+    if (type === "pickup") {
+      setPickupAddress(address);
+    } else {
+      setDropoffAddress(address);
+    }
+  };
+
+  return (
+    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+      <ScrollView className="flex-1">
+        <View className="px-6 py-4">
+          {/* Header */}
+          <View className="flex-row items-center justify-between mb-6">
+            <Pressable onPress={() => navigation.goBack()}>
+              <Ionicons name="arrow-back" size={28} color="#1f2937" />
+            </Pressable>
+            <Text className="text-xl font-bold text-gray-900">Request a Ride</Text>
+            <View className="w-7" />
+          </View>
+
+          {/* Pickup Location */}
+          <View className="mb-4">
+            <Text className="text-sm font-medium text-gray-700 mb-2">Pickup Location</Text>
+            <View className="flex-row items-center border border-gray-300 rounded-xl px-4 py-3">
+              <Ionicons name="locate" size={20} color="#2563eb" />
+              <TextInput
+                value={pickupAddress}
+                onChangeText={setPickupAddress}
+                placeholder="Enter pickup address"
+                className="flex-1 ml-3 text-base"
+                placeholderTextColor="#9ca3af"
+              />
+            </View>
+          </View>
+
+          {/* Dropoff Location */}
+          <View className="mb-4">
+            <Text className="text-sm font-medium text-gray-700 mb-2">Drop-off Location</Text>
+            <View className="flex-row items-center border border-gray-300 rounded-xl px-4 py-3">
+              <Ionicons name="location" size={20} color="#dc2626" />
+              <TextInput
+                value={dropoffAddress}
+                onChangeText={setDropoffAddress}
+                placeholder="Enter destination"
+                className="flex-1 ml-3 text-base"
+                placeholderTextColor="#9ca3af"
+              />
+            </View>
+          </View>
+
+          {/* Saved Locations */}
+          <View className="mb-6">
+            <Text className="text-sm font-medium text-gray-700 mb-3">Saved Locations</Text>
+            <View className="flex-row flex-wrap gap-2">
+              {savedLocations.map((location) => (
+                <Pressable
+                  key={location.id}
+                  onPress={() => selectSavedLocation(location.location.address, "dropoff")}
+                  className="bg-blue-50 rounded-full px-4 py-2 flex-row items-center active:bg-blue-100"
+                >
+                  <Ionicons
+                    name={location.icon as any}
+                    size={16}
+                    color="#2563eb"
+                  />
+                  <Text className="text-blue-700 font-medium ml-2">
+                    {location.name}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
+          {/* When Section */}
+          <View className="mb-4">
+            <Text className="text-sm font-medium text-gray-700 mb-3">When</Text>
+            <View className="flex-row gap-3">
+              <Pressable
+                onPress={() => setWhenOption("now")}
+                className={`flex-1 rounded-xl py-3 px-4 ${
+                  whenOption === "now"
+                    ? "bg-blue-600"
+                    : "bg-gray-100"
+                }`}
+              >
+                <Text
+                  className={`text-center font-semibold ${
+                    whenOption === "now" ? "text-white" : "text-gray-700"
+                  }`}
+                >
+                  Now
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setWhenOption("later")}
+                className={`flex-1 rounded-xl py-3 px-4 ${
+                  whenOption === "later"
+                    ? "bg-blue-600"
+                    : "bg-gray-100"
+                }`}
+              >
+                <Text
+                  className={`text-center font-semibold ${
+                    whenOption === "later" ? "text-white" : "text-gray-700"
+                  }`}
+                >
+                  Later
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+
+          {/* Passengers */}
+          <View className="mb-6">
+            <Text className="text-sm font-medium text-gray-700 mb-3">Passengers</Text>
+            <View className="flex-row items-center justify-between bg-gray-50 rounded-xl p-4">
+              <Pressable
+                onPress={() => setPassengers(Math.max(1, passengers - 1))}
+                className="w-10 h-10 bg-white rounded-full items-center justify-center border border-gray-300"
+              >
+                <Ionicons name="remove" size={20} color="#1f2937" />
+              </Pressable>
+              <Text className="text-xl font-semibold text-gray-900">{passengers}</Text>
+              <Pressable
+                onPress={() => setPassengers(Math.min(4, passengers + 1))}
+                className="w-10 h-10 bg-white rounded-full items-center justify-center border border-gray-300"
+              >
+                <Ionicons name="add" size={20} color="#1f2937" />
+              </Pressable>
+            </View>
+          </View>
+
+          {/* Info Tip */}
+          <View className="bg-blue-50 rounded-xl p-4 mb-6 flex-row">
+            <Ionicons name="information-circle" size={20} color="#2563eb" />
+            <Text className="flex-1 ml-3 text-sm text-blue-900">
+              Scheduling 1 hour ahead increases your chances of finding a match
+            </Text>
+          </View>
+
+          {/* Find Rides Button */}
+          <Pressable
+            onPress={handleFindRides}
+            disabled={!pickupAddress || !dropoffAddress || isSearching}
+            className={`rounded-2xl py-4 px-6 ${
+              pickupAddress && dropoffAddress && !isSearching
+                ? "bg-blue-600 active:bg-blue-700"
+                : "bg-gray-300"
+            }`}
+          >
+            <Text className="text-white text-center text-lg font-semibold">
+              {isSearching ? "Searching..." : "Find Rides"}
+            </Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
