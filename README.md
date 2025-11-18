@@ -21,6 +21,7 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 - **Saved Locations:** Quick access to frequently visited places (Home, Work)
 - **Trip History:** View past rides and driver ratings
 - **Safety Features:** In-app calling, SOS button, trip cancellation
+- **Account Management:** Profile stats, verification badges, settings, and logout
 
 ### For Drivers
 - **Route Publishing:** Share your planned route and available seats
@@ -28,6 +29,7 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 - **Rider Requests:** Accept or decline riders along your route
 - **Online/Offline Toggle:** Control when you're available for rides
 - **Stats Tracking:** Total trips, rating, and lifetime earnings
+- **Account Management:** Driver stats, vehicle info, documents, bank settings, and logout
 
 ### Core Technology
 - **Smart Matching Algorithm:** Finds drivers traveling the same direction with minimal detour
@@ -50,9 +52,11 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 │   │   ├── TripRequestScreen.tsx          # Request a ride
 │   │   ├── DriverSelectionScreen.tsx      # Browse available drivers
 │   │   ├── LiveTripScreen.tsx             # GPS tracking during trip
+│   │   ├── TripRatingScreen.tsx           # Rate your ride
+│   │   ├── RiderAccountScreen.tsx         # Rider profile and settings
 │   │   ├── DriverHomeScreen.tsx           # Driver dashboard
 │   │   ├── PublishRouteScreen.tsx         # Share your route
-│   │   └── TripRatingScreen.tsx           # Rate your ride
+│   │   └── DriverAccountScreen.tsx        # Driver profile and settings
 │   ├── state/
 │   │   ├── authStore.ts          # User authentication state
 │   │   ├── riderStore.ts         # Rider trip management

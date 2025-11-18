@@ -13,10 +13,12 @@ import RiderHomeScreen from "../screens/RiderHomeScreen";
 import TripRequestScreen from "../screens/TripRequestScreen";
 import DriverSelectionScreen from "../screens/DriverSelectionScreen";
 import LiveTripScreen from "../screens/LiveTripScreen";
+import RiderAccountScreen from "../screens/RiderAccountScreen";
 
 // Driver Screens
 import DriverHomeScreen from "../screens/DriverHomeScreen";
 import PublishRouteScreen from "../screens/PublishRouteScreen";
+import DriverAccountScreen from "../screens/DriverAccountScreen";
 
 // Shared Screens
 import TripRatingScreen from "../screens/TripRatingScreen";
@@ -86,13 +88,13 @@ function RiderTabNavigator() {
       </RiderTab.Screen>
       <RiderTab.Screen
         name="RiderAccount"
+        component={RiderAccountScreen}
         options={{
+          headerShown: false,
           tabBarLabel: "Account",
           tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
         }}
-      >
-        {() => <PlaceholderScreen title="Account" />}
-      </RiderTab.Screen>
+      />
     </RiderTab.Navigator>
   );
 }
@@ -146,13 +148,13 @@ function DriverTabNavigator() {
       </DriverTab.Screen>
       <DriverTab.Screen
         name="DriverAccount"
+        component={DriverAccountScreen}
         options={{
+          headerShown: false,
           tabBarLabel: "Account",
           tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
         }}
-      >
-        {() => <PlaceholderScreen title="Account" />}
-      </DriverTab.Screen>
+      />
     </DriverTab.Navigator>
   );
 }
