@@ -1,12 +1,4 @@
 // Firebase configuration
-// To use Firebase, you need to:
-// 1. Create a Firebase project at https://console.firebase.google.com
-// 2. Enable Authentication, Firestore, and Storage
-// 3. Add your config values below
-// 4. Run: bun add firebase
-
-// Uncomment and add your Firebase config when ready:
-/*
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
@@ -21,15 +13,31 @@ const firebaseConfig = {
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase only if config values are present
+let app: any = null;
+let auth: any = null;
+let db: any = null;
+let storage: any = null;
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+if (
+  firebaseConfig.apiKey &&
+  firebaseConfig.authDomain &&
+  firebaseConfig.projectId &&
+  firebaseConfig.storageBucket &&
+  firebaseConfig.messagingSenderId &&
+  firebaseConfig.appId
+) {
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    storage = getStorage(app);
+  } catch (error) {
+    console.error('Firebase initialization error:', error);
+  }
+} else {
+  console.warn('Firebase config values are missing. Please add them to your .env file.');
+}
+
+export { auth, db, storage };
 export default app;
-*/
-
-// Mock exports for now (until Firebase is configured)
-export const auth = null;
-export const db = null;
-export const storage = null;
