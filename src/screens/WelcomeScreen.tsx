@@ -74,7 +74,7 @@ export default function WelcomeScreen({ navigation }: Props) {
         {/* CTA Buttons */}
         <View className="space-y-3">
           <Pressable
-            onPress={() => navigation.navigate("UserTypeSelection")}
+            onPress={() => navigation.navigate("PhoneAuth")}
             className="bg-blue-600 rounded-2xl py-4 px-6 active:bg-blue-700"
           >
             <Text className="text-white text-center text-lg font-semibold">
@@ -83,7 +83,7 @@ export default function WelcomeScreen({ navigation }: Props) {
           </Pressable>
 
           <Pressable
-            onPress={() => navigation.navigate("UserTypeSelection")}
+            onPress={() => navigation.navigate("PhoneAuth")}
             className="border-2 border-gray-300 rounded-2xl py-4 px-6 active:bg-gray-50"
           >
             <Text className="text-gray-700 text-center text-lg font-semibold">

@@ -14,6 +14,12 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 
 ## 📱 Features Implemented
 
+### Authentication
+- **Phone Number Verification:** Beautiful phone authentication screen with real-time formatting
+- **OTP Verification:** 6-digit OTP input with auto-focus and countdown timer
+- **User Registration:** Seamless flow from phone verification to user type selection
+- **Pre-filled Phone:** Verified phone number automatically populated in registration
+
 ### For Riders
 - **Trip Request Flow:** Enter pickup and destination, view matched drivers
 - **Driver Selection:** See driver profiles, ratings, vehicle info, and estimated fares
@@ -38,7 +44,20 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 - **Online/Offline Toggle:** Control when you're available for rides
 - **Stats Tracking:** Total trips, rating, and lifetime earnings
 - **Account Management:** Complete driver profile management
+- **Vehicle Information:** Add and manage vehicle details
+- **Documents:** Upload and verify driver documents (license, insurance, etc.)
+- **Bank Account:** Add payout information
+- **Tax Information:** Manage tax filing details
 - **Interactive Menu:** All features accessible with smooth navigation
+
+### Shared Features
+- **Toast Notifications:** Global feedback system for all user actions
+- **Payment Methods:** Add and manage credit/debit cards
+- **Saved Places:** Manage frequently visited locations
+- **In-App Messaging:** Real-time chat during trips
+- **Help Center:** Searchable FAQ with support contact
+- **Notification Settings:** Granular control over app notifications
+- **Schedule Ride:** Book rides up to 7 days in advance
 
 ### Core Technology
 - **Smart Matching Algorithm:** Finds drivers traveling the same direction with minimal detour
@@ -92,22 +111,26 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 
 ## 🎯 User Flows
 
+### Authentication Flow (New!)
+1. **Welcome** → Tap "Get Started" or "Sign In"
+2. **Phone Auth** → Enter 10-digit phone number with real-time formatting
+3. **OTP Verification** → Enter 6-digit code sent via SMS (60s resend timer)
+4. **User Type Selection** → Choose rider or driver (phone auto-filled and verified)
+5. **Complete Profile** → Enter first and last name
+6. **Navigate to App** → Enter rider or driver experience
+
 ### Rider Flow
-1. **Welcome** → Select "I need a ride"
-2. **Enter Details** → First name, last name, phone
-3. **Rider Home** → Tap "Where to?"
-4. **Request Trip** → Enter pickup/destination, select passengers
-5. **Select Driver** → Browse matched drivers, view profiles and fares
-6. **Live Tracking** → Watch driver approach on map, call/message
-7. **Trip Complete** → Rate driver, return to home
+1. **Rider Home** → Tap "Where to?"
+2. **Request Trip** → Enter pickup/destination, select passengers
+3. **Select Driver** → Browse matched drivers, view profiles and fares
+4. **Live Tracking** → Watch driver approach on map, call/message
+5. **Trip Complete** → Rate driver, return to home
 
 ### Driver Flow
-1. **Welcome** → Select "I am a driver"
-2. **Enter Details** → First name, last name, phone
-3. **Driver Home** → Toggle online, view earnings
-4. **Publish Route** → Set origin, destination, seats, departure time
-5. **Accept Riders** → Review requests, accept or decline
-6. **Complete Trip** → Finish ride, earnings automatically updated
+1. **Driver Home** → Toggle online, view earnings
+2. **Publish Route** → Set origin, destination, seats, departure time
+3. **Accept Riders** → Review requests, accept or decline
+4. **Complete Trip** → Finish ride, earnings automatically updated
 
 ## 🔧 Technical Stack
 
@@ -173,38 +196,46 @@ routes/
 
 ## 🚀 How to Test
 
+### Authentication Flow
+1. Open the app → You'll see the Welcome screen
+2. Tap "Get Started" or "Sign In" (both lead to phone auth)
+3. Enter a 10-digit phone number (e.g., "5551234567")
+4. Watch the number format automatically: (555) 123-4567
+5. Tap "Send Verification Code"
+6. Enter any 6-digit code (e.g., "123456") - demo accepts all codes
+7. Watch auto-focus move through the OTP fields
+8. After verification, choose rider or driver
+9. Notice your phone number is pre-filled and marked as verified
+10. Complete your profile with name and continue
+
 ### As a Rider
-1. Open the app → Tap "Get Started"
-2. Select "I need a ride"
-3. Enter your name and phone (e.g., "John Doe", "+1234567890")
-4. On home screen, tap the search box "Where to?"
-5. Enter any pickup and destination addresses
-6. Tap "Find Rides" → Wait 1.5 seconds for matching
-7. See 3 matched drivers with ratings, vehicles, and fares
-8. Tap "Request Ride" on any driver
-9. Watch the live map as the driver approaches (simulated GPS)
-10. Driver automatically arrives and completes the trip
-11. Rate your driver (1-5 stars)
-12. **NEW:** Navigate to "My Rides" tab to see your complete trip history
-13. **NEW:** Visit "Safety" tab for emergency features and contacts
-14. **NEW:** Check "Account" tab - all menu items are now functional
+1. After authentication, you'll be on the Rider Home screen
+2. Tap the search box "Where to?"
+3. Enter any pickup and destination addresses
+4. Tap "Find Rides" → Wait 1.5 seconds for matching
+5. See 3 matched drivers with ratings, vehicles, and fares
+6. Tap "Request Ride" on any driver
+7. Watch the live map as the driver approaches (simulated GPS)
+8. Driver automatically arrives and completes the trip
+9. Rate your driver (1-5 stars)
+10. **NEW:** Navigate to "My Rides" tab to see your complete trip history
+11. **NEW:** Visit "Safety" tab for emergency features and contacts
+12. **NEW:** Check "Account" tab - all menu items are now functional
 
 ### As a Driver
-1. Open the app → Tap "Get Started"
-2. Select "I am a driver"
-3. Enter your name and phone
-4. Toggle online (green badge appears)
-5. Tap "Publish a Route"
-6. Select departure time (now or later) and available seats
-7. Tap "Publish Route"
-8. Wait 3 seconds → You'll receive a rider request
-9. **NEW:** Tap on the pending request to see full details
-10. **NEW:** View rider profile, route impact, and earnings breakdown
-11. Accept or decline the request
-12. **NEW:** Navigate to "My Routes" tab to see route history
-13. **NEW:** Visit "Earnings" tab for detailed analytics and charts
-14. **NEW:** Check "Account" tab - all menu items are now functional
-15. See earnings update as you complete trips
+1. After authentication, you'll be on the Driver Home screen
+2. Toggle online (green badge appears)
+3. Tap "Publish a Route"
+4. Select departure time (now or later) and available seats
+5. Tap "Publish Route"
+6. Wait 3 seconds → You'll receive a rider request
+7. **NEW:** Tap on the pending request to see full details
+8. **NEW:** View rider profile, route impact, and earnings breakdown
+9. Accept or decline the request
+10. **NEW:** Navigate to "My Routes" tab to see route history
+11. **NEW:** Visit "Earnings" tab for detailed analytics and charts
+12. **NEW:** Check "Account" tab - all menu items are now functional
+13. See earnings update as you complete trips
 
 ## 💡 Key Features & Design Decisions
 

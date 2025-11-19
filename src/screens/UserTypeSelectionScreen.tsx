@@ -9,12 +9,14 @@ import { UserType, User } from "../types/routeshare";
 
 type Props = NativeStackScreenProps<RootStackParamList, "UserTypeSelection">;
 
-export default function UserTypeSelectionScreen({ navigation }: Props) {
+export default function UserTypeSelectionScreen({ navigation, route }: Props) {
   const [selectedType, setSelectedType] = useState<UserType | null>(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(route.params?.phone || "");
   const setUser = useAuthStore((s) => s.setUser);
+
+  const isNewUser = route.params?.isNewUser ?? true;
 
   const handleContinue = () => {
     if (!selectedType || !firstName || !lastName || !phone) return;
@@ -158,7 +160,13 @@ export default function UserTypeSelectionScreen({ navigation }: Props) {
                 keyboardType="phone-pad"
                 className="border border-gray-300 rounded-xl px-4 py-3 text-base"
                 placeholderTextColor="#9ca3af"
+                editable={!route.params?.phone}
               />
+              {route.params?.phone && (
+                <Text className="text-xs text-green-600 mt-1">
+                  Phone number verified
+                </Text>
+              )}
             </View>
           </View>
         )}

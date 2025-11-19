@@ -1,6 +1,8 @@
 export type RootStackParamList = {
   Welcome: undefined;
-  UserTypeSelection: undefined;
+  PhoneAuth: undefined;
+  OTPVerification: { phone: string };
+  UserTypeSelection: { phone?: string; isNewUser?: boolean } | undefined;
   RiderTabs: undefined;
   DriverTabs: undefined;
   TripRequest: undefined;
