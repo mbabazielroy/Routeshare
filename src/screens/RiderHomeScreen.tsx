@@ -9,6 +9,7 @@ import { useRiderStore } from "../state/riderStore";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
+import { useToast } from "../components/Toast";
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<RiderTabParamList, "RiderHome">,
@@ -18,6 +19,7 @@ type Props = CompositeScreenProps<
 export default function RiderHomeScreen({ navigation }: Props) {
   const user = useAuthStore((s) => s.user);
   const savedLocations = useRiderStore((s) => s.savedLocations);
+  const showToast = useToast((s) => s.show);
   const currentTrip = useRiderStore((s) => s.currentTrip);
   const tripHistory = useRiderStore((s) => s.tripHistory);
 
@@ -147,7 +149,7 @@ export default function RiderHomeScreen({ navigation }: Props) {
           <Text className="text-lg font-bold text-gray-900 mb-3">Quick Actions</Text>
           <View className="flex-row gap-3">
             <Pressable
-              onPress={() => console.log("Schedule - Coming soon")}
+              onPress={() => navigation.navigate("ScheduleRide")}
               className="flex-1 bg-white rounded-xl p-4 items-center border border-gray-200 active:bg-gray-50"
             >
               <View className="w-12 h-12 bg-purple-50 rounded-full items-center justify-center mb-2">
@@ -157,7 +159,7 @@ export default function RiderHomeScreen({ navigation }: Props) {
             </Pressable>
 
             <Pressable
-              onPress={() => console.log("Carpool - Coming soon")}
+              onPress={() => showToast("Carpool feature coming soon!", "info")}
               className="flex-1 bg-white rounded-xl p-4 items-center border border-gray-200 active:bg-gray-50"
             >
               <View className="w-12 h-12 bg-green-50 rounded-full items-center justify-center mb-2">
@@ -167,7 +169,7 @@ export default function RiderHomeScreen({ navigation }: Props) {
             </Pressable>
 
             <Pressable
-              onPress={() => console.log("Help - Coming soon")}
+              onPress={() => navigation.navigate("HelpCenter")}
               className="flex-1 bg-white rounded-xl p-4 items-center border border-gray-200 active:bg-gray-50"
             >
               <View className="w-12 h-12 bg-orange-50 rounded-full items-center justify-center mb-2">

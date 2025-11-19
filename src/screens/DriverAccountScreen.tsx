@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, ScrollView } from "react-native";
+import { View, Text, Pressable, ScrollView, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
@@ -34,10 +34,6 @@ export default function DriverAccountScreen({ navigation }: Props) {
       index: 0,
       routes: [{ name: "Welcome" }],
     });
-  };
-
-  const showComingSoon = (feature: string) => {
-    console.log(`${feature} - Coming in next update`);
   };
 
   const verificationBadge = {
@@ -163,7 +159,7 @@ export default function DriverAccountScreen({ navigation }: Props) {
 
             {/* Vehicle Information */}
             <Pressable
-              onPress={() => showComingSoon("Vehicle Information")}
+              onPress={() => navigation.navigate("VehicleInformation")}
               className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
             >
               <View className="w-10 h-10 bg-blue-50 rounded-full items-center justify-center mr-3">
@@ -180,7 +176,7 @@ export default function DriverAccountScreen({ navigation }: Props) {
 
             {/* Documents */}
             <Pressable
-              onPress={() => showComingSoon("Documents")}
+              onPress={() => navigation.navigate("Documents")}
               className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
             >
               <View className="w-10 h-10 bg-orange-50 rounded-full items-center justify-center mr-3">
@@ -197,7 +193,7 @@ export default function DriverAccountScreen({ navigation }: Props) {
 
             {/* Bank Account */}
             <Pressable
-              onPress={() => showComingSoon("Bank Account")}
+              onPress={() => navigation.navigate("BankAccount")}
               className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
             >
               <View className="w-10 h-10 bg-green-50 rounded-full items-center justify-center mr-3">
@@ -214,7 +210,7 @@ export default function DriverAccountScreen({ navigation }: Props) {
 
             {/* Tax Information */}
             <Pressable
-              onPress={() => showComingSoon("Tax Information")}
+              onPress={() => navigation.navigate("TaxInformation")}
               className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
             >
               <View className="w-10 h-10 bg-purple-50 rounded-full items-center justify-center mr-3">
@@ -248,7 +244,7 @@ export default function DriverAccountScreen({ navigation }: Props) {
 
             {/* Preferences */}
             <Pressable
-              onPress={() => showComingSoon("Driver Preferences")}
+              onPress={() => navigation.navigate("NotificationSettings")}
               className="flex-row items-center p-4 active:bg-gray-50"
             >
               <View className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center mr-3">
@@ -272,7 +268,7 @@ export default function DriverAccountScreen({ navigation }: Props) {
           </Text>
           <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
             <Pressable
-              onPress={() => showComingSoon("Driver Support")}
+              onPress={() => navigation.navigate("HelpCenter")}
               className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
             >
               <Ionicons name="help-circle-outline" size={24} color="#6b7280" />
@@ -281,7 +277,7 @@ export default function DriverAccountScreen({ navigation }: Props) {
             </Pressable>
 
             <Pressable
-              onPress={() => showComingSoon("Safety Center")}
+              onPress={() => Linking.openURL("https://routeshare.com/safety")}
               className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
             >
               <Ionicons name="shield-checkmark-outline" size={24} color="#6b7280" />
@@ -290,7 +286,7 @@ export default function DriverAccountScreen({ navigation }: Props) {
             </Pressable>
 
             <Pressable
-              onPress={() => showComingSoon("Driver Agreement")}
+              onPress={() => Linking.openURL("https://routeshare.com/driver-agreement")}
               className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
             >
               <Ionicons name="document-text-outline" size={24} color="#6b7280" />
@@ -301,7 +297,7 @@ export default function DriverAccountScreen({ navigation }: Props) {
             </Pressable>
 
             <Pressable
-              onPress={() => showComingSoon("About RouteShare")}
+              onPress={() => Linking.openURL("https://routeshare.com/about")}
               className="flex-row items-center p-4 active:bg-gray-50"
             >
               <Ionicons name="information-circle-outline" size={24} color="#6b7280" />

@@ -31,6 +31,13 @@ import EditProfileScreen from "../screens/EditProfileScreen";
 import PaymentMethodsScreen from "../screens/PaymentMethodsScreen";
 import SavedPlacesScreen from "../screens/SavedPlacesScreen";
 import InAppMessagingScreen from "../screens/InAppMessagingScreen";
+import VehicleInformationScreen from "../screens/VehicleInformationScreen";
+import DocumentsScreen from "../screens/DocumentsScreen";
+import BankAccountScreen from "../screens/BankAccountScreen";
+import TaxInformationScreen from "../screens/TaxInformationScreen";
+import NotificationSettingsScreen from "../screens/NotificationSettingsScreen";
+import HelpCenterScreen from "../screens/HelpCenterScreen";
+import ScheduleRideScreen from "../screens/ScheduleRideScreen";
 
 // Placeholder screens
 import { View, Text } from "react-native";
@@ -201,6 +208,13 @@ export default function RootNavigator() {
       <Stack.Screen name="PaymentMethods" component={PaymentMethodsScreen} />
       <Stack.Screen name="SavedPlaces" component={SavedPlacesScreen} />
       <Stack.Screen name="InAppMessaging" component={InAppMessagingScreen} />
+      <Stack.Screen name="VehicleInformation" component={VehicleInformationScreen} />
+      <Stack.Screen name="Documents" component={DocumentsScreen} />
+      <Stack.Screen name="BankAccount" component={BankAccountScreen} />
+      <Stack.Screen name="TaxInformation" component={TaxInformationScreen} />
+      <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
+      <Stack.Screen name="HelpCenter" component={HelpCenterScreen} />
+      <Stack.Screen name="ScheduleRide" component={ScheduleRideScreen} />
     </Stack.Navigator>
   );
 }

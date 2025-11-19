@@ -3,6 +3,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import RootNavigator from "./src/navigation/RootNavigator";
+import { Toast } from "./src/components/Toast";
 
 /*
 IMPORTANT NOTICE: DO NOT REMOVE
@@ -31,6 +32,7 @@ export default function App() {
       <SafeAreaProvider>
         <NavigationContainer>
           <RootNavigator />
+          <Toast />
           <StatusBar style="auto" />
         </NavigationContainer>
       </SafeAreaProvider>

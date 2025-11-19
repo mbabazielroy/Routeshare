@@ -13,6 +13,13 @@ export type RootStackParamList = {
   PaymentMethods: undefined;
   SavedPlaces: undefined;
   InAppMessaging: { conversationId: string };
+  VehicleInformation: undefined;
+  Documents: undefined;
+  BankAccount: undefined;
+  TaxInformation: undefined;
+  NotificationSettings: undefined;
+  HelpCenter: undefined;
+  ScheduleRide: undefined;
 };
 
 export type RiderTabParamList = {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, ScrollView } from "react-native";
+import { View, Text, Pressable, ScrollView, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
@@ -33,11 +33,6 @@ export default function RiderAccountScreen({ navigation }: Props) {
       index: 0,
       routes: [{ name: "Welcome" }],
     });
-  };
-
-  const showComingSoon = (feature: string) => {
-    // Simple inline feedback for features not fully implemented
-    console.log(`${feature} - Coming in next update`);
   };
 
   const verificationBadge = {
@@ -209,7 +204,7 @@ export default function RiderAccountScreen({ navigation }: Props) {
 
             {/* Notifications */}
             <Pressable
-              onPress={() => showComingSoon("Notifications")}
+              onPress={() => navigation.navigate("NotificationSettings")}
               className="flex-row items-center p-4 active:bg-gray-50"
             >
               <View className="w-10 h-10 bg-yellow-50 rounded-full items-center justify-center mr-3">
@@ -233,7 +228,7 @@ export default function RiderAccountScreen({ navigation }: Props) {
           </Text>
           <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
             <Pressable
-              onPress={() => showComingSoon("Help Center")}
+              onPress={() => navigation.navigate("HelpCenter")}
               className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
             >
               <Ionicons name="help-circle-outline" size={24} color="#6b7280" />
@@ -242,7 +237,7 @@ export default function RiderAccountScreen({ navigation }: Props) {
             </Pressable>
 
             <Pressable
-              onPress={() => showComingSoon("Terms & Conditions")}
+              onPress={() => Linking.openURL("https://routeshare.com/terms")}
               className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
             >
               <Ionicons name="document-text-outline" size={24} color="#6b7280" />
@@ -253,7 +248,7 @@ export default function RiderAccountScreen({ navigation }: Props) {
             </Pressable>
 
             <Pressable
-              onPress={() => showComingSoon("Privacy Policy")}
+              onPress={() => Linking.openURL("https://routeshare.com/privacy")}
               className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
             >
               <Ionicons name="shield-outline" size={24} color="#6b7280" />
@@ -262,7 +257,7 @@ export default function RiderAccountScreen({ navigation }: Props) {
             </Pressable>
 
             <Pressable
-              onPress={() => showComingSoon("About RouteShare")}
+              onPress={() => Linking.openURL("https://routeshare.com/about")}
               className="flex-row items-center p-4 active:bg-gray-50"
             >
               <Ionicons name="information-circle-outline" size={24} color="#6b7280" />
