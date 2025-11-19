@@ -1,64 +1,19 @@
-import React, { useState } from "react";
-import { View, Text, Pressable, TextInput, KeyboardAvoidingView, Platform, Modal, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Pressable, TextInput, KeyboardAvoidingView, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import { useToast } from "../components/Toast";
+import { Country, COUNTRIES } from "./CountrySelectionScreen";
 
 type Props = NativeStackScreenProps<RootStackParamList, "PhoneAuth">;
-
-interface Country {
-  name: string;
-  code: string;
-  dialCode: string;
-  flag: string;
-  maxLength: number;
-  format?: (text: string) => string;
-}
-
-const COUNTRIES: Country[] = [
-  {
-    name: "United States",
-    code: "US",
-    dialCode: "+1",
-    flag: "🇺🇸",
-    maxLength: 14,
-    format: (text: string) => {
-      const cleaned = text.replace(/\D/g, "");
-      const limited = cleaned.substring(0, 10);
-      if (limited.length >= 6) {
-        return `(${limited.slice(0, 3)}) ${limited.slice(3, 6)}-${limited.slice(6)}`;
-      } else if (limited.length >= 3) {
-        return `(${limited.slice(0, 3)}) ${limited.slice(3)}`;
-      } else if (limited.length > 0) {
-        return `(${limited}`;
-      }
-      return "";
-    }
-  },
-  { name: "Canada", code: "CA", dialCode: "+1", flag: "🇨🇦", maxLength: 14 },
-  { name: "United Kingdom", code: "GB", dialCode: "+44", flag: "🇬🇧", maxLength: 15 },
-  { name: "Australia", code: "AU", dialCode: "+61", flag: "🇦🇺", maxLength: 12 },
-  { name: "India", code: "IN", dialCode: "+91", flag: "🇮🇳", maxLength: 10 },
-  { name: "Mexico", code: "MX", dialCode: "+52", flag: "🇲🇽", maxLength: 10 },
-  { name: "Germany", code: "DE", dialCode: "+49", flag: "🇩🇪", maxLength: 15 },
-  { name: "France", code: "FR", dialCode: "+33", flag: "🇫🇷", maxLength: 12 },
-  { name: "Brazil", code: "BR", dialCode: "+55", flag: "🇧🇷", maxLength: 11 },
-  { name: "Japan", code: "JP", dialCode: "+81", flag: "🇯🇵", maxLength: 11 },
-  { name: "China", code: "CN", dialCode: "+86", flag: "🇨🇳", maxLength: 11 },
-  { name: "South Korea", code: "KR", dialCode: "+82", flag: "🇰🇷", maxLength: 11 },
-  { name: "Spain", code: "ES", dialCode: "+34", flag: "🇪🇸", maxLength: 9 },
-  { name: "Italy", code: "IT", dialCode: "+39", flag: "🇮🇹", maxLength: 13 },
-  { name: "Netherlands", code: "NL", dialCode: "+31", flag: "🇳🇱", maxLength: 10 },
-];
 
 export default function PhoneAuthScreen({ navigation }: Props) {
   const showToast = useToast((s) => s.show);
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country>(COUNTRIES[0]);
-  const [showCountryPicker, setShowCountryPicker] = useState(false);
 
   const formatPhoneNumber = (text: string) => {
     if (selectedCountry.format) {
@@ -109,10 +64,14 @@ export default function PhoneAuthScreen({ navigation }: Props) {
     });
   };
 
-  const handleCountrySelect = (country: Country) => {
-    setSelectedCountry(country);
-    setPhone(""); // Clear phone when country changes
-    setShowCountryPicker(false);
+  const handleCountryPress = () => {
+    navigation.navigate("CountrySelection", {
+      currentCountryCode: selectedCountry.code,
+      onSelect: (country: Country) => {
+        setSelectedCountry(country);
+        setPhone(""); // Clear phone when country changes
+      }
+    });
   };
 
   return (
@@ -151,7 +110,7 @@ export default function PhoneAuthScreen({ navigation }: Props) {
             <View className="flex-row items-center bg-gray-50 rounded-xl px-4 py-4 border-2 border-gray-200">
               {/* Country Selector */}
               <Pressable
-                onPress={() => setShowCountryPicker(true)}
+                onPress={handleCountryPress}
                 className="flex-row items-center mr-3 active:opacity-70"
               >
                 <Text className="text-lg font-semibold text-gray-900">{selectedCountry.flag}</Text>
@@ -218,57 +177,6 @@ export default function PhoneAuthScreen({ navigation }: Props) {
           </View>
         </View>
       </KeyboardAvoidingView>
-
-      {/* Country Picker Modal */}
-      <Modal
-        visible={showCountryPicker}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setShowCountryPicker(false)}
-      >
-        <View className="flex-1 bg-black/50 justify-end">
-          <SafeAreaView className="bg-white rounded-t-3xl max-h-[80%]" edges={["bottom"]}>
-            {/* Modal Header */}
-            <View className="flex-row items-center justify-between px-6 py-4 border-b border-gray-200">
-              <Text className="text-xl font-bold text-gray-900">
-                Select Country
-              </Text>
-              <Pressable
-                onPress={() => setShowCountryPicker(false)}
-                className="w-10 h-10 items-center justify-center -mr-2"
-              >
-                <Ionicons name="close" size={28} color="#6b7280" />
-              </Pressable>
-            </View>
-
-            {/* Country List */}
-            <ScrollView className="flex-1">
-              {COUNTRIES.map((country) => (
-                <Pressable
-                  key={country.code}
-                  onPress={() => handleCountrySelect(country)}
-                  className={`flex-row items-center px-6 py-4 border-b border-gray-100 active:bg-gray-50 ${
-                    selectedCountry.code === country.code ? "bg-blue-50" : ""
-                  }`}
-                >
-                  <Text className="text-2xl mr-3">{country.flag}</Text>
-                  <View className="flex-1">
-                    <Text className="text-base font-semibold text-gray-900">
-                      {country.name}
-                    </Text>
-                    <Text className="text-sm text-gray-600 mt-0.5">
-                      {country.dialCode}
-                    </Text>
-                  </View>
-                  {selectedCountry.code === country.code && (
-                    <Ionicons name="checkmark-circle" size={24} color="#2563eb" />
-                  )}
-                </Pressable>
-              ))}
-            </ScrollView>
-          </SafeAreaView>
-        </View>
-      </Modal>
     </SafeAreaView>
   );
 }

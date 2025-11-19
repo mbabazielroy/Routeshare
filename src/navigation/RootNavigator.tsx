@@ -7,6 +7,7 @@ import { RootStackParamList, RiderTabParamList, DriverTabParamList } from "./typ
 // Auth Screens
 import WelcomeScreen from "../screens/WelcomeScreen";
 import PhoneAuthScreen from "../screens/PhoneAuthScreen";
+import CountrySelectionScreen from "../screens/CountrySelectionScreen";
 import OTPVerificationScreen from "../screens/OTPVerificationScreen";
 import UserTypeSelectionScreen from "../screens/UserTypeSelectionScreen";
 
@@ -188,6 +189,7 @@ export default function RootNavigator() {
     >
       <Stack.Screen name="Welcome" component={WelcomeScreen} />
       <Stack.Screen name="PhoneAuth" component={PhoneAuthScreen} />
+      <Stack.Screen name="CountrySelection" component={CountrySelectionScreen} />
       <Stack.Screen name="OTPVerification" component={OTPVerificationScreen} />
       <Stack.Screen name="UserTypeSelection" component={UserTypeSelectionScreen} />
 

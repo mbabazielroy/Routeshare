@@ -1,6 +1,7 @@
 export type RootStackParamList = {
   Welcome: undefined;
   PhoneAuth: undefined;
+  CountrySelection: { currentCountryCode?: string; onSelect?: (country: any) => void };
   OTPVerification: { phone: string };
   UserTypeSelection: { phone?: string; isNewUser?: boolean } | undefined;
   RiderTabs: undefined;
