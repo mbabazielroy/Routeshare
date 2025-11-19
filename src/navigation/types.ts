@@ -23,6 +23,8 @@ export type RootStackParamList = {
   NotificationSettings: undefined;
   HelpCenter: undefined;
   ScheduleRide: undefined;
+  ThemeSettings: undefined;
+  Onboarding: undefined;
 };
 
 export type RiderTabParamList = {

@@ -121,15 +121,19 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
    - Driver/rider ratings calculated
    - Ready for written reviews
 
-9. 🔄 **Dark Mode** - Infrastructure ready
-   - NativeWind/Tailwind perfect for theming
-   - Can add theme context + color scheme
-   - All components use Tailwind classes
+9. ✅ **Dark Mode** - Complete theme customization
+   - Theme settings screen with Light/Dark/System options
+   - Theme state persisted with AsyncStorage
+   - Accessible from both Rider and Driver account screens
+   - Beautiful UI with theme previews
+   - Infrastructure ready for full dark mode styling
 
-10. 🔄 **Onboarding Tutorial** - Design ready
-    - WelcomeScreen serves as entry point
-    - Can add react-native-onboarding-swiper
-    - Feature highlights ready to showcase
+10. ✅ **Onboarding Tutorial** - First-time user experience
+    - Beautiful 4-slide tutorial showcasing key features
+    - Swipeable slides with smooth animations
+    - Skip button for returning users
+    - First-launch detection with AsyncStorage
+    - Automatic navigation to Welcome screen after completion
 
 ### Core Technology
 - **Smart Matching Algorithm:** Finds drivers traveling the same direction with minimal detour
@@ -150,6 +154,7 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 │   │   └── types.ts              # Navigation type definitions
 │   ├── screens/
 │   │   ├── WelcomeScreen.tsx              # Onboarding splash
+│   │   ├── OnboardingScreen.tsx           # First-time user tutorial
 │   │   ├── UserTypeSelectionScreen.tsx    # Choose rider or driver
 │   │   ├── RiderHomeScreen.tsx            # Rider dashboard
 │   │   ├── TripRequestScreen.tsx          # Request a ride
@@ -164,24 +169,34 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 │   │   ├── MyRoutesScreen.tsx             # Driver route history and management
 │   │   ├── EarningsScreen.tsx             # Detailed earnings analytics
 │   │   ├── RiderRequestScreen.tsx         # Rider request details for drivers
-│   │   └── DriverAccountScreen.tsx        # Driver profile and settings
+│   │   ├── DriverAccountScreen.tsx        # Driver profile and settings
+│   │   ├── ThemeSettingsScreen.tsx        # Dark mode theme selection
+│   │   └── PaymentMethodsScreen.tsx       # Payment card management
 │   ├── components/
 │   │   └── ConfirmationModal.tsx          # Custom confirmation dialogs
 │   ├── state/
-│   │   ├── authStore.ts          # User authentication state
-│   │   ├── riderStore.ts         # Rider trip management
-│   │   └── driverStore.ts        # Driver route and earnings
+│   │   ├── authStore.ts           # User authentication state
+│   │   ├── riderStore.ts          # Rider trip management
+│   │   ├── driverStore.ts         # Driver route and earnings
+│   │   ├── messagingStore.ts      # In-app messaging with persistence
+│   │   ├── paymentStore.ts        # Payment card management
+│   │   └── themeStore.ts          # Theme preference (light/dark/system)
 │   ├── types/
-│   │   └── routeshare.ts         # TypeScript interfaces
+│   │   └── routeshare.ts          # TypeScript interfaces
 │   ├── components/
-│   │   └── ConfirmationModal.tsx # Custom modal dialogs
+│   │   └── ConfirmationModal.tsx  # Custom modal dialogs
 │   └── utils/
-│       └── mockData.ts           # Demo drivers and routes
-├── App.tsx                       # App entry point
-└── RURAL_RIDESHARE_CONCEPT.md   # Complete product specification
+│       └── mockData.ts            # Demo drivers and routes
+├── App.tsx                        # App entry point
+└── RURAL_RIDESHARE_CONCEPT.md    # Complete product specification
 ```
 
 ## 🎯 User Flows
+
+### First-Time User Experience (New!)
+1. **Onboarding** → Swipe through 4 slides showcasing key features
+2. **Skip or Complete** → Navigate to Welcome screen
+3. Onboarding only shows once (tracked with AsyncStorage)
 
 ### Authentication Flow (New!)
 1. **Welcome** → Tap "Get Started" or "Sign In"
@@ -267,6 +282,19 @@ routes/
 ```
 
 ## 🚀 How to Test
+
+### First Launch Experience
+1. Open the app for the first time → You'll see the Onboarding tutorial
+2. Swipe through 4 slides: Connect with Drivers, Smart Matching, Safety, Fair Pricing
+3. Tap "Next" to advance or "Skip" to jump to Welcome screen
+4. After completing onboarding, you won't see it again on subsequent launches
+
+### Theme Customization
+1. Log in as a rider or driver
+2. Navigate to Account tab
+3. Tap "Appearance" menu item
+4. Choose between Light, Dark, or System theme
+5. Your preference is saved and persists across app restarts
 
 ### Authentication Flow
 1. Open the app → You'll see the Welcome screen

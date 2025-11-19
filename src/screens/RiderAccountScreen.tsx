@@ -212,7 +212,7 @@ export default function RiderAccountScreen({ navigation }: Props) {
             {/* Notifications */}
             <Pressable
               onPress={() => navigation.navigate("NotificationSettings")}
-              className="flex-row items-center p-4 active:bg-gray-50"
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
             >
               <View className="w-10 h-10 bg-yellow-50 rounded-full items-center justify-center mr-3">
                 <Ionicons name="notifications-outline" size={20} color="#eab308" />
@@ -221,6 +221,23 @@ export default function RiderAccountScreen({ navigation }: Props) {
                 <Text className="font-semibold text-gray-900">Notifications</Text>
                 <Text className="text-sm text-gray-500 mt-0.5">
                   Manage notification preferences
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+            </Pressable>
+
+            {/* Appearance */}
+            <Pressable
+              onPress={() => navigation.navigate("ThemeSettings")}
+              className="flex-row items-center p-4 active:bg-gray-50"
+            >
+              <View className="w-10 h-10 bg-indigo-50 rounded-full items-center justify-center mr-3">
+                <Ionicons name="color-palette-outline" size={20} color="#6366f1" />
+              </View>
+              <View className="flex-1">
+                <Text className="font-semibold text-gray-900">Appearance</Text>
+                <Text className="text-sm text-gray-500 mt-0.5">
+                  Choose light or dark theme
                 </Text>
               </View>
               <Ionicons name="chevron-forward" size={20} color="#9ca3af" />

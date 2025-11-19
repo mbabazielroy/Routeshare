@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { View, ActivityIndicator, Text } from "react-native";
 import { RootStackParamList, RiderTabParamList, DriverTabParamList } from "./types";
 import { useAuthStore } from "../state/authStore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Auth Screens
 import WelcomeScreen from "../screens/WelcomeScreen";
@@ -43,6 +44,8 @@ import TaxInformationScreen from "../screens/TaxInformationScreen";
 import NotificationSettingsScreen from "../screens/NotificationSettingsScreen";
 import HelpCenterScreen from "../screens/HelpCenterScreen";
 import ScheduleRideScreen from "../screens/ScheduleRideScreen";
+import ThemeSettingsScreen from "../screens/ThemeSettingsScreen";
+import OnboardingScreen from "../screens/OnboardingScreen";
 
 // Placeholder screens
 const PlaceholderScreen = ({ title }: { title: string }) => (
@@ -183,9 +186,19 @@ export default function RootNavigator() {
   const user = useAuthStore((s) => s.user);
   const isLoading = useAuthStore((s) => s.isLoading);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
 
-  // Show loading screen while checking auth state
-  if (isLoading) {
+  // Check if onboarding has been completed
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      const completed = await AsyncStorage.getItem("onboarding_completed");
+      setOnboardingCompleted(completed === "true");
+    };
+    checkOnboarding();
+  }, []);
+
+  // Show loading screen while checking auth state and onboarding
+  if (isLoading || onboardingCompleted === null) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
         <ActivityIndicator size="large" color="#2563eb" />
@@ -194,20 +207,26 @@ export default function RootNavigator() {
     );
   }
 
+  // Determine initial route
+  const getInitialRouteName = () => {
+    if (!onboardingCompleted) {
+      return "Onboarding";
+    }
+    if (isAuthenticated && user) {
+      return user.userType === "rider" ? "RiderTabs" : "DriverTabs";
+    }
+    return "Welcome";
+  };
+
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
         animation: "slide_from_right",
       }}
-      initialRouteName={
-        isAuthenticated && user
-          ? user.userType === "rider"
-            ? "RiderTabs"
-            : "DriverTabs"
-          : "Welcome"
-      }
+      initialRouteName={getInitialRouteName()}
     >
+      <Stack.Screen name="Onboarding" component={OnboardingScreen} />
       <Stack.Screen name="Welcome" component={WelcomeScreen} />
       <Stack.Screen name="PhoneAuth" component={PhoneAuthScreen} />
       <Stack.Screen name="CountrySelection" component={CountrySelectionScreen} />
@@ -242,6 +261,7 @@ export default function RootNavigator() {
       <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
       <Stack.Screen name="HelpCenter" component={HelpCenterScreen} />
       <Stack.Screen name="ScheduleRide" component={ScheduleRideScreen} />
+      <Stack.Screen name="ThemeSettings" component={ThemeSettingsScreen} />
     </Stack.Navigator>
   );
 }
