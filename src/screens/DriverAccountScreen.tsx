@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, Pressable, ScrollView, Alert } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Pressable, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
@@ -9,6 +9,7 @@ import { useDriverStore } from "../state/driverStore";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
+import { ConfirmationModal } from "../components/ConfirmationModal";
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<DriverTabParamList, "DriverAccount">,
@@ -20,27 +21,23 @@ export default function DriverAccountScreen({ navigation }: Props) {
   const logout = useAuthStore((s) => s.logout);
   const earnings = useDriverStore((s) => s.earnings);
   const tripHistory = useDriverStore((s) => s.tripHistory);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleLogout = () => {
-    Alert.alert(
-      "Logout",
-      "Are you sure you want to logout?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Logout",
-          style: "destructive",
-          onPress: () => {
-            logout();
-            navigation.getParent()?.reset({
-              index: 0,
-              routes: [{ name: "Welcome" }],
-            });
-          },
-        },
-      ],
-      { cancelable: true }
-    );
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
+    setShowLogoutModal(false);
+    logout();
+    navigation.getParent()?.reset({
+      index: 0,
+      routes: [{ name: "Welcome" }],
+    });
+  };
+
+  const showComingSoon = (feature: string) => {
+    console.log(`${feature} - Coming in next update`);
   };
 
   const verificationBadge = {
@@ -54,6 +51,16 @@ export default function DriverAccountScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
+      <ConfirmationModal
+        visible={showLogoutModal}
+        title="Logout"
+        message="Are you sure you want to logout?"
+        confirmText="Logout"
+        cancelText="Cancel"
+        onConfirm={confirmLogout}
+        onCancel={() => setShowLogoutModal(false)}
+        destructive
+      />
       <ScrollView className="flex-1">
         {/* Header */}
         <View className="bg-white px-6 py-6 border-b border-gray-200">
@@ -138,7 +145,10 @@ export default function DriverAccountScreen({ navigation }: Props) {
         <View className="mx-6 mt-4">
           <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
             {/* Vehicle Information */}
-            <Pressable className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("Vehicle Information")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
               <View className="w-10 h-10 bg-blue-50 rounded-full items-center justify-center mr-3">
                 <Ionicons name="car-outline" size={20} color="#2563eb" />
               </View>
@@ -152,7 +162,10 @@ export default function DriverAccountScreen({ navigation }: Props) {
             </Pressable>
 
             {/* Documents */}
-            <Pressable className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("Documents")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
               <View className="w-10 h-10 bg-orange-50 rounded-full items-center justify-center mr-3">
                 <Ionicons name="document-text-outline" size={20} color="#ea580c" />
               </View>
@@ -166,7 +179,10 @@ export default function DriverAccountScreen({ navigation }: Props) {
             </Pressable>
 
             {/* Bank Account */}
-            <Pressable className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("Bank Account")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
               <View className="w-10 h-10 bg-green-50 rounded-full items-center justify-center mr-3">
                 <Ionicons name="wallet-outline" size={20} color="#16a34a" />
               </View>
@@ -180,7 +196,10 @@ export default function DriverAccountScreen({ navigation }: Props) {
             </Pressable>
 
             {/* Tax Information */}
-            <Pressable className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("Tax Information")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
               <View className="w-10 h-10 bg-purple-50 rounded-full items-center justify-center mr-3">
                 <Ionicons name="receipt-outline" size={20} color="#9333ea" />
               </View>
@@ -194,7 +213,10 @@ export default function DriverAccountScreen({ navigation }: Props) {
             </Pressable>
 
             {/* Earnings History */}
-            <Pressable className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50">
+            <Pressable
+              onPress={() => navigation.navigate("Earnings")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
               <View className="w-10 h-10 bg-yellow-50 rounded-full items-center justify-center mr-3">
                 <Ionicons name="bar-chart-outline" size={20} color="#eab308" />
               </View>
@@ -208,7 +230,10 @@ export default function DriverAccountScreen({ navigation }: Props) {
             </Pressable>
 
             {/* Preferences */}
-            <Pressable className="flex-row items-center p-4 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("Driver Preferences")}
+              className="flex-row items-center p-4 active:bg-gray-50"
+            >
               <View className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center mr-3">
                 <Ionicons name="settings-outline" size={20} color="#6b7280" />
               </View>
@@ -229,19 +254,28 @@ export default function DriverAccountScreen({ navigation }: Props) {
             SUPPORT & LEGAL
           </Text>
           <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-            <Pressable className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("Driver Support")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
               <Ionicons name="help-circle-outline" size={24} color="#6b7280" />
               <Text className="ml-3 flex-1 font-medium text-gray-900">Driver Support</Text>
               <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
             </Pressable>
 
-            <Pressable className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("Safety Center")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
               <Ionicons name="shield-checkmark-outline" size={24} color="#6b7280" />
               <Text className="ml-3 flex-1 font-medium text-gray-900">Safety Center</Text>
               <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
             </Pressable>
 
-            <Pressable className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("Driver Agreement")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
               <Ionicons name="document-text-outline" size={24} color="#6b7280" />
               <Text className="ml-3 flex-1 font-medium text-gray-900">
                 Driver Agreement
@@ -249,7 +283,10 @@ export default function DriverAccountScreen({ navigation }: Props) {
               <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
             </Pressable>
 
-            <Pressable className="flex-row items-center p-4 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("About RouteShare")}
+              className="flex-row items-center p-4 active:bg-gray-50"
+            >
               <Ionicons name="information-circle-outline" size={24} color="#6b7280" />
               <Text className="ml-3 flex-1 font-medium text-gray-900">About RouteShare</Text>
               <Ionicons name="chevron-forward" size={20} color="#9ca3af" />

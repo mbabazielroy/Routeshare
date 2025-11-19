@@ -155,7 +155,10 @@ export default function DriverHomeScreen({ navigation }: Props) {
                 <Text className="text-gray-600 text-sm">
                   {currentRoute.distance.toFixed(1)} mi • {currentRoute.estimatedDuration} min
                 </Text>
-                <Pressable className="bg-blue-600 rounded-lg px-4 py-2">
+                <Pressable
+                  onPress={() => navigation.navigate("MyRoutes")}
+                  className="bg-blue-600 rounded-lg px-4 py-2 active:bg-blue-700"
+                >
                   <Text className="text-white font-semibold">View Route</Text>
                 </Pressable>
               </View>

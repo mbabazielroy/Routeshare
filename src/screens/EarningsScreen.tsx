@@ -1,0 +1,264 @@
+import React, { useState } from "react";
+import { View, Text, Pressable, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import { DriverTabParamList } from "../navigation/types";
+import { useDriverStore } from "../state/driverStore";
+
+type Props = BottomTabScreenProps<DriverTabParamList, "Earnings">;
+
+type TimePeriod = "today" | "week" | "month" | "all";
+
+export default function EarningsScreen({ navigation }: Props) {
+  const earnings = useDriverStore((s) => s.earnings);
+  const tripHistory = useDriverStore((s) => s.tripHistory);
+  const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>("week");
+
+  const getEarningsForPeriod = () => {
+    switch (selectedPeriod) {
+      case "today":
+        return earnings.today;
+      case "week":
+        return earnings.week;
+      case "month":
+        return earnings.month;
+      case "all":
+        return earnings.total;
+    }
+  };
+
+  const getTripsForPeriod = () => {
+    // Mock data - in production, filter by actual dates
+    switch (selectedPeriod) {
+      case "today":
+        return Math.floor(tripHistory.length * 0.1) || 0;
+      case "week":
+        return Math.floor(tripHistory.length * 0.3) || tripHistory.length;
+      case "month":
+        return Math.floor(tripHistory.length * 0.7) || tripHistory.length;
+      case "all":
+        return tripHistory.length;
+    }
+  };
+
+  const currentEarnings = getEarningsForPeriod();
+  const currentTrips = getTripsForPeriod();
+  const avgPerTrip = currentTrips > 0 ? currentEarnings / currentTrips : 0;
+
+  // Mock weekly breakdown
+  const weeklyData = [
+    { day: "Mon", amount: 45.5, trips: 2 },
+    { day: "Tue", amount: 67.8, trips: 3 },
+    { day: "Wed", amount: 89.2, trips: 4 },
+    { day: "Thu", amount: 52.3, trips: 2 },
+    { day: "Fri", amount: 98.7, trips: 5 },
+    { day: "Sat", amount: 123.4, trips: 6 },
+    { day: "Sun", amount: 78.9, trips: 3 },
+  ];
+
+  const maxAmount = Math.max(...weeklyData.map((d) => d.amount));
+
+  return (
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <ScrollView className="flex-1">
+        {/* Header */}
+        <View className="bg-white px-6 py-6 border-b border-gray-200">
+          <Text className="text-3xl font-bold text-gray-900 mb-1">Earnings</Text>
+          <Text className="text-base text-gray-600">
+            Track your income and performance
+          </Text>
+        </View>
+
+        {/* Time Period Selector */}
+        <View className="px-6 pt-4">
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View className="flex-row gap-2">
+              <Pressable
+                onPress={() => setSelectedPeriod("today")}
+                className={`px-4 py-2 rounded-xl ${
+                  selectedPeriod === "today"
+                    ? "bg-blue-600"
+                    : "bg-white border border-gray-200"
+                }`}
+              >
+                <Text
+                  className={`font-semibold ${
+                    selectedPeriod === "today" ? "text-white" : "text-gray-700"
+                  }`}
+                >
+                  Today
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setSelectedPeriod("week")}
+                className={`px-4 py-2 rounded-xl ${
+                  selectedPeriod === "week"
+                    ? "bg-blue-600"
+                    : "bg-white border border-gray-200"
+                }`}
+              >
+                <Text
+                  className={`font-semibold ${
+                    selectedPeriod === "week" ? "text-white" : "text-gray-700"
+                  }`}
+                >
+                  This Week
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setSelectedPeriod("month")}
+                className={`px-4 py-2 rounded-xl ${
+                  selectedPeriod === "month"
+                    ? "bg-blue-600"
+                    : "bg-white border border-gray-200"
+                }`}
+              >
+                <Text
+                  className={`font-semibold ${
+                    selectedPeriod === "month" ? "text-white" : "text-gray-700"
+                  }`}
+                >
+                  This Month
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setSelectedPeriod("all")}
+                className={`px-4 py-2 rounded-xl ${
+                  selectedPeriod === "all"
+                    ? "bg-blue-600"
+                    : "bg-white border border-gray-200"
+                }`}
+              >
+                <Text
+                  className={`font-semibold ${
+                    selectedPeriod === "all" ? "text-white" : "text-gray-700"
+                  }`}
+                >
+                  All Time
+                </Text>
+              </Pressable>
+            </View>
+          </ScrollView>
+        </View>
+
+        {/* Earnings Summary */}
+        <View className="mx-6 mt-4">
+          <View className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-6">
+            <Text className="text-blue-100 text-sm font-medium mb-2">
+              Total Earnings
+            </Text>
+            <Text className="text-white text-5xl font-bold mb-4">
+              ${currentEarnings.toFixed(2)}
+            </Text>
+            <View className="flex-row items-center">
+              <Ionicons name="trending-up" size={16} color="#93c5fd" />
+              <Text className="text-blue-100 text-sm ml-1">
+                {currentTrips} trips completed
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Stats Grid */}
+        <View className="mx-6 mt-4">
+          <View className="flex-row gap-3">
+            <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-200">
+              <View className="w-10 h-10 bg-green-50 rounded-full items-center justify-center mb-3">
+                <Ionicons name="cash" size={20} color="#16a34a" />
+              </View>
+              <Text className="text-2xl font-bold text-gray-900">
+                ${avgPerTrip.toFixed(2)}
+              </Text>
+              <Text className="text-sm text-gray-600 mt-1">Avg per Trip</Text>
+            </View>
+            <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-200">
+              <View className="w-10 h-10 bg-purple-50 rounded-full items-center justify-center mb-3">
+                <Ionicons name="car" size={20} color="#9333ea" />
+              </View>
+              <Text className="text-2xl font-bold text-gray-900">
+                {currentTrips}
+              </Text>
+              <Text className="text-sm text-gray-600 mt-1">Total Trips</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Weekly Chart */}
+        {selectedPeriod === "week" && (
+          <View className="mx-6 mt-4">
+            <View className="bg-white rounded-2xl p-5 border border-gray-200">
+              <Text className="text-lg font-bold text-gray-900 mb-4">
+                This Week
+              </Text>
+              <View className="flex-row items-end justify-between h-48">
+                {weeklyData.map((day, index) => {
+                  const height = (day.amount / maxAmount) * 100;
+                  return (
+                    <View key={index} className="flex-1 items-center">
+                      <View className="w-full items-center mb-2">
+                        <Text className="text-xs font-semibold text-gray-900 mb-1">
+                          ${day.amount.toFixed(0)}
+                        </Text>
+                        <View
+                          className="w-8 bg-blue-600 rounded-t-lg"
+                          style={{ height: `${height}%` }}
+                        />
+                      </View>
+                      <Text className="text-xs text-gray-600 mt-2">{day.day}</Text>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+          </View>
+        )}
+
+        {/* Earnings Breakdown */}
+        <View className="mx-6 mt-4">
+          <Text className="text-lg font-bold text-gray-900 mb-3 px-2">
+            Earnings Breakdown
+          </Text>
+          <View className="bg-white rounded-2xl p-5 border border-gray-200">
+            <View className="flex-row justify-between items-center mb-4">
+              <Text className="text-sm text-gray-600">Your Earnings (85%)</Text>
+              <Text className="text-base font-bold text-gray-900">
+                ${(currentEarnings * 0.85).toFixed(2)}
+              </Text>
+            </View>
+            <View className="flex-row justify-between items-center mb-4">
+              <Text className="text-sm text-gray-600">Platform Fee (15%)</Text>
+              <Text className="text-base font-bold text-gray-900">
+                ${(currentEarnings * 0.15).toFixed(2)}
+              </Text>
+            </View>
+            <View className="h-px bg-gray-200 my-2" />
+            <View className="flex-row justify-between items-center">
+              <Text className="text-sm font-semibold text-gray-900">
+                Total Fares
+              </Text>
+              <Text className="text-lg font-bold text-gray-900">
+                ${currentEarnings.toFixed(2)}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Cash Out */}
+        <View className="mx-6 mt-4 mb-6">
+          <Pressable className="bg-green-600 rounded-2xl py-4 px-6 active:bg-green-700">
+            <View className="flex-row items-center justify-center">
+              <Ionicons name="wallet" size={20} color="white" />
+              <Text className="ml-2 text-white font-bold text-base">
+                Cash Out ${(currentEarnings * 0.85).toFixed(2)}
+              </Text>
+            </View>
+          </Pressable>
+          <Text className="text-center text-xs text-gray-500 mt-3">
+            Available balance • Instant transfer to your bank
+          </Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}

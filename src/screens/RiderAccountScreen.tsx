@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, Pressable, ScrollView, Alert } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Pressable, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
@@ -9,6 +9,7 @@ import { useRiderStore } from "../state/riderStore";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
+import { ConfirmationModal } from "../components/ConfirmationModal";
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<RiderTabParamList, "RiderAccount">,
@@ -19,27 +20,24 @@ export default function RiderAccountScreen({ navigation }: Props) {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const tripHistory = useRiderStore((s) => s.tripHistory);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleLogout = () => {
-    Alert.alert(
-      "Logout",
-      "Are you sure you want to logout?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Logout",
-          style: "destructive",
-          onPress: () => {
-            logout();
-            navigation.getParent()?.reset({
-              index: 0,
-              routes: [{ name: "Welcome" }],
-            });
-          },
-        },
-      ],
-      { cancelable: true }
-    );
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
+    setShowLogoutModal(false);
+    logout();
+    navigation.getParent()?.reset({
+      index: 0,
+      routes: [{ name: "Welcome" }],
+    });
+  };
+
+  const showComingSoon = (feature: string) => {
+    // Simple inline feedback for features not fully implemented
+    console.log(`${feature} - Coming in next update`);
   };
 
   const verificationBadge = {
@@ -53,6 +51,16 @@ export default function RiderAccountScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
+      <ConfirmationModal
+        visible={showLogoutModal}
+        title="Logout"
+        message="Are you sure you want to logout?"
+        confirmText="Logout"
+        cancelText="Cancel"
+        onConfirm={confirmLogout}
+        onCancel={() => setShowLogoutModal(false)}
+        destructive
+      />
       <ScrollView className="flex-1">
         {/* Header */}
         <View className="bg-white px-6 py-6 border-b border-gray-200">
@@ -132,7 +140,10 @@ export default function RiderAccountScreen({ navigation }: Props) {
         <View className="mx-6 mt-4">
           <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
             {/* Profile */}
-            <Pressable className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("Edit Profile")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
               <View className="w-10 h-10 bg-blue-50 rounded-full items-center justify-center mr-3">
                 <Ionicons name="person-outline" size={20} color="#2563eb" />
               </View>
@@ -146,7 +157,10 @@ export default function RiderAccountScreen({ navigation }: Props) {
             </Pressable>
 
             {/* Payment Methods */}
-            <Pressable className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("Payment Methods")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
               <View className="w-10 h-10 bg-green-50 rounded-full items-center justify-center mr-3">
                 <Ionicons name="card-outline" size={20} color="#16a34a" />
               </View>
@@ -160,7 +174,10 @@ export default function RiderAccountScreen({ navigation }: Props) {
             </Pressable>
 
             {/* Saved Locations */}
-            <Pressable className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("Saved Places")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
               <View className="w-10 h-10 bg-purple-50 rounded-full items-center justify-center mr-3">
                 <Ionicons name="location-outline" size={20} color="#9333ea" />
               </View>
@@ -174,7 +191,10 @@ export default function RiderAccountScreen({ navigation }: Props) {
             </Pressable>
 
             {/* Trip History */}
-            <Pressable className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50">
+            <Pressable
+              onPress={() => navigation.navigate("MyRides")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
               <View className="w-10 h-10 bg-orange-50 rounded-full items-center justify-center mr-3">
                 <Ionicons name="time-outline" size={20} color="#ea580c" />
               </View>
@@ -188,7 +208,10 @@ export default function RiderAccountScreen({ navigation }: Props) {
             </Pressable>
 
             {/* Notifications */}
-            <Pressable className="flex-row items-center p-4 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("Notifications")}
+              className="flex-row items-center p-4 active:bg-gray-50"
+            >
               <View className="w-10 h-10 bg-yellow-50 rounded-full items-center justify-center mr-3">
                 <Ionicons name="notifications-outline" size={20} color="#eab308" />
               </View>
@@ -209,13 +232,19 @@ export default function RiderAccountScreen({ navigation }: Props) {
             SUPPORT & LEGAL
           </Text>
           <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-            <Pressable className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("Help Center")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
               <Ionicons name="help-circle-outline" size={24} color="#6b7280" />
               <Text className="ml-3 flex-1 font-medium text-gray-900">Help Center</Text>
               <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
             </Pressable>
 
-            <Pressable className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("Terms & Conditions")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
               <Ionicons name="document-text-outline" size={24} color="#6b7280" />
               <Text className="ml-3 flex-1 font-medium text-gray-900">
                 Terms & Conditions
@@ -223,13 +252,19 @@ export default function RiderAccountScreen({ navigation }: Props) {
               <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
             </Pressable>
 
-            <Pressable className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("Privacy Policy")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
               <Ionicons name="shield-outline" size={24} color="#6b7280" />
               <Text className="ml-3 flex-1 font-medium text-gray-900">Privacy Policy</Text>
               <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
             </Pressable>
 
-            <Pressable className="flex-row items-center p-4 active:bg-gray-50">
+            <Pressable
+              onPress={() => showComingSoon("About RouteShare")}
+              className="flex-row items-center p-4 active:bg-gray-50"
+            >
               <Ionicons name="information-circle-outline" size={24} color="#6b7280" />
               <Text className="ml-3 flex-1 font-medium text-gray-900">About RouteShare</Text>
               <Ionicons name="chevron-forward" size={20} color="#9ca3af" />

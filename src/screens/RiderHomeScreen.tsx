@@ -146,21 +146,30 @@ export default function RiderHomeScreen({ navigation }: Props) {
         <View className="px-6 mt-2 pb-8">
           <Text className="text-lg font-bold text-gray-900 mb-3">Quick Actions</Text>
           <View className="flex-row gap-3">
-            <Pressable className="flex-1 bg-white rounded-xl p-4 items-center border border-gray-200">
+            <Pressable
+              onPress={() => console.log("Schedule - Coming soon")}
+              className="flex-1 bg-white rounded-xl p-4 items-center border border-gray-200 active:bg-gray-50"
+            >
               <View className="w-12 h-12 bg-purple-50 rounded-full items-center justify-center mb-2">
                 <Ionicons name="calendar" size={24} color="#9333ea" />
               </View>
               <Text className="text-sm font-medium text-gray-900">Schedule</Text>
             </Pressable>
 
-            <Pressable className="flex-1 bg-white rounded-xl p-4 items-center border border-gray-200">
+            <Pressable
+              onPress={() => console.log("Carpool - Coming soon")}
+              className="flex-1 bg-white rounded-xl p-4 items-center border border-gray-200 active:bg-gray-50"
+            >
               <View className="w-12 h-12 bg-green-50 rounded-full items-center justify-center mb-2">
                 <Ionicons name="people" size={24} color="#16a34a" />
               </View>
               <Text className="text-sm font-medium text-gray-900">Carpool</Text>
             </Pressable>
 
-            <Pressable className="flex-1 bg-white rounded-xl p-4 items-center border border-gray-200">
+            <Pressable
+              onPress={() => console.log("Help - Coming soon")}
+              className="flex-1 bg-white rounded-xl p-4 items-center border border-gray-200 active:bg-gray-50"
+            >
               <View className="w-12 h-12 bg-orange-50 rounded-full items-center justify-center mb-2">
                 <Ionicons name="help-circle" size={24} color="#ea580c" />
               </View>

@@ -14,11 +14,16 @@ import TripRequestScreen from "../screens/TripRequestScreen";
 import DriverSelectionScreen from "../screens/DriverSelectionScreen";
 import LiveTripScreen from "../screens/LiveTripScreen";
 import RiderAccountScreen from "../screens/RiderAccountScreen";
+import MyRidesScreen from "../screens/MyRidesScreen";
+import SafetyScreen from "../screens/SafetyScreen";
 
 // Driver Screens
 import DriverHomeScreen from "../screens/DriverHomeScreen";
 import PublishRouteScreen from "../screens/PublishRouteScreen";
 import DriverAccountScreen from "../screens/DriverAccountScreen";
+import MyRoutesScreen from "../screens/MyRoutesScreen";
+import EarningsScreen from "../screens/EarningsScreen";
+import RiderRequestScreen from "../screens/RiderRequestScreen";
 
 // Shared Screens
 import TripRatingScreen from "../screens/TripRatingScreen";
@@ -68,24 +73,24 @@ function RiderTabNavigator() {
       />
       <RiderTab.Screen
         name="MyRides"
+        component={MyRidesScreen}
         options={{
+          headerShown: false,
           tabBarLabel: "My Rides",
           tabBarIcon: ({ color, size }) => <Ionicons name="list" size={size} color={color} />,
         }}
-      >
-        {() => <PlaceholderScreen title="My Rides" />}
-      </RiderTab.Screen>
+      />
       <RiderTab.Screen
         name="Safety"
+        component={SafetyScreen}
         options={{
+          headerShown: false,
           tabBarLabel: "Safety",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="shield-checkmark" size={size} color={color} />
           ),
         }}
-      >
-        {() => <PlaceholderScreen title="Safety" />}
-      </RiderTab.Screen>
+      />
       <RiderTab.Screen
         name="RiderAccount"
         component={RiderAccountScreen}
@@ -130,22 +135,22 @@ function DriverTabNavigator() {
       />
       <DriverTab.Screen
         name="MyRoutes"
+        component={MyRoutesScreen}
         options={{
+          headerShown: false,
           tabBarLabel: "My Routes",
           tabBarIcon: ({ color, size }) => <Ionicons name="map" size={size} color={color} />,
         }}
-      >
-        {() => <PlaceholderScreen title="My Routes" />}
-      </DriverTab.Screen>
+      />
       <DriverTab.Screen
         name="Earnings"
+        component={EarningsScreen}
         options={{
+          headerShown: false,
           tabBarLabel: "Earnings",
           tabBarIcon: ({ color, size }) => <Ionicons name="cash" size={size} color={color} />,
         }}
-      >
-        {() => <PlaceholderScreen title="Earnings" />}
-      </DriverTab.Screen>
+      />
       <DriverTab.Screen
         name="DriverAccount"
         component={DriverAccountScreen}
@@ -184,9 +189,7 @@ export default function RootNavigator() {
         component={PublishRouteScreen}
         options={{ presentation: "modal" }}
       />
-      <Stack.Screen name="RiderRequest">
-        {() => <PlaceholderScreen title="Rider Request" />}
-      </Stack.Screen>
+      <Stack.Screen name="RiderRequest" component={RiderRequestScreen} />
 
       {/* Shared */}
       <Stack.Screen name="TripRating" component={TripRatingScreen} />
