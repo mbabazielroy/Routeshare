@@ -144,6 +144,23 @@ export default function DriverAccountScreen({ navigation }: Props) {
         {/* Driver Menu Items */}
         <View className="mx-6 mt-4">
           <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            {/* Edit Profile */}
+            <Pressable
+              onPress={() => navigation.navigate("EditProfile")}
+              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+            >
+              <View className="w-10 h-10 bg-blue-50 rounded-full items-center justify-center mr-3">
+                <Ionicons name="person-outline" size={20} color="#2563eb" />
+              </View>
+              <View className="flex-1">
+                <Text className="font-semibold text-gray-900">Edit Profile</Text>
+                <Text className="text-sm text-gray-500 mt-0.5">
+                  Update your personal information
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+            </Pressable>
+
             {/* Vehicle Information */}
             <Pressable
               onPress={() => showComingSoon("Vehicle Information")}

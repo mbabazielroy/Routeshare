@@ -9,6 +9,10 @@ export type RootStackParamList = {
   PublishRoute: undefined;
   RiderRequest: { requestId: string };
   TripRating: { tripId: string; otherUserId: string };
+  EditProfile: undefined;
+  PaymentMethods: undefined;
+  SavedPlaces: undefined;
+  InAppMessaging: { conversationId: string };
 };
 
 export type RiderTabParamList = {

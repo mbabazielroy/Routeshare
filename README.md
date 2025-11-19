@@ -20,21 +20,25 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 - **Live Trip Tracking:** Real-time GPS tracking with driver location simulation
 - **My Rides:** Complete trip history with filters (all, completed, cancelled)
 - **Safety Center:** Emergency SOS, trip sharing, emergency contacts, and safety tips
-- **Saved Locations:** Quick access to frequently visited places (Home, Work)
+- **Saved Places:** Manage frequently visited locations with custom icons
+- **Edit Profile:** Update name, email, phone, and profile photo
+- **Payment Methods:** Add and manage credit/debit cards (UI ready)
+- **In-App Messaging:** Real-time chat with drivers during trips
 - **Trip Rating:** Rate drivers after completing rides
-- **Account Management:** Profile stats, verification badges, custom logout confirmation
-- **Interactive Menu:** Navigate to trip history, settings, help center, and more
+- **Account Management:** Full profile management with working navigation
+- **Interactive Menu:** All menu items functional with beautiful UI
 
 ### For Drivers
 - **Route Publishing:** Share your planned route and available seats
 - **Earnings Dashboard:** Detailed analytics with daily, weekly, monthly, and total earnings
-- **Earnings Screen:** Visual charts, breakdown, and cash-out functionality
+- **Earnings Screen:** Visual charts, time period selector, and breakdown
 - **My Routes:** Route history and management with status filters
 - **Rider Requests:** Detailed request screen with earnings preview and route impact
+- **Edit Profile:** Update personal information and profile settings
 - **Online/Offline Toggle:** Control when you're available for rides
 - **Stats Tracking:** Total trips, rating, and lifetime earnings
-- **Account Management:** Driver stats, vehicle info, documents, bank settings, custom logout confirmation
-- **Interactive Menu:** Navigate to earnings, routes, documents, and support
+- **Account Management:** Complete driver profile management
+- **Interactive Menu:** All features accessible with smooth navigation
 
 ### Core Technology
 - **Smart Matching Algorithm:** Finds drivers traveling the same direction with minimal detour
@@ -43,6 +47,7 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 - **Custom Modals:** Beautiful confirmation dialogs (no system alerts)
 - **Beautiful UI:** Steve Jobs-inspired design with NativeWind/Tailwind styling
 - **Full Navigation:** All screens properly wired with working menu items
+- **Firebase Ready:** Backend configuration setup for easy integration
 
 ## 🏗️ Project Structure
 
@@ -113,6 +118,58 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 - **Maps:** react-native-maps with Mapbox
 - **Icons:** @expo/vector-icons (Ionicons)
 - **TypeScript:** Fully typed for safety
+- **Backend (Ready):** Firebase configuration prepared for easy integration
+
+## 🔥 Firebase Setup (Optional Backend Integration)
+
+The app is currently using mock data but is ready for Firebase integration. To connect to a real backend:
+
+### 1. Create a Firebase Project
+```bash
+# Visit https://console.firebase.google.com
+# Create a new project
+# Enable Authentication, Firestore, and Storage
+```
+
+### 2. Install Firebase
+```bash
+bun add firebase
+```
+
+### 3. Configure Environment Variables
+Create a `.env` file in the root directory:
+```env
+EXPO_PUBLIC_FIREBASE_API_KEY=your_api_key
+EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+EXPO_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+EXPO_PUBLIC_FIREBASE_APP_ID=your_app_id
+```
+
+### 4. Enable Firebase in Config
+Uncomment the Firebase configuration in `src/config/firebase.ts`
+
+### 5. Firestore Collections Structure
+```
+users/
+  - {userId}
+    - firstName, lastName, email, phone
+    - userType, verificationLevel, rating
+    - createdAt
+
+trips/
+  - {tripId}
+    - driverId, riderId
+    - pickup, dropoff, fare
+    - status, createdAt
+
+routes/
+  - {routeId}
+    - driverId, origin, destination
+    - availableSeats, status
+    - createdAt
+```
 
 ## 🚀 How to Test
 

@@ -141,7 +141,7 @@ export default function RiderAccountScreen({ navigation }: Props) {
           <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
             {/* Profile */}
             <Pressable
-              onPress={() => showComingSoon("Edit Profile")}
+              onPress={() => navigation.navigate("EditProfile")}
               className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
             >
               <View className="w-10 h-10 bg-blue-50 rounded-full items-center justify-center mr-3">
@@ -158,7 +158,7 @@ export default function RiderAccountScreen({ navigation }: Props) {
 
             {/* Payment Methods */}
             <Pressable
-              onPress={() => showComingSoon("Payment Methods")}
+              onPress={() => navigation.navigate("PaymentMethods")}
               className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
             >
               <View className="w-10 h-10 bg-green-50 rounded-full items-center justify-center mr-3">
@@ -175,7 +175,7 @@ export default function RiderAccountScreen({ navigation }: Props) {
 
             {/* Saved Locations */}
             <Pressable
-              onPress={() => showComingSoon("Saved Places")}
+              onPress={() => navigation.navigate("SavedPlaces")}
               className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
             >
               <View className="w-10 h-10 bg-purple-50 rounded-full items-center justify-center mr-3">

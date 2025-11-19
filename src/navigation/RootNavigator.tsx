@@ -27,6 +27,10 @@ import RiderRequestScreen from "../screens/RiderRequestScreen";
 
 // Shared Screens
 import TripRatingScreen from "../screens/TripRatingScreen";
+import EditProfileScreen from "../screens/EditProfileScreen";
+import PaymentMethodsScreen from "../screens/PaymentMethodsScreen";
+import SavedPlacesScreen from "../screens/SavedPlacesScreen";
+import InAppMessagingScreen from "../screens/InAppMessagingScreen";
 
 // Placeholder screens
 import { View, Text } from "react-native";
@@ -193,6 +197,10 @@ export default function RootNavigator() {
 
       {/* Shared */}
       <Stack.Screen name="TripRating" component={TripRatingScreen} />
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+      <Stack.Screen name="PaymentMethods" component={PaymentMethodsScreen} />
+      <Stack.Screen name="SavedPlaces" component={SavedPlacesScreen} />
+      <Stack.Screen name="InAppMessaging" component={InAppMessagingScreen} />
     </Stack.Navigator>
   );
 }
