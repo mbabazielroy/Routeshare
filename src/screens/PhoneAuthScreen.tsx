@@ -158,7 +158,9 @@ export default function PhoneAuthScreen({ navigation }: Props) {
                 <Text className="text-base font-semibold text-gray-900 ml-2">
                   {selectedCountry.dialCode}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#6b7280" className="ml-1" />
+                <View className="ml-1">
+                  <Ionicons name="chevron-down" size={20} color="#6b7280" />
+                </View>
               </Pressable>
 
               <TextInput
