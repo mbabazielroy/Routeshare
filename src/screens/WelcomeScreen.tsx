@@ -9,61 +9,61 @@ type Props = NativeStackScreenProps<RootStackParamList, "Welcome">;
 
 export default function WelcomeScreen({ navigation }: Props) {
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-gray-900">
       <View className="flex-1 px-6 justify-between py-8">
         {/* Hero Section */}
         <View className="flex-1 justify-center items-center">
-          <View className="w-24 h-24 bg-blue-600 rounded-3xl items-center justify-center mb-6">
+          <View className="w-24 h-24 bg-blue-600 dark:bg-blue-500 rounded-3xl items-center justify-center mb-6">
             <Ionicons name="car-sport" size={48} color="white" />
           </View>
 
-          <Text className="text-4xl font-bold text-gray-900 text-center mb-3">
+          <Text className="text-4xl font-bold text-gray-900 dark:text-white text-center mb-3">
             RouteShare
           </Text>
 
-          <Text className="text-lg text-gray-600 text-center mb-8 px-4">
+          <Text className="text-lg text-gray-600 dark:text-gray-300 text-center mb-8 px-4">
             Rural ride-sharing that connects neighbors heading the same way
           </Text>
 
           {/* Benefits */}
           <View className="w-full mt-8 space-y-4">
             <View className="flex-row items-center">
-              <View className="w-12 h-12 bg-blue-50 rounded-full items-center justify-center mr-4">
+              <View className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-full items-center justify-center mr-4">
                 <Ionicons name="people" size={24} color="#2563eb" />
               </View>
               <View className="flex-1">
-                <Text className="text-base font-semibold text-gray-900">
+                <Text className="text-base font-semibold text-gray-900 dark:text-white">
                   Community-Based
                 </Text>
-                <Text className="text-sm text-gray-600">
+                <Text className="text-sm text-gray-600 dark:text-gray-400">
                   Ride with verified local drivers
                 </Text>
               </View>
             </View>
 
             <View className="flex-row items-center mt-4">
-              <View className="w-12 h-12 bg-green-50 rounded-full items-center justify-center mr-4">
+              <View className="w-12 h-12 bg-green-50 dark:bg-green-900/30 rounded-full items-center justify-center mr-4">
                 <Ionicons name="cash" size={24} color="#16a34a" />
               </View>
               <View className="flex-1">
-                <Text className="text-base font-semibold text-gray-900">
+                <Text className="text-base font-semibold text-gray-900 dark:text-white">
                   Fair Pricing
                 </Text>
-                <Text className="text-sm text-gray-600">
+                <Text className="text-sm text-gray-600 dark:text-gray-400">
                   Affordable rides that help drivers earn
                 </Text>
               </View>
             </View>
 
             <View className="flex-row items-center mt-4">
-              <View className="w-12 h-12 bg-purple-50 rounded-full items-center justify-center mr-4">
+              <View className="w-12 h-12 bg-purple-50 dark:bg-purple-900/30 rounded-full items-center justify-center mr-4">
                 <Ionicons name="shield-checkmark" size={24} color="#9333ea" />
               </View>
               <View className="flex-1">
-                <Text className="text-base font-semibold text-gray-900">
+                <Text className="text-base font-semibold text-gray-900 dark:text-white">
                   Safe & Verified
                 </Text>
-                <Text className="text-sm text-gray-600">
+                <Text className="text-sm text-gray-600 dark:text-gray-400">
                   Background checks and ratings
                 </Text>
               </View>
@@ -75,7 +75,7 @@ export default function WelcomeScreen({ navigation }: Props) {
         <View className="space-y-3">
           <Pressable
             onPress={() => navigation.navigate("PhoneAuth")}
-            className="bg-blue-600 rounded-2xl py-4 px-6 active:bg-blue-700"
+            className="bg-blue-600 dark:bg-blue-500 rounded-2xl py-4 px-6 active:bg-blue-700"
           >
             <Text className="text-white text-center text-lg font-semibold">
               Get Started
@@ -84,9 +84,9 @@ export default function WelcomeScreen({ navigation }: Props) {
 
           <Pressable
             onPress={() => navigation.navigate("PhoneAuth")}
-            className="border-2 border-gray-300 rounded-2xl py-4 px-6 active:bg-gray-50"
+            className="border-2 border-gray-300 dark:border-gray-600 rounded-2xl py-4 px-6 active:bg-gray-50 dark:active:bg-gray-800"
           >
-            <Text className="text-gray-700 text-center text-lg font-semibold">
+            <Text className="text-gray-700 dark:text-gray-200 text-center text-lg font-semibold">
               Sign In
             </Text>
           </Pressable>

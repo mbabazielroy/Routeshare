@@ -34,14 +34,14 @@ export default function ThemeSettingsScreen({ navigation }: Props) {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={["top"]}>
       {/* Header */}
-      <View className="bg-white px-6 py-4 border-b border-gray-200">
+      <View className="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <View className="flex-row items-center">
           <Pressable onPress={() => navigation.goBack()} className="mr-3">
-            <Ionicons name="arrow-back" size={24} color="#111827" />
+            <Ionicons name="arrow-back" size={24} color="#3b82f6" />
           </Pressable>
-          <Text className="text-2xl font-bold text-gray-900 flex-1">
+          <Text className="text-2xl font-bold text-gray-900 dark:text-white flex-1">
             Appearance
           </Text>
         </View>
@@ -49,7 +49,7 @@ export default function ThemeSettingsScreen({ navigation }: Props) {
 
       <ScrollView className="flex-1">
         <View className="px-6 pt-4">
-          <Text className="text-sm text-gray-600 mb-4">
+          <Text className="text-sm text-gray-600 dark:text-gray-400 mb-4">
             Choose how RouteShare looks on your device
           </Text>
 
@@ -57,14 +57,14 @@ export default function ThemeSettingsScreen({ navigation }: Props) {
             <Pressable
               key={themeOption.id}
               onPress={() => setTheme(themeOption.id)}
-              className={`bg-white rounded-2xl p-5 mb-3 border-2 active:bg-gray-50 ${
-                theme === themeOption.id ? "border-blue-600" : "border-gray-200"
+              className={`bg-white dark:bg-gray-800 rounded-2xl p-5 mb-3 border-2 active:bg-gray-50 dark:active:bg-gray-700 ${
+                theme === themeOption.id ? "border-blue-600 dark:border-blue-500" : "border-gray-200 dark:border-gray-700"
               }`}
             >
               <View className="flex-row items-center">
                 <View
                   className={`w-12 h-12 rounded-full items-center justify-center mr-4 ${
-                    theme === themeOption.id ? "bg-blue-100" : "bg-gray-100"
+                    theme === themeOption.id ? "bg-blue-100 dark:bg-blue-900/50" : "bg-gray-100 dark:bg-gray-700"
                   }`}
                 >
                   <Ionicons
@@ -74,10 +74,10 @@ export default function ThemeSettingsScreen({ navigation }: Props) {
                   />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-lg font-bold text-gray-900">
+                  <Text className="text-lg font-bold text-gray-900 dark:text-white">
                     {themeOption.name}
                   </Text>
-                  <Text className="text-sm text-gray-600 mt-1">
+                  <Text className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                     {themeOption.description}
                   </Text>
                 </View>
@@ -91,21 +91,21 @@ export default function ThemeSettingsScreen({ navigation }: Props) {
 
         {/* Preview Section */}
         <View className="mx-6 mt-6 mb-6">
-          <Text className="text-sm font-semibold text-gray-700 mb-3">
+          <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
             Preview
           </Text>
-          <View className="bg-white rounded-2xl p-6 border border-gray-200">
+          <View className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
             <View className="flex-row items-center mb-4">
-              <View className="w-12 h-12 bg-blue-600 rounded-full items-center justify-center mr-3">
+              <View className="w-12 h-12 bg-blue-600 dark:bg-blue-500 rounded-full items-center justify-center mr-3">
                 <Ionicons name="car-sport" size={24} color="white" />
               </View>
               <View className="flex-1">
-                <Text className="text-lg font-bold text-gray-900">RouteShare</Text>
-                <Text className="text-sm text-gray-600">Rural ride-sharing</Text>
+                <Text className="text-lg font-bold text-gray-900 dark:text-white">RouteShare</Text>
+                <Text className="text-sm text-gray-600 dark:text-gray-400">Rural ride-sharing</Text>
               </View>
             </View>
-            <View className="bg-gray-50 rounded-xl p-4">
-              <Text className="text-sm text-gray-700">
+            <View className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+              <Text className="text-sm text-gray-700 dark:text-gray-300">
                 This is how the app will look with your selected theme. Dark mode
                 makes it easier on the eyes in low-light conditions.
               </Text>
@@ -115,14 +115,14 @@ export default function ThemeSettingsScreen({ navigation }: Props) {
 
         {/* Info */}
         <View className="mx-6 mb-6">
-          <View className="bg-blue-50 rounded-2xl p-5 border border-blue-200">
+          <View className="bg-blue-50 dark:bg-blue-900/30 rounded-2xl p-5 border border-blue-200 dark:border-blue-800">
             <View className="flex-row items-start">
               <Ionicons name="information-circle" size={24} color="#2563eb" />
               <View className="flex-1 ml-3">
-                <Text className="text-sm font-semibold text-blue-900 mb-1">
+                <Text className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-1">
                   About Dark Mode
                 </Text>
-                <Text className="text-xs text-blue-800">
+                <Text className="text-xs text-blue-800 dark:text-blue-200">
                   Dark mode reduces eye strain in low-light environments and can help
                   save battery on OLED screens. System mode automatically switches
                   based on your device settings.

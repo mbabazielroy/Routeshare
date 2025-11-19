@@ -45,7 +45,7 @@ export default function RiderAccountScreen({ navigation }: Props) {
   const badge = verificationBadge[user?.verificationLevel || "basic"];
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900">
       <ConfirmationModal
         visible={showLogoutModal}
         title="Logout"
@@ -58,14 +58,14 @@ export default function RiderAccountScreen({ navigation }: Props) {
       />
       <ScrollView className="flex-1">
         {/* Header */}
-        <View className="bg-white px-6 py-6 border-b border-gray-200">
-          <Text className="text-3xl font-bold text-gray-900 mb-1">Account</Text>
-          <Text className="text-base text-gray-600">Manage your profile and settings</Text>
+        <View className="bg-white dark:bg-gray-800 px-6 py-6 border-b border-gray-200 dark:border-gray-700">
+          <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Account</Text>
+          <Text className="text-base text-gray-600 dark:text-gray-300">Manage your profile and settings</Text>
         </View>
 
         {/* Profile Card */}
         <View className="mx-6 mt-4">
-          <View className="bg-white rounded-2xl p-5 border border-gray-200">
+          <View className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700">
             <View className="flex-row items-center mb-4">
               {user?.profilePhoto ? (
                 <Image
@@ -73,34 +73,34 @@ export default function RiderAccountScreen({ navigation }: Props) {
                   className="w-20 h-20 rounded-full mr-4"
                 />
               ) : (
-                <View className="w-20 h-20 bg-blue-100 rounded-full items-center justify-center mr-4">
-                  <Text className="text-3xl font-bold text-blue-600">
+                <View className="w-20 h-20 bg-blue-100 dark:bg-blue-900/50 rounded-full items-center justify-center mr-4">
+                  <Text className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                     {user?.firstName[0]}{user?.lastName[0]}
                   </Text>
                 </View>
               )}
               <View className="flex-1">
-                <Text className="text-2xl font-bold text-gray-900">
+                <Text className="text-2xl font-bold text-gray-900 dark:text-white">
                   {user?.firstName} {user?.lastName}
                 </Text>
-                <Text className="text-base text-gray-600 mt-1">{user?.phone}</Text>
+                <Text className="text-base text-gray-600 dark:text-gray-300 mt-1">{user?.phone}</Text>
                 {user?.email && (
-                  <Text className="text-sm text-gray-500 mt-1">{user.email}</Text>
+                  <Text className="text-sm text-gray-500 dark:text-gray-400 mt-1">{user.email}</Text>
                 )}
               </View>
             </View>
 
             {/* Verification Badge */}
-            <View className="flex-row items-center bg-gray-50 rounded-xl p-3">
+            <View className="flex-row items-center bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3">
               <Ionicons
                 name={badge.icon as any}
                 size={20}
                 color={badge.color === "green" ? "#16a34a" : "#6b7280"}
               />
-              <Text className="ml-2 font-medium text-gray-700">{badge.label}</Text>
+              <Text className="ml-2 font-medium text-gray-700 dark:text-gray-300">{badge.label}</Text>
               <View className="flex-1" />
               <Pressable>
-                <Text className="text-blue-600 font-semibold text-sm">Upgrade</Text>
+                <Text className="text-blue-600 dark:text-blue-400 font-semibold text-sm">Upgrade</Text>
               </Pressable>
             </View>
           </View>
@@ -108,31 +108,31 @@ export default function RiderAccountScreen({ navigation }: Props) {
 
         {/* Stats */}
         <View className="mx-6 mt-4">
-          <View className="bg-white rounded-2xl p-5 border border-gray-200">
-            <Text className="text-lg font-bold text-gray-900 mb-4">Your Stats</Text>
+          <View className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700">
+            <Text className="text-lg font-bold text-gray-900 dark:text-white mb-4">Your Stats</Text>
             <View className="flex-row justify-between">
               <View className="items-center flex-1">
-                <Text className="text-3xl font-bold text-gray-900">
+                <Text className="text-3xl font-bold text-gray-900 dark:text-white">
                   {user?.totalTrips || 0}
                 </Text>
-                <Text className="text-sm text-gray-600 mt-1">Total Trips</Text>
+                <Text className="text-sm text-gray-600 dark:text-gray-400 mt-1">Total Trips</Text>
               </View>
-              <View className="w-px bg-gray-200" />
+              <View className="w-px bg-gray-200 dark:bg-gray-700" />
               <View className="items-center flex-1">
                 <View className="flex-row items-center">
                   <Ionicons name="star" size={20} color="#eab308" />
-                  <Text className="text-3xl font-bold text-gray-900 ml-1">
+                  <Text className="text-3xl font-bold text-gray-900 dark:text-white ml-1">
                     {user?.rating.toFixed(1)}
                   </Text>
                 </View>
-                <Text className="text-sm text-gray-600 mt-1">Rating</Text>
+                <Text className="text-sm text-gray-600 dark:text-gray-400 mt-1">Rating</Text>
               </View>
-              <View className="w-px bg-gray-200" />
+              <View className="w-px bg-gray-200 dark:bg-gray-700" />
               <View className="items-center flex-1">
-                <Text className="text-3xl font-bold text-gray-900">
+                <Text className="text-3xl font-bold text-gray-900 dark:text-white">
                   {tripHistory.length}
                 </Text>
-                <Text className="text-sm text-gray-600 mt-1">Completed</Text>
+                <Text className="text-sm text-gray-600 dark:text-gray-400 mt-1">Completed</Text>
               </View>
             </View>
           </View>
@@ -140,18 +140,18 @@ export default function RiderAccountScreen({ navigation }: Props) {
 
         {/* Menu Items */}
         <View className="mx-6 mt-4">
-          <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+          <View className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             {/* Profile */}
             <Pressable
               onPress={() => navigation.navigate("EditProfile")}
-              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+              className="flex-row items-center p-4 border-b border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
             >
-              <View className="w-10 h-10 bg-blue-50 rounded-full items-center justify-center mr-3">
+              <View className="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-full items-center justify-center mr-3">
                 <Ionicons name="person-outline" size={20} color="#2563eb" />
               </View>
               <View className="flex-1">
-                <Text className="font-semibold text-gray-900">Edit Profile</Text>
-                <Text className="text-sm text-gray-500 mt-0.5">
+                <Text className="font-semibold text-gray-900 dark:text-white">Edit Profile</Text>
+                <Text className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                   Update your personal information
                 </Text>
               </View>
@@ -161,14 +161,14 @@ export default function RiderAccountScreen({ navigation }: Props) {
             {/* Payment Methods */}
             <Pressable
               onPress={() => navigation.navigate("PaymentMethods")}
-              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+              className="flex-row items-center p-4 border-b border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
             >
-              <View className="w-10 h-10 bg-green-50 rounded-full items-center justify-center mr-3">
+              <View className="w-10 h-10 bg-green-50 dark:bg-green-900/30 rounded-full items-center justify-center mr-3">
                 <Ionicons name="card-outline" size={20} color="#16a34a" />
               </View>
               <View className="flex-1">
-                <Text className="font-semibold text-gray-900">Payment Methods</Text>
-                <Text className="text-sm text-gray-500 mt-0.5">
+                <Text className="font-semibold text-gray-900 dark:text-white">Payment Methods</Text>
+                <Text className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                   Manage cards and payment options
                 </Text>
               </View>
@@ -178,14 +178,14 @@ export default function RiderAccountScreen({ navigation }: Props) {
             {/* Saved Locations */}
             <Pressable
               onPress={() => navigation.navigate("SavedPlaces")}
-              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+              className="flex-row items-center p-4 border-b border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
             >
-              <View className="w-10 h-10 bg-purple-50 rounded-full items-center justify-center mr-3">
+              <View className="w-10 h-10 bg-purple-50 dark:bg-purple-900/30 rounded-full items-center justify-center mr-3">
                 <Ionicons name="location-outline" size={20} color="#9333ea" />
               </View>
               <View className="flex-1">
-                <Text className="font-semibold text-gray-900">Saved Places</Text>
-                <Text className="text-sm text-gray-500 mt-0.5">
+                <Text className="font-semibold text-gray-900 dark:text-white">Saved Places</Text>
+                <Text className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                   Manage your saved locations
                 </Text>
               </View>
@@ -195,14 +195,14 @@ export default function RiderAccountScreen({ navigation }: Props) {
             {/* Trip History */}
             <Pressable
               onPress={() => navigation.navigate("MyRides")}
-              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+              className="flex-row items-center p-4 border-b border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
             >
-              <View className="w-10 h-10 bg-orange-50 rounded-full items-center justify-center mr-3">
+              <View className="w-10 h-10 bg-orange-50 dark:bg-orange-900/30 rounded-full items-center justify-center mr-3">
                 <Ionicons name="time-outline" size={20} color="#ea580c" />
               </View>
               <View className="flex-1">
-                <Text className="font-semibold text-gray-900">Trip History</Text>
-                <Text className="text-sm text-gray-500 mt-0.5">
+                <Text className="font-semibold text-gray-900 dark:text-white">Trip History</Text>
+                <Text className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                   View all your past rides
                 </Text>
               </View>
@@ -212,14 +212,14 @@ export default function RiderAccountScreen({ navigation }: Props) {
             {/* Notifications */}
             <Pressable
               onPress={() => navigation.navigate("NotificationSettings")}
-              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+              className="flex-row items-center p-4 border-b border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
             >
-              <View className="w-10 h-10 bg-yellow-50 rounded-full items-center justify-center mr-3">
+              <View className="w-10 h-10 bg-yellow-50 dark:bg-yellow-900/30 rounded-full items-center justify-center mr-3">
                 <Ionicons name="notifications-outline" size={20} color="#eab308" />
               </View>
               <View className="flex-1">
-                <Text className="font-semibold text-gray-900">Notifications</Text>
-                <Text className="text-sm text-gray-500 mt-0.5">
+                <Text className="font-semibold text-gray-900 dark:text-white">Notifications</Text>
+                <Text className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                   Manage notification preferences
                 </Text>
               </View>
@@ -229,14 +229,14 @@ export default function RiderAccountScreen({ navigation }: Props) {
             {/* Appearance */}
             <Pressable
               onPress={() => navigation.navigate("ThemeSettings")}
-              className="flex-row items-center p-4 active:bg-gray-50"
+              className="flex-row items-center p-4 active:bg-gray-50 dark:active:bg-gray-700"
             >
-              <View className="w-10 h-10 bg-indigo-50 rounded-full items-center justify-center mr-3">
+              <View className="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-full items-center justify-center mr-3">
                 <Ionicons name="color-palette-outline" size={20} color="#6366f1" />
               </View>
               <View className="flex-1">
-                <Text className="font-semibold text-gray-900">Appearance</Text>
-                <Text className="text-sm text-gray-500 mt-0.5">
+                <Text className="font-semibold text-gray-900 dark:text-white">Appearance</Text>
+                <Text className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                   Choose light or dark theme
                 </Text>
               </View>
@@ -247,25 +247,25 @@ export default function RiderAccountScreen({ navigation }: Props) {
 
         {/* Support & Legal */}
         <View className="mx-6 mt-4">
-          <Text className="text-sm font-semibold text-gray-500 mb-2 px-2">
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2 px-2">
             SUPPORT & LEGAL
           </Text>
-          <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+          <View className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             <Pressable
               onPress={() => navigation.navigate("HelpCenter")}
-              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+              className="flex-row items-center p-4 border-b border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
             >
               <Ionicons name="help-circle-outline" size={24} color="#6b7280" />
-              <Text className="ml-3 flex-1 font-medium text-gray-900">Help Center</Text>
+              <Text className="ml-3 flex-1 font-medium text-gray-900 dark:text-white">Help Center</Text>
               <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
             </Pressable>
 
             <Pressable
               onPress={() => Linking.openURL("https://routeshare.com/terms")}
-              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+              className="flex-row items-center p-4 border-b border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
             >
               <Ionicons name="document-text-outline" size={24} color="#6b7280" />
-              <Text className="ml-3 flex-1 font-medium text-gray-900">
+              <Text className="ml-3 flex-1 font-medium text-gray-900 dark:text-white">
                 Terms & Conditions
               </Text>
               <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
@@ -273,19 +273,19 @@ export default function RiderAccountScreen({ navigation }: Props) {
 
             <Pressable
               onPress={() => Linking.openURL("https://routeshare.com/privacy")}
-              className="flex-row items-center p-4 border-b border-gray-200 active:bg-gray-50"
+              className="flex-row items-center p-4 border-b border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
             >
               <Ionicons name="shield-outline" size={24} color="#6b7280" />
-              <Text className="ml-3 flex-1 font-medium text-gray-900">Privacy Policy</Text>
+              <Text className="ml-3 flex-1 font-medium text-gray-900 dark:text-white">Privacy Policy</Text>
               <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
             </Pressable>
 
             <Pressable
               onPress={() => Linking.openURL("https://routeshare.com/about")}
-              className="flex-row items-center p-4 active:bg-gray-50"
+              className="flex-row items-center p-4 active:bg-gray-50 dark:active:bg-gray-700"
             >
               <Ionicons name="information-circle-outline" size={24} color="#6b7280" />
-              <Text className="ml-3 flex-1 font-medium text-gray-900">About RouteShare</Text>
+              <Text className="ml-3 flex-1 font-medium text-gray-900 dark:text-white">About RouteShare</Text>
               <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
             </Pressable>
           </View>
@@ -295,15 +295,15 @@ export default function RiderAccountScreen({ navigation }: Props) {
         <View className="mx-6 mt-4 pb-8">
           <Pressable
             onPress={handleLogout}
-            className="bg-red-50 border-2 border-red-200 rounded-2xl py-4 px-6 active:bg-red-100"
+            className="bg-red-50 dark:bg-red-900/30 border-2 border-red-200 dark:border-red-800 rounded-2xl py-4 px-6 active:bg-red-100 dark:active:bg-red-900/50"
           >
             <View className="flex-row items-center justify-center">
               <Ionicons name="log-out-outline" size={20} color="#dc2626" />
-              <Text className="ml-2 text-red-600 font-semibold text-base">Logout</Text>
+              <Text className="ml-2 text-red-600 dark:text-red-400 font-semibold text-base">Logout</Text>
             </View>
           </Pressable>
 
-          <Text className="text-center text-xs text-gray-500 mt-4">
+          <Text className="text-center text-xs text-gray-500 dark:text-gray-400 mt-4">
             Version 1.0.0 • Built with RouteShare
           </Text>
         </View>
