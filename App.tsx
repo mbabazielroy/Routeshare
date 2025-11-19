@@ -7,6 +7,7 @@ import { Toast } from "./src/components/Toast";
 import { OfflineIndicator } from "./src/components/OfflineIndicator";
 import { useEffect } from "react";
 import { useOfflineStore } from "./src/state/offlineStore";
+import { useThemeStore } from "./src/state/themeStore";
 
 /*
 IMPORTANT NOTICE: DO NOT REMOVE
@@ -31,10 +32,15 @@ const openai_api_key = Constants.expoConfig.extra.apikey;
 
 export default function App() {
   const startNetworkListener = useOfflineStore((s) => s.startNetworkListener);
+  const updateColorScheme = useThemeStore((s) => s.updateColorScheme);
+  const isDark = useThemeStore((s) => s.isDark);
 
   useEffect(() => {
     // Initialize network status monitoring
     startNetworkListener();
+
+    // Initialize theme on app start
+    updateColorScheme();
   }, []);
 
   return (
@@ -44,7 +50,7 @@ export default function App() {
           <RootNavigator />
           <OfflineIndicator />
           <Toast />
-          <StatusBar style="auto" />
+          <StatusBar style={isDark ? "light" : "dark"} />
         </NavigationContainer>
       </SafeAreaProvider>
     </GestureHandlerRootView>
