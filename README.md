@@ -21,6 +21,9 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 - **OTP Verification:** 6-digit OTP input with auto-focus and countdown timer
 - **User Registration:** Seamless flow from phone verification to user type selection
 - **Pre-filled Phone:** Verified phone number automatically populated in registration
+- **Persistent Auth:** Auto-login on app launch with AsyncStorage
+- **Smart Navigation:** Automatically routes to appropriate screen based on user type
+- **Logout Functionality:** Secure logout with confirmation modal
 
 ### For Riders
 - **Trip Request Flow:** Enter pickup and destination, view matched drivers
@@ -56,10 +59,23 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 - **Toast Notifications:** Global feedback system for all user actions
 - **Payment Methods:** Add and manage credit/debit cards
 - **Saved Places:** Manage frequently visited locations
-- **In-App Messaging:** Real-time chat during trips
+- **In-App Messaging:** Real-time chat with message persistence, typing indicators, and photo sharing
 - **Help Center:** Searchable FAQ with support contact
 - **Notification Settings:** Granular control over app notifications
 - **Schedule Ride:** Book rides up to 7 days in advance
+- **Profile Photos:** Upload photos via camera or gallery with auto-display across app
+
+### New Features ✨
+1. **Persistent Authentication** - Users stay logged in between sessions with auto-login
+2. **Profile Photo Upload** - Take or choose photos with camera/gallery integration
+3. **Enhanced Messaging** - Message persistence, typing indicators, photo sharing, auto-scroll
+4. **Payment Integration** - UI ready for Stripe integration (cards, payment history, receipts)
+5. **Push Notifications** - Infrastructure ready for Expo notifications
+6. **Offline Mode** - Cached data and connection status indicators
+7. **Search & Filters** - Address autocomplete ready, enhanced driver filtering
+8. **Review System** - Written reviews with driver responses and statistics
+9. **Dark Mode** - Theme toggle with persisted preferences (coming soon)
+10. **Onboarding** - First-time user tutorial with feature highlights (coming soon)
 
 ### Core Technology
 - **Smart Matching Algorithm:** Finds drivers traveling the same direction with minimal detour
