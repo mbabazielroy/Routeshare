@@ -45,11 +45,17 @@ export const usePaymentStore = create<PaymentState>()(
         };
 
         set((state) => {
-          // If this is the first card, make it default
+          // If this is the first card or user wants it as default, make it default
           const isFirstCard = state.cards.length === 0;
+          const shouldBeDefault = isFirstCard || cardData.isDefault;
+
+          // If making this card default, unset other defaults
+          const updatedCards = shouldBeDefault
+            ? state.cards.map(card => ({ ...card, isDefault: false }))
+            : state.cards;
 
           return {
-            cards: [...state.cards, { ...newCard, isDefault: isFirstCard }],
+            cards: [...updatedCards, { ...newCard, isDefault: shouldBeDefault }],
           };
         });
       },

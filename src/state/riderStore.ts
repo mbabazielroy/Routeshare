@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Trip,
   TripRequest,
@@ -31,8 +33,10 @@ interface RiderState {
   updateDriverLocation: (latitude: number, longitude: number) => void;
 }
 
-export const useRiderStore = create<RiderState>((set, get) => ({
-  currentRequest: null,
+export const useRiderStore = create<RiderState>()(
+  persist(
+    (set, get) => ({
+      currentRequest: null,
   currentTrip: null,
   availableMatches: [],
   savedLocations: [
@@ -196,4 +200,15 @@ export const useRiderStore = create<RiderState>((set, get) => ({
         : null,
     }));
   },
-}));
+    }),
+    {
+      name: "rider-storage",
+      storage: createJSONStorage(() => AsyncStorage),
+      // Only persist saved locations and trip history, not current trip/request
+      partialize: (state) => ({
+        savedLocations: state.savedLocations,
+        tripHistory: state.tripHistory,
+      }),
+    }
+  )
+);

@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Route, Trip, TripRequest } from "../types/routeshare";
 
 interface DriverState {
@@ -25,8 +27,10 @@ interface DriverState {
   updateEarnings: (amount: number) => void;
 }
 
-export const useDriverStore = create<DriverState>((set, get) => ({
-  currentRoute: null,
+export const useDriverStore = create<DriverState>()(
+  persist(
+    (set, get) => ({
+      currentRoute: null,
   activeTrips: [],
   pendingRequests: [],
   earnings: {
@@ -173,4 +177,15 @@ export const useDriverStore = create<DriverState>((set, get) => ({
       },
     }));
   },
-}));
+    }),
+    {
+      name: "driver-storage",
+      storage: createJSONStorage(() => AsyncStorage),
+      // Persist earnings and trip history, not current route/trips
+      partialize: (state) => ({
+        earnings: state.earnings,
+        tripHistory: state.tripHistory,
+      }),
+    }
+  )
+);
