@@ -1,22 +1,93 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, ScrollView, TextInput, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, Pressable, ScrollView, TextInput, KeyboardAvoidingView, Platform, Image, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import { useAuthStore } from "../state/authStore";
+import * as ImagePicker from "expo-image-picker";
+import { useToast } from "../components/Toast";
 
 type Props = NativeStackScreenProps<RootStackParamList, "EditProfile">;
 
 export default function EditProfileScreen({ navigation }: Props) {
   const user = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);
+  const showToast = useToast((s) => s.show);
 
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
   const [email, setEmail] = useState(user?.email || "");
   const [phone, setPhone] = useState(user?.phone || "");
+  const [profilePhoto, setProfilePhoto] = useState(user?.profilePhoto || "");
   const [isSaving, setIsSaving] = useState(false);
+
+  const handlePickImage = async () => {
+    // Request permissions
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (status !== "granted") {
+      showToast("Permission needed to access photos", "error");
+      return;
+    }
+
+    // Pick image
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: "images" as any,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      setProfilePhoto(result.assets[0].uri);
+      showToast("Photo selected", "success");
+    }
+  };
+
+  const handleTakePhoto = async () => {
+    // Request permissions
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (status !== "granted") {
+      showToast("Permission needed to access camera", "error");
+      return;
+    }
+
+    // Take photo
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      setProfilePhoto(result.assets[0].uri);
+      showToast("Photo captured", "success");
+    }
+  };
+
+  const handleChangePhoto = () => {
+    // Show options for camera or gallery
+    Alert.alert(
+      "Change Photo",
+      "Choose an option",
+      [
+        {
+          text: "Take Photo",
+          onPress: handleTakePhoto,
+        },
+        {
+          text: "Choose from Gallery",
+          onPress: handlePickImage,
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ]
+    );
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -29,9 +100,11 @@ export default function EditProfileScreen({ navigation }: Props) {
       lastName,
       email,
       phone,
+      profilePhoto,
     });
 
     setIsSaving(false);
+    showToast("Profile updated successfully", "success");
     navigation.goBack();
   };
 
@@ -39,7 +112,8 @@ export default function EditProfileScreen({ navigation }: Props) {
     firstName !== user?.firstName ||
     lastName !== user?.lastName ||
     email !== (user?.email || "") ||
-    phone !== user?.phone;
+    phone !== user?.phone ||
+    profilePhoto !== (user?.profilePhoto || "");
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
@@ -73,12 +147,22 @@ export default function EditProfileScreen({ navigation }: Props) {
         <ScrollView className="flex-1">
           {/* Profile Photo */}
           <View className="items-center py-8 bg-white border-b border-gray-200">
-            <View className="w-24 h-24 bg-blue-100 rounded-full items-center justify-center mb-4">
-              <Text className="text-4xl font-bold text-blue-600">
-                {firstName[0]}{lastName[0]}
-              </Text>
-            </View>
-            <Pressable className="px-4 py-2 bg-blue-50 rounded-lg active:bg-blue-100">
+            {profilePhoto ? (
+              <Image
+                source={{ uri: profilePhoto }}
+                className="w-24 h-24 rounded-full mb-4"
+              />
+            ) : (
+              <View className="w-24 h-24 bg-blue-100 rounded-full items-center justify-center mb-4">
+                <Text className="text-4xl font-bold text-blue-600">
+                  {firstName[0]}{lastName[0]}
+                </Text>
+              </View>
+            )}
+            <Pressable
+              onPress={handleChangePhoto}
+              className="px-4 py-2 bg-blue-50 rounded-lg active:bg-blue-100"
+            >
               <Text className="text-blue-600 font-semibold">Change Photo</Text>
             </Pressable>
           </View>

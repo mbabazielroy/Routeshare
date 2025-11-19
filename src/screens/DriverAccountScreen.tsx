@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, ScrollView, Linking } from "react-native";
+import { View, Text, Pressable, ScrollView, Linking, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
@@ -68,11 +68,18 @@ export default function DriverAccountScreen({ navigation }: Props) {
         <View className="mx-6 mt-4">
           <View className="bg-white rounded-2xl p-5 border border-gray-200">
             <View className="flex-row items-center mb-4">
-              <View className="w-20 h-20 bg-blue-100 rounded-full items-center justify-center mr-4">
-                <Text className="text-3xl font-bold text-blue-600">
-                  {user?.firstName[0]}{user?.lastName[0]}
-                </Text>
-              </View>
+              {user?.profilePhoto ? (
+                <Image
+                  source={{ uri: user.profilePhoto }}
+                  className="w-20 h-20 rounded-full mr-4"
+                />
+              ) : (
+                <View className="w-20 h-20 bg-blue-100 rounded-full items-center justify-center mr-4">
+                  <Text className="text-3xl font-bold text-blue-600">
+                    {user?.firstName[0]}{user?.lastName[0]}
+                  </Text>
+                </View>
+              )}
               <View className="flex-1">
                 <Text className="text-2xl font-bold text-gray-900">
                   {user?.firstName} {user?.lastName}

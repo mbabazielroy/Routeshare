@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import { View, ActivityIndicator, Text } from "react-native";
 import { RootStackParamList, RiderTabParamList, DriverTabParamList } from "./types";
+import { useAuthStore } from "../state/authStore";
 
 // Auth Screens
 import WelcomeScreen from "../screens/WelcomeScreen";
@@ -43,8 +45,6 @@ import HelpCenterScreen from "../screens/HelpCenterScreen";
 import ScheduleRideScreen from "../screens/ScheduleRideScreen";
 
 // Placeholder screens
-import { View, Text } from "react-native";
-
 const PlaceholderScreen = ({ title }: { title: string }) => (
   <View className="flex-1 items-center justify-center bg-white">
     <Text className="text-xl font-bold text-gray-900">{title}</Text>
@@ -180,12 +180,33 @@ function DriverTabNavigator() {
 
 // Root Stack Navigator
 export default function RootNavigator() {
+  const user = useAuthStore((s) => s.user);
+  const isLoading = useAuthStore((s) => s.isLoading);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  // Show loading screen while checking auth state
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="large" color="#2563eb" />
+        <Text className="text-gray-600 mt-4">Loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
         animation: "slide_from_right",
       }}
+      initialRouteName={
+        isAuthenticated && user
+          ? user.userType === "rider"
+            ? "RiderTabs"
+            : "DriverTabs"
+          : "Welcome"
+      }
     >
       <Stack.Screen name="Welcome" component={WelcomeScreen} />
       <Stack.Screen name="PhoneAuth" component={PhoneAuthScreen} />
