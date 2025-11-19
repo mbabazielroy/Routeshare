@@ -16,6 +16,8 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 
 ### Authentication
 - **Phone Number Verification:** Beautiful phone authentication screen with real-time formatting
+- **Country Selection:** Choose from 15+ countries with flag emojis and dial codes
+- **International Support:** Automatic phone formatting based on selected country
 - **OTP Verification:** 6-digit OTP input with auto-focus and countdown timer
 - **User Registration:** Seamless flow from phone verification to user type selection
 - **Pre-filled Phone:** Verified phone number automatically populated in registration
@@ -199,14 +201,18 @@ routes/
 ### Authentication Flow
 1. Open the app → You'll see the Welcome screen
 2. Tap "Get Started" or "Sign In" (both lead to phone auth)
-3. Enter a 10-digit phone number (e.g., "5551234567")
-4. Watch the number format automatically: (555) 123-4567
-5. Tap "Send Verification Code"
-6. Enter any 6-digit code (e.g., "123456") - demo accepts all codes
-7. Watch auto-focus move through the OTP fields
-8. After verification, choose rider or driver
-9. Notice your phone number is pre-filled and marked as verified
-10. Complete your profile with name and continue
+3. **NEW:** Tap the country selector (shows 🇺🇸 +1 by default) to change country
+4. **NEW:** Select from 15+ countries including US, Canada, UK, India, and more
+5. Enter your phone number (format adjusts based on selected country)
+6. For US/Canada: Enter 10 digits, automatically formats as (555) 123-4567
+7. For other countries: Enter 6-15 digits based on country requirements
+8. Green checkmark appears when phone number is valid
+9. Tap "Send Verification Code"
+10. Enter any 6-digit code (e.g., "123456") - demo accepts all codes
+11. Watch auto-focus move through the OTP fields
+12. After verification, choose rider or driver
+13. Notice your phone number is pre-filled and marked as verified
+14. Complete your profile with name and continue
 
 ### As a Rider
 1. After authentication, you'll be on the Rider Home screen
