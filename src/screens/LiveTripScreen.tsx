@@ -15,7 +15,7 @@ export default function LiveTripScreen({ navigation, route }: Props) {
   const completeTrip = useRiderStore((s) => s.completeTrip);
   const cancelTrip = useRiderStore((s) => s.cancelTrip);
 
-  const mapRef = useRef<MapView>(null);
+  const mapRef = useRef<MapView | null>(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
   // Simulate driver movement
