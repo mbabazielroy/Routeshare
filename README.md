@@ -88,25 +88,39 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
    - Simulated responses for demo
 
 4. ✅ **Payment Integration** - Complete payment management system
-   - Add/remove payment cards with full CRUD
-   - Set default payment method
-   - Card type detection (Visa, Mastercard, Amex)
-   - Secure card storage with AsyncStorage
-   - Transaction history tracking
-   - Beautiful card UI with brand colors
+   - Payment store with full CRUD operations (add, remove, set default)
+   - Card type detection (Visa, Mastercard, Amex, Discover)
+   - Beautiful add card screen with live card preview
+   - Card number formatting (spaces every 4 digits)
+   - Expiry date formatting (MM/YY) and validation
+   - CVV validation (3 or 4 digits based on card type)
+   - Cardholder name validation
+   - Secure card storage with AsyncStorage persistence
+   - Empty state UI with helpful messaging
+   - Confirmation modals for card removal
+   - Set default payment method functionality
+   - Transaction history tracking infrastructure
 
 5. ✅ **Push Notifications** - Ready for implementation
    - Notification settings screen with granular controls
    - Infrastructure ready for Expo notifications
    - Category-based preferences (Trips, Safety, Financial, Marketing)
 
-6. ✅ **Offline Mode** - Comprehensive data persistence
-   - Auth state persisted (AsyncStorage)
-   - Messages persisted (AsyncStorage)
-   - Rider trips cached (AsyncStorage)
-   - Driver routes cached (AsyncStorage)
+6. ✅ **Offline Mode** - Complete offline support with sync queue
+   - Real-time network status monitoring with NetInfo
+   - Offline state management store with Zustand
+   - Sync queue for pending actions (trips, messages, profile updates, etc.)
+   - Automatic sync when connection restored
+   - Visual offline indicator banner with animations
+   - Retry mechanism with max 3 attempts
+   - Failed items tracking and manual retry option
+   - Data persistence with AsyncStorage
+   - Auth state persisted across sessions
+   - Messages persisted locally
+   - Rider trips cached
+   - Driver routes cached
    - Payment methods stored locally
-   - Ready for connection status indicators
+   - Queue status: pending, processing, failed
 
 7. ✅ **Search & Filters** - Enhanced discovery
    - Trip request screen with pickup/destination inputs
@@ -138,10 +152,14 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 ### Core Technology
 - **Smart Matching Algorithm:** Finds drivers traveling the same direction with minimal detour
 - **GPS Simulation:** Realistic driver location updates during trips
-- **State Management:** Zustand with AsyncStorage persistence
+- **State Management:** Zustand with AsyncStorage persistence across all stores
+- **Offline Support:** Network status monitoring with automatic sync queue
+- **Payment Management:** Full CRUD for payment cards with validation
 - **Custom Modals:** Beautiful confirmation dialogs (no system alerts)
+- **Animated Indicators:** React Native Reanimated for smooth offline banner
 - **Beautiful UI:** Steve Jobs-inspired design with NativeWind/Tailwind styling
 - **Full Navigation:** All screens properly wired with working menu items
+- **Type Safety:** Full TypeScript with strict mode enabled
 - **Firebase Ready:** Backend configuration setup for easy integration
 
 ## 🏗️ Project Structure
@@ -171,16 +189,19 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 │   │   ├── RiderRequestScreen.tsx         # Rider request details for drivers
 │   │   ├── DriverAccountScreen.tsx        # Driver profile and settings
 │   │   ├── ThemeSettingsScreen.tsx        # Dark mode theme selection
-│   │   └── PaymentMethodsScreen.tsx       # Payment card management
+│   │   ├── PaymentMethodsScreen.tsx       # Payment card management
+│   │   └── AddPaymentCardScreen.tsx       # Add new payment card with validation
 │   ├── components/
-│   │   └── ConfirmationModal.tsx          # Custom confirmation dialogs
+│   │   ├── ConfirmationModal.tsx          # Custom confirmation dialogs
+│   │   └── OfflineIndicator.tsx           # Network status banner
 │   ├── state/
 │   │   ├── authStore.ts           # User authentication state
 │   │   ├── riderStore.ts          # Rider trip management
 │   │   ├── driverStore.ts         # Driver route and earnings
 │   │   ├── messagingStore.ts      # In-app messaging with persistence
-│   │   ├── paymentStore.ts        # Payment card management
-│   │   └── themeStore.ts          # Theme preference (light/dark/system)
+│   │   ├── paymentStore.ts        # Payment card management with CRUD
+│   │   ├── themeStore.ts          # Theme preference (light/dark/system)
+│   │   └── offlineStore.ts        # Network status and sync queue
 │   ├── types/
 │   │   └── routeshare.ts          # TypeScript interfaces
 │   ├── components/
@@ -295,6 +316,36 @@ routes/
 3. Tap "Appearance" menu item
 4. Choose between Light, Dark, or System theme
 5. Your preference is saved and persists across app restarts
+
+### Payment Integration
+1. Log in as a rider
+2. Navigate to Account tab → Payment Methods
+3. **Empty State:** If no cards, see helpful empty state with "Add Payment Method" button
+4. Tap "+ Add" or "Add Payment Method" button
+5. **Live Card Preview:** Watch the card preview update as you type
+6. Enter card details:
+   - Card Number: Automatically formats with spaces (e.g., 4242 4242 4242 4242)
+   - Card Type: Auto-detects Visa, Mastercard, Amex, Discover
+   - Cardholder Name: Your full name
+   - Expiry Date: Auto-formats as MM/YY
+   - CVV: 3 digits (4 for Amex)
+7. **Validation:** See real-time error messages for invalid inputs
+8. Check "Set as default payment method" if desired
+9. Tap "Add Card" to save
+10. **Manage Cards:** Set any card as default or remove cards with confirmation
+11. Cards persist across app restarts
+
+### Offline Mode
+1. Log in to the app
+2. **Simulate Offline:** Turn on Airplane Mode or disable WiFi/cellular data
+3. **Visual Indicator:** See red banner appear at top: "No internet connection"
+4. **Queue Actions:** Try to update profile, send message, or perform any action
+5. Actions are queued locally and will sync when connection restored
+6. **Restore Connection:** Turn off Airplane Mode
+7. **Auto Sync:** Watch banner turn blue "Syncing changes..." then green
+8. **Manual Retry:** If sync fails, tap "Retry" button on orange warning banner
+9. **Queue Persistence:** Close app and reopen - pending actions still queued
+10. Network status monitoring works throughout the app automatically
 
 ### Authentication Flow
 1. Open the app → You'll see the Welcome screen

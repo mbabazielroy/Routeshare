@@ -46,6 +46,7 @@ import HelpCenterScreen from "../screens/HelpCenterScreen";
 import ScheduleRideScreen from "../screens/ScheduleRideScreen";
 import ThemeSettingsScreen from "../screens/ThemeSettingsScreen";
 import OnboardingScreen from "../screens/OnboardingScreen";
+import AddPaymentCardScreen from "../screens/AddPaymentCardScreen";
 
 // Placeholder screens
 const PlaceholderScreen = ({ title }: { title: string }) => (
@@ -252,6 +253,7 @@ export default function RootNavigator() {
       <Stack.Screen name="TripRating" component={TripRatingScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="PaymentMethods" component={PaymentMethodsScreen} />
+      <Stack.Screen name="AddPaymentCard" component={AddPaymentCardScreen} />
       <Stack.Screen name="SavedPlaces" component={SavedPlacesScreen} />
       <Stack.Screen name="InAppMessaging" component={InAppMessagingScreen} />
       <Stack.Screen name="VehicleInformation" component={VehicleInformationScreen} />

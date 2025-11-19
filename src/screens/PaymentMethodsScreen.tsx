@@ -1,32 +1,19 @@
-import React, { useState } from "react";
-import { View, Text, Pressable, ScrollView } from "react-native";
+import React from "react";
+import { View, Text, Pressable, ScrollView, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
+import { usePaymentStore } from "../state/paymentStore";
+import { ConfirmationModal } from "../components/ConfirmationModal";
 
 type Props = NativeStackScreenProps<RootStackParamList, "PaymentMethods">;
 
-interface PaymentCard {
-  id: string;
-  type: "visa" | "mastercard" | "amex";
-  last4: string;
-  expiryMonth: string;
-  expiryYear: string;
-  isDefault: boolean;
-}
-
 export default function PaymentMethodsScreen({ navigation }: Props) {
-  const [cards] = useState<PaymentCard[]>([
-    {
-      id: "1",
-      type: "visa",
-      last4: "4242",
-      expiryMonth: "12",
-      expiryYear: "25",
-      isDefault: true,
-    },
-  ]);
+  const cards = usePaymentStore((s) => s.cards);
+  const setDefaultCard = usePaymentStore((s) => s.setDefaultCard);
+  const removeCard = usePaymentStore((s) => s.removeCard);
+  const [cardToDelete, setCardToDelete] = React.useState<string | null>(null);
 
   const getCardIcon = (type: string) => {
     switch (type) {
@@ -35,6 +22,8 @@ export default function PaymentMethodsScreen({ navigation }: Props) {
       case "mastercard":
         return "card";
       case "amex":
+        return "card";
+      case "discover":
         return "card";
       default:
         return "card";
@@ -49,13 +38,45 @@ export default function PaymentMethodsScreen({ navigation }: Props) {
         return "#EB001B";
       case "amex":
         return "#006FCF";
+      case "discover":
+        return "#FF6000";
       default:
         return "#6b7280";
     }
   };
 
+  const handleSetDefault = (cardId: string) => {
+    setDefaultCard(cardId);
+  };
+
+  const handleRemoveCard = (cardId: string) => {
+    setCardToDelete(cardId);
+  };
+
+  const confirmRemoveCard = () => {
+    if (cardToDelete) {
+      removeCard(cardToDelete);
+      setCardToDelete(null);
+    }
+  };
+
+  const handleAddCard = () => {
+    navigation.navigate("AddPaymentCard");
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+      <ConfirmationModal
+        visible={cardToDelete !== null}
+        title="Remove Card"
+        message="Are you sure you want to remove this payment card? This action cannot be undone."
+        confirmText="Remove"
+        cancelText="Cancel"
+        onConfirm={confirmRemoveCard}
+        onCancel={() => setCardToDelete(null)}
+        destructive
+      />
+
       {/* Header */}
       <View className="bg-white px-6 py-4 border-b border-gray-200">
         <View className="flex-row items-center">
@@ -65,7 +86,10 @@ export default function PaymentMethodsScreen({ navigation }: Props) {
           <Text className="text-2xl font-bold text-gray-900 flex-1">
             Payment Methods
           </Text>
-          <Pressable className="px-3 py-1 bg-blue-600 rounded-lg active:bg-blue-700">
+          <Pressable
+            onPress={handleAddCard}
+            className="px-3 py-1 bg-blue-600 rounded-lg active:bg-blue-700"
+          >
             <Text className="text-white font-semibold text-sm">+ Add</Text>
           </Pressable>
         </View>
@@ -73,74 +97,110 @@ export default function PaymentMethodsScreen({ navigation }: Props) {
 
       <ScrollView className="flex-1">
         {/* Cards List */}
-        <View className="px-6 pt-4">
-          {cards.map((card) => (
-            <Pressable
-              key={card.id}
-              className="bg-white rounded-2xl p-5 mb-3 border border-gray-200 active:bg-gray-50"
-            >
-              <View className="flex-row items-center justify-between mb-3">
-                <View className="flex-row items-center flex-1">
-                  <View
-                    className="w-12 h-12 rounded-xl items-center justify-center mr-3"
-                    style={{ backgroundColor: `${getCardColor(card.type)}20` }}
-                  >
-                    <Ionicons
-                      name={getCardIcon(card.type) as any}
-                      size={24}
-                      color={getCardColor(card.type)}
-                    />
+        {cards.length > 0 ? (
+          <View className="px-6 pt-4">
+            {cards.map((card) => (
+              <Pressable
+                key={card.id}
+                className="bg-white rounded-2xl p-5 mb-3 border border-gray-200 active:bg-gray-50"
+              >
+                <View className="flex-row items-center justify-between mb-3">
+                  <View className="flex-row items-center flex-1">
+                    <View
+                      className="w-12 h-12 rounded-xl items-center justify-center mr-3"
+                      style={{ backgroundColor: `${getCardColor(card.type)}20` }}
+                    >
+                      <Ionicons
+                        name={getCardIcon(card.type) as any}
+                        size={24}
+                        color={getCardColor(card.type)}
+                      />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-base font-bold text-gray-900 capitalize">
+                        {card.type} •••• {card.last4}
+                      </Text>
+                      <Text className="text-sm text-gray-600 mt-0.5">
+                        {card.holderName}
+                      </Text>
+                      <Text className="text-xs text-gray-500 mt-0.5">
+                        Expires {card.expiryMonth}/{card.expiryYear}
+                      </Text>
+                    </View>
                   </View>
-                  <View className="flex-1">
-                    <Text className="text-base font-bold text-gray-900 capitalize">
-                      {card.type} •••• {card.last4}
-                    </Text>
-                    <Text className="text-sm text-gray-600 mt-0.5">
-                      Expires {card.expiryMonth}/{card.expiryYear}
-                    </Text>
-                  </View>
+                  {card.isDefault && (
+                    <View className="bg-green-50 px-3 py-1 rounded-full">
+                      <Text className="text-xs font-semibold text-green-600">
+                        Default
+                      </Text>
+                    </View>
+                  )}
                 </View>
-                {card.isDefault && (
-                  <View className="bg-green-50 px-3 py-1 rounded-full">
-                    <Text className="text-xs font-semibold text-green-600">
-                      Default
-                    </Text>
-                  </View>
-                )}
-              </View>
 
-              <View className="flex-row gap-2">
-                {!card.isDefault && (
-                  <Pressable className="flex-1 bg-blue-50 py-2 rounded-lg active:bg-blue-100">
-                    <Text className="text-blue-600 font-semibold text-sm text-center">
-                      Set as Default
+                <View className="flex-row gap-2">
+                  {!card.isDefault && (
+                    <Pressable
+                      onPress={() => handleSetDefault(card.id)}
+                      className="flex-1 bg-blue-50 py-2 rounded-lg active:bg-blue-100"
+                    >
+                      <Text className="text-blue-600 font-semibold text-sm text-center">
+                        Set as Default
+                      </Text>
+                    </Pressable>
+                  )}
+                  <Pressable
+                    onPress={() => handleRemoveCard(card.id)}
+                    className="flex-1 bg-red-50 py-2 rounded-lg active:bg-red-100"
+                  >
+                    <Text className="text-red-600 font-semibold text-sm text-center">
+                      Remove
                     </Text>
                   </Pressable>
-                )}
-                <Pressable className="flex-1 bg-red-50 py-2 rounded-lg active:bg-red-100">
-                  <Text className="text-red-600 font-semibold text-sm text-center">
-                    Remove
-                  </Text>
-                </Pressable>
+                </View>
+              </Pressable>
+            ))}
+          </View>
+        ) : (
+          <View className="px-6 pt-20">
+            <View className="items-center">
+              <View className="w-24 h-24 bg-gray-100 rounded-full items-center justify-center mb-4">
+                <Ionicons name="card-outline" size={48} color="#9ca3af" />
               </View>
-            </Pressable>
-          ))}
-        </View>
+              <Text className="text-xl font-bold text-gray-900 mb-2">
+                No Payment Methods
+              </Text>
+              <Text className="text-sm text-gray-600 text-center mb-6">
+                Add a payment method to start booking rides
+              </Text>
+              <Pressable
+                onPress={handleAddCard}
+                className="bg-blue-600 px-6 py-3 rounded-xl active:bg-blue-700"
+              >
+                <Text className="text-white font-semibold">Add Payment Method</Text>
+              </Pressable>
+            </View>
+          </View>
+        )}
 
         {/* Add Card Button */}
-        <View className="px-6 mt-2">
-          <Pressable className="bg-white border-2 border-dashed border-gray-300 rounded-2xl p-6 items-center active:bg-gray-50">
-            <View className="w-16 h-16 bg-blue-50 rounded-full items-center justify-center mb-3">
-              <Ionicons name="add" size={32} color="#2563eb" />
-            </View>
-            <Text className="text-lg font-bold text-gray-900 mb-1">
-              Add Payment Method
-            </Text>
-            <Text className="text-sm text-gray-600 text-center">
-              Add a credit or debit card for easy payments
-            </Text>
-          </Pressable>
-        </View>
+        {cards.length > 0 && (
+          <View className="px-6 mt-2">
+            <Pressable
+              onPress={handleAddCard}
+              className="bg-white border-2 border-dashed border-gray-300 rounded-2xl p-6 items-center active:bg-gray-50"
+            >
+              <View className="w-16 h-16 bg-blue-50 rounded-full items-center justify-center mb-3">
+                <Ionicons name="add" size={32} color="#2563eb" />
+              </View>
+              <Text className="text-lg font-bold text-gray-900 mb-1">
+                Add Payment Method
+              </Text>
+              <Text className="text-sm text-gray-600 text-center">
+                Add a credit or debit card for easy payments
+              </Text>
+            </Pressable>
+          </View>
+        )}
 
         {/* Info Card */}
         <View className="mx-6 mt-4 mb-6">

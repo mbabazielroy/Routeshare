@@ -25,6 +25,7 @@ export type RootStackParamList = {
   ScheduleRide: undefined;
   ThemeSettings: undefined;
   Onboarding: undefined;
+  AddPaymentCard: undefined;
 };
 
 export type RiderTabParamList = {

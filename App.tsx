@@ -4,6 +4,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import RootNavigator from "./src/navigation/RootNavigator";
 import { Toast } from "./src/components/Toast";
+import { OfflineIndicator } from "./src/components/OfflineIndicator";
+import { useEffect } from "react";
+import { useOfflineStore } from "./src/state/offlineStore";
 
 /*
 IMPORTANT NOTICE: DO NOT REMOVE
@@ -27,11 +30,19 @@ const openai_api_key = Constants.expoConfig.extra.apikey;
 */
 
 export default function App() {
+  const startNetworkListener = useOfflineStore((s) => s.startNetworkListener);
+
+  useEffect(() => {
+    // Initialize network status monitoring
+    startNetworkListener();
+  }, []);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <NavigationContainer>
           <RootNavigator />
+          <OfflineIndicator />
           <Toast />
           <StatusBar style="auto" />
         </NavigationContainer>
