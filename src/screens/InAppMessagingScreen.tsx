@@ -12,8 +12,10 @@ type Props = NativeStackScreenProps<RootStackParamList, "InAppMessaging">;
 
 export default function InAppMessagingScreen({ navigation, route }: Props) {
   const conversationId = route.params?.conversationId || "demo_conversation";
-  const messages = useMessagingStore((s) => s.getMessages(conversationId));
-  const conversation = useMessagingStore((s) => s.getConversation(conversationId));
+
+  // Fix: Select data directly from state instead of using getter methods
+  const messages = useMessagingStore((s) => s.messages[conversationId] || []);
+  const conversation = useMessagingStore((s) => s.conversations[conversationId]);
   const addMessage = useMessagingStore((s) => s.addMessage);
   const markAsRead = useMessagingStore((s) => s.markAsRead);
   const setTyping = useMessagingStore((s) => s.setTyping);
