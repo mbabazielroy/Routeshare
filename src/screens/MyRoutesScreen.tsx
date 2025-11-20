@@ -68,13 +68,13 @@ export default function MyRoutesScreen({ navigation }: Props) {
     return (
       <Pressable
         key={route.id}
-        className="bg-white rounded-2xl p-4 mb-3 border border-gray-200 active:bg-gray-50"
+        className="bg-white dark:bg-gray-800 rounded-2xl p-4 mb-3 border border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
       >
         {/* Date and Status */}
         <View className="flex-row justify-between items-start mb-3">
           <View>
-            <Text className="text-sm font-semibold text-gray-900">{dateStr}</Text>
-            <Text className="text-xs text-gray-500 mt-0.5">{timeStr}</Text>
+            <Text className="text-sm font-semibold text-gray-900 dark:text-white">{dateStr}</Text>
+            <Text className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{timeStr}</Text>
           </View>
           <View className={`px-3 py-1 rounded-full ${statusBg}`}>
             <Text className={`text-xs font-semibold ${statusColor} capitalize`}>
@@ -87,35 +87,35 @@ export default function MyRoutesScreen({ navigation }: Props) {
         <View className="mb-3">
           <View className="flex-row items-start mb-2">
             <Ionicons name="radio-button-on" size={16} color="#2563eb" />
-            <Text className="flex-1 ml-2 text-sm text-gray-700" numberOfLines={1}>
+            <Text className="flex-1 ml-2 text-sm text-gray-700 dark:text-gray-300" numberOfLines={1}>
               {route.origin.address}
             </Text>
           </View>
           <View className="flex-row items-start">
             <Ionicons name="location" size={16} color="#dc2626" />
-            <Text className="flex-1 ml-2 text-sm text-gray-700" numberOfLines={1}>
+            <Text className="flex-1 ml-2 text-sm text-gray-700 dark:text-gray-300" numberOfLines={1}>
               {route.destination.address}
             </Text>
           </View>
         </View>
 
         {/* Route Info */}
-        <View className="flex-row items-center pt-3 border-t border-gray-100">
+        <View className="flex-row items-center pt-3 border-t border-gray-100 dark:border-gray-700">
           <View className="flex-row items-center flex-1">
             <Ionicons name="people" size={16} color="#6b7280" />
-            <Text className="text-xs text-gray-600 ml-1">
+            <Text className="text-xs text-gray-600 dark:text-gray-300 ml-1">
               {route.availableSeats} seats
             </Text>
           </View>
           <View className="flex-row items-center flex-1">
             <Ionicons name="speedometer" size={16} color="#6b7280" />
-            <Text className="text-xs text-gray-600 ml-1">
+            <Text className="text-xs text-gray-600 dark:text-gray-300 ml-1">
               {route.distance} mi
             </Text>
           </View>
           <View className="flex-row items-center flex-1">
             <Ionicons name="time" size={16} color="#6b7280" />
-            <Text className="text-xs text-gray-600 ml-1">
+            <Text className="text-xs text-gray-600 dark:text-gray-300 ml-1">
               {route.estimatedDuration} min
             </Text>
           </View>
@@ -130,35 +130,35 @@ export default function MyRoutesScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={["top"]}>
       {/* Header */}
-      <View className="bg-white px-6 py-4 border-b border-gray-200">
+      <View className="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <View className="flex-row items-center mb-4">
           <View className="flex-1">
-            <Text className="text-2xl font-bold text-gray-900">My Routes</Text>
-            <Text className="text-sm text-gray-600 mt-0.5">
+            <Text className="text-2xl font-bold text-gray-900 dark:text-white">My Routes</Text>
+            <Text className="text-sm text-gray-600 dark:text-gray-300 mt-0.5">
               {allRoutes.length} total routes
             </Text>
           </View>
           <Pressable
             onPress={() => navigation.navigate("DriverHome")}
-            className="px-4 py-2 bg-blue-600 rounded-xl active:bg-blue-700"
+            className="px-4 py-2 bg-blue-600 dark:bg-blue-500 rounded-xl active:bg-blue-700 dark:active:bg-blue-600"
           >
             <Text className="text-white font-semibold text-sm">+ New Route</Text>
           </Pressable>
         </View>
 
         {/* Filter Tabs */}
-        <View className="flex-row bg-gray-100 rounded-xl p-1">
+        <View className="flex-row bg-gray-100 dark:bg-gray-700 rounded-xl p-1">
           <Pressable
             onPress={() => setFilter("active")}
             className={`flex-1 py-2 rounded-lg ${
-              filter === "active" ? "bg-white" : "bg-transparent"
+              filter === "active" ? "bg-white dark:bg-gray-800" : "bg-transparent"
             }`}
           >
             <Text
               className={`text-center text-sm font-semibold ${
-                filter === "active" ? "text-gray-900" : "text-gray-600"
+                filter === "active" ? "text-gray-900 dark:text-white" : "text-gray-600 dark:text-gray-300"
               }`}
             >
               Active
@@ -167,12 +167,12 @@ export default function MyRoutesScreen({ navigation }: Props) {
           <Pressable
             onPress={() => setFilter("completed")}
             className={`flex-1 py-2 rounded-lg ${
-              filter === "completed" ? "bg-white" : "bg-transparent"
+              filter === "completed" ? "bg-white dark:bg-gray-800" : "bg-transparent"
             }`}
           >
             <Text
               className={`text-center text-sm font-semibold ${
-                filter === "completed" ? "text-gray-900" : "text-gray-600"
+                filter === "completed" ? "text-gray-900 dark:text-white" : "text-gray-600 dark:text-gray-300"
               }`}
             >
               Completed
@@ -181,12 +181,12 @@ export default function MyRoutesScreen({ navigation }: Props) {
           <Pressable
             onPress={() => setFilter("cancelled")}
             className={`flex-1 py-2 rounded-lg ${
-              filter === "cancelled" ? "bg-white" : "bg-transparent"
+              filter === "cancelled" ? "bg-white dark:bg-gray-800" : "bg-transparent"
             }`}
           >
             <Text
               className={`text-center text-sm font-semibold ${
-                filter === "cancelled" ? "text-gray-900" : "text-gray-600"
+                filter === "cancelled" ? "text-gray-900 dark:text-white" : "text-gray-600 dark:text-gray-300"
               }`}
             >
               Cancelled
@@ -199,13 +199,13 @@ export default function MyRoutesScreen({ navigation }: Props) {
       <ScrollView className="flex-1 px-6 pt-4">
         {filteredRoutes.length === 0 ? (
           <View className="items-center justify-center py-16">
-            <View className="w-20 h-20 bg-gray-100 rounded-full items-center justify-center mb-4">
+            <View className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-full items-center justify-center mb-4">
               <Ionicons name="map-outline" size={40} color="#9ca3af" />
             </View>
-            <Text className="text-lg font-semibold text-gray-900 mb-2">
+            <Text className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               No routes yet
             </Text>
-            <Text className="text-sm text-gray-600 text-center px-8">
+            <Text className="text-sm text-gray-600 dark:text-gray-300 text-center px-8">
               {filter === "active"
                 ? "Publish your first route to start earning"
                 : `You have no ${filter} routes`}
@@ -213,7 +213,7 @@ export default function MyRoutesScreen({ navigation }: Props) {
             {filter === "active" && (
               <Pressable
                 onPress={() => navigation.navigate("DriverHome")}
-                className="mt-4 px-6 py-3 bg-blue-600 rounded-xl active:bg-blue-700"
+                className="mt-4 px-6 py-3 bg-blue-600 dark:bg-blue-500 rounded-xl active:bg-blue-700 dark:active:bg-blue-600"
               >
                 <Text className="text-white font-semibold">Publish a Route</Text>
               </Pressable>

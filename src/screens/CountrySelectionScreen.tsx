@@ -65,36 +65,36 @@ export default function CountrySelectionScreen({ navigation, route }: Props) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-gray-900">
       {/* Header */}
-      <View className="flex-row items-center px-6 py-4 border-b border-gray-200">
+      <View className="flex-row items-center px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <Pressable
           onPress={() => navigation.goBack()}
           className="w-10 h-10 items-center justify-center -ml-2 mr-2"
         >
           <Ionicons name="arrow-back" size={24} color="#111827" />
         </Pressable>
-        <Text className="text-xl font-bold text-gray-900 flex-1">
+        <Text className="text-xl font-bold text-gray-900 dark:text-white flex-1">
           Select Country
         </Text>
       </View>
 
       {/* Country List */}
-      <ScrollView className="flex-1">
+      <ScrollView className="flex-1 bg-white dark:bg-gray-900">
         {COUNTRIES.map((country) => (
           <Pressable
             key={country.code}
             onPress={() => handleCountrySelect(country)}
-            className={`flex-row items-center px-6 py-4 border-b border-gray-100 active:bg-gray-50 ${
-              selectedCountry.code === country.code ? "bg-blue-50" : ""
+            className={`flex-row items-center px-6 py-4 border-b border-gray-100 dark:border-gray-800 active:bg-gray-50 dark:active:bg-gray-700 ${
+              selectedCountry.code === country.code ? "bg-blue-50 dark:bg-blue-900/30" : "bg-white dark:bg-gray-900"
             }`}
           >
             <Text className="text-2xl mr-3">{country.flag}</Text>
             <View className="flex-1">
-              <Text className="text-base font-semibold text-gray-900">
+              <Text className="text-base font-semibold text-gray-900 dark:text-white">
                 {country.name}
               </Text>
-              <Text className="text-sm text-gray-600 mt-0.5">
+              <Text className="text-sm text-gray-600 dark:text-gray-400 mt-0.5">
                 {country.dialCode}
               </Text>
             </View>

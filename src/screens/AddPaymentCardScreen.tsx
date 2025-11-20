@@ -180,7 +180,7 @@ export default function AddPaymentCardScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={["top"]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
@@ -188,12 +188,12 @@ export default function AddPaymentCardScreen({ navigation }: Props) {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View className="flex-1">
             {/* Header */}
-            <View className="bg-white px-6 py-4 border-b border-gray-200">
+            <View className="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
               <View className="flex-row items-center">
                 <Pressable onPress={() => navigation.goBack()} className="mr-3">
                   <Ionicons name="arrow-back" size={24} color="#111827" />
                 </Pressable>
-                <Text className="text-2xl font-bold text-gray-900">Add Payment Card</Text>
+                <Text className="text-2xl font-bold text-gray-900 dark:text-white">Add Payment Card</Text>
               </View>
             </View>
 
@@ -232,30 +232,32 @@ export default function AddPaymentCardScreen({ navigation }: Props) {
 
               {/* Card Number */}
               <View className="mb-4">
-                <Text className="text-sm font-semibold text-gray-700 mb-2">
+                <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Card Number
                 </Text>
                 <TextInput
-                  className="bg-white border border-gray-300 rounded-xl px-4 py-3 text-base"
+                  className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-3 text-base text-gray-900 dark:text-white"
                   placeholder="1234 5678 9012 3456"
+                  placeholderTextColor="#9ca3af"
                   keyboardType="number-pad"
                   value={cardNumber}
                   onChangeText={handleCardNumberChange}
                   maxLength={19}
                 />
                 {errors.cardNumber ? (
-                  <Text className="text-red-600 text-xs mt-1">{errors.cardNumber}</Text>
+                  <Text className="text-red-600 dark:text-red-400 text-xs mt-1">{errors.cardNumber}</Text>
                 ) : null}
               </View>
 
               {/* Cardholder Name */}
               <View className="mb-4">
-                <Text className="text-sm font-semibold text-gray-700 mb-2">
+                <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Cardholder Name
                 </Text>
                 <TextInput
-                  className="bg-white border border-gray-300 rounded-xl px-4 py-3 text-base"
+                  className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-3 text-base text-gray-900 dark:text-white"
                   placeholder="John Doe"
+                  placeholderTextColor="#9ca3af"
                   value={cardHolder}
                   onChangeText={(text) => {
                     setCardHolder(text);
@@ -266,34 +268,36 @@ export default function AddPaymentCardScreen({ navigation }: Props) {
                   autoCapitalize="words"
                 />
                 {errors.cardHolder ? (
-                  <Text className="text-red-600 text-xs mt-1">{errors.cardHolder}</Text>
+                  <Text className="text-red-600 dark:text-red-400 text-xs mt-1">{errors.cardHolder}</Text>
                 ) : null}
               </View>
 
               {/* Expiry Date and CVV */}
               <View className="flex-row gap-4 mb-4">
                 <View className="flex-1">
-                  <Text className="text-sm font-semibold text-gray-700 mb-2">
+                  <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     Expiry Date
                   </Text>
                   <TextInput
-                    className="bg-white border border-gray-300 rounded-xl px-4 py-3 text-base"
+                    className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-3 text-base text-gray-900 dark:text-white"
                     placeholder="MM/YY"
+                    placeholderTextColor="#9ca3af"
                     keyboardType="number-pad"
                     value={expiryDate}
                     onChangeText={handleExpiryDateChange}
                     maxLength={5}
                   />
                   {errors.expiryDate ? (
-                    <Text className="text-red-600 text-xs mt-1">{errors.expiryDate}</Text>
+                    <Text className="text-red-600 dark:text-red-400 text-xs mt-1">{errors.expiryDate}</Text>
                   ) : null}
                 </View>
 
                 <View className="flex-1">
-                  <Text className="text-sm font-semibold text-gray-700 mb-2">CVV</Text>
+                  <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">CVV</Text>
                   <TextInput
-                    className="bg-white border border-gray-300 rounded-xl px-4 py-3 text-base"
+                    className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-3 text-base text-gray-900 dark:text-white"
                     placeholder="123"
+                    placeholderTextColor="#9ca3af"
                     keyboardType="number-pad"
                     value={cvv}
                     onChangeText={handleCvvChange}
@@ -301,7 +305,7 @@ export default function AddPaymentCardScreen({ navigation }: Props) {
                     secureTextEntry
                   />
                   {errors.cvv ? (
-                    <Text className="text-red-600 text-xs mt-1">{errors.cvv}</Text>
+                    <Text className="text-red-600 dark:text-red-400 text-xs mt-1">{errors.cvv}</Text>
                   ) : null}
                 </View>
               </View>
@@ -314,22 +318,22 @@ export default function AddPaymentCardScreen({ navigation }: Props) {
                 <View
                   className={`w-6 h-6 rounded-md border-2 ${
                     setAsDefault
-                      ? "bg-blue-600 border-blue-600"
-                      : "bg-white border-gray-300"
+                      ? "bg-blue-600 dark:bg-blue-500 border-blue-600 dark:border-blue-500"
+                      : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
                   } items-center justify-center mr-3`}
                 >
                   {setAsDefault && <Ionicons name="checkmark" size={16} color="white" />}
                 </View>
-                <Text className="text-gray-900 font-medium">
+                <Text className="text-gray-900 dark:text-white font-medium">
                   Set as default payment method
                 </Text>
               </Pressable>
 
               {/* Info Card */}
-              <View className="bg-blue-50 rounded-2xl p-4 border border-blue-200 mb-6">
+              <View className="bg-blue-50 dark:bg-blue-900/30 rounded-2xl p-4 border border-blue-200 dark:border-blue-700 mb-6">
                 <View className="flex-row items-start">
                   <Ionicons name="information-circle" size={20} color="#2563eb" />
-                  <Text className="flex-1 ml-2 text-xs text-blue-900">
+                  <Text className="flex-1 ml-2 text-xs text-blue-900 dark:text-blue-200">
                     Your card information is securely encrypted. We use industry-standard
                     security measures to protect your payment details.
                   </Text>
@@ -338,10 +342,10 @@ export default function AddPaymentCardScreen({ navigation }: Props) {
             </ScrollView>
 
             {/* Add Card Button */}
-            <View className="bg-white border-t border-gray-200 px-6 py-4">
+            <View className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-6 py-4">
               <Pressable
                 onPress={handleAddCard}
-                className="bg-blue-600 rounded-2xl py-4 items-center active:bg-blue-700"
+                className="bg-blue-600 dark:bg-blue-500 rounded-2xl py-4 items-center active:bg-blue-700 dark:active:bg-blue-600"
               >
                 <Text className="text-white font-bold text-lg">Add Card</Text>
               </Pressable>

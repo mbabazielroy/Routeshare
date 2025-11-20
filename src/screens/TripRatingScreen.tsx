@@ -16,15 +16,15 @@ export default function TripRatingScreen({ navigation, route }: Props) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-gray-900">
       <View className="flex-1 px-6 py-8 justify-between">
         <View>
           <View className="items-center mb-8">
-            <View className="w-20 h-20 bg-green-50 rounded-full items-center justify-center mb-4">
+            <View className="w-20 h-20 bg-green-50 dark:bg-green-900/30 rounded-full items-center justify-center mb-4">
               <Ionicons name="checkmark-circle" size={48} color="#16a34a" />
             </View>
-            <Text className="text-2xl font-bold text-gray-900 mb-2">Trip Complete!</Text>
-            <Text className="text-base text-gray-600 text-center">
+            <Text className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Trip Complete!</Text>
+            <Text className="text-base text-gray-600 dark:text-gray-300 text-center">
               How was your ride?
             </Text>
           </View>
@@ -47,16 +47,16 @@ export default function TripRatingScreen({ navigation, route }: Props) {
           {/* Quick Feedback */}
           {rating > 0 && (
             <View className="space-y-2">
-              <Text className="text-sm font-medium text-gray-700 mb-2">
+              <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 What went well? (Optional)
               </Text>
               <View className="flex-row flex-wrap gap-2">
                 {["Friendly", "On Time", "Safe Driving", "Clean Car", "Good Conversation"].map((tag) => (
                   <Pressable
                     key={tag}
-                    className="bg-gray-100 rounded-full px-4 py-2 active:bg-blue-50"
+                    className="bg-gray-100 dark:bg-gray-700 rounded-full px-4 py-2 active:bg-blue-50 dark:active:bg-gray-600"
                   >
-                    <Text className="text-gray-700 text-sm">{tag}</Text>
+                    <Text className="text-gray-700 dark:text-gray-300 text-sm">{tag}</Text>
                   </Pressable>
                 ))}
               </View>
@@ -69,7 +69,7 @@ export default function TripRatingScreen({ navigation, route }: Props) {
           onPress={handleSubmit}
           disabled={rating === 0}
           className={`rounded-2xl py-4 px-6 ${
-            rating > 0 ? "bg-blue-600 active:bg-blue-700" : "bg-gray-300"
+            rating > 0 ? "bg-blue-600 dark:bg-blue-500 active:bg-blue-700 dark:active:bg-blue-600" : "bg-gray-300 dark:bg-gray-700"
           }`}
         >
           <Text className="text-white text-center text-lg font-semibold">

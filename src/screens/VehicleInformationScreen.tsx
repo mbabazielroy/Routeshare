@@ -51,14 +51,14 @@ export default function VehicleInformationScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={["top"]}>
       {/* Header */}
-      <View className="bg-white px-6 py-4 border-b border-gray-200">
+      <View className="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <View className="flex-row items-center">
           <Pressable onPress={() => navigation.goBack()} className="mr-3">
-            <Ionicons name="arrow-back" size={24} color="#111827" />
+            <Ionicons name="arrow-back" size={24} color="#111827" className="dark:text-white" />
           </Pressable>
-          <Text className="text-2xl font-bold text-gray-900 flex-1">
+          <Text className="text-2xl font-bold text-gray-900 dark:text-white flex-1">
             Vehicle Information
           </Text>
         </View>
@@ -68,7 +68,7 @@ export default function VehicleInformationScreen({ navigation }: Props) {
         <View className="px-6 py-6">
           {/* Vehicle Type Selection */}
           <View className="mb-6">
-            <Text className="text-base font-semibold text-gray-900 mb-3">
+            <Text className="text-base font-semibold text-gray-900 dark:text-white mb-3">
               Vehicle Type
             </Text>
             <View className="flex-row flex-wrap gap-3">
@@ -78,8 +78,8 @@ export default function VehicleInformationScreen({ navigation }: Props) {
                   onPress={() => setVehicle({ ...vehicle, type: type.id })}
                   className={`flex-1 min-w-[30%] p-4 rounded-xl border-2 ${
                     vehicle.type === type.id
-                      ? "bg-blue-50 border-blue-600"
-                      : "bg-white border-gray-200"
+                      ? "bg-blue-50 dark:bg-blue-900/30 border-blue-600 dark:border-blue-500"
+                      : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                   }`}
                 >
                   <View className="items-center">
@@ -90,7 +90,7 @@ export default function VehicleInformationScreen({ navigation }: Props) {
                     />
                     <Text
                       className={`text-sm font-semibold mt-2 ${
-                        vehicle.type === type.id ? "text-blue-600" : "text-gray-700"
+                        vehicle.type === type.id ? "text-blue-600 dark:text-blue-400" : "text-gray-700 dark:text-gray-300"
                       }`}
                     >
                       {type.label}
@@ -102,59 +102,59 @@ export default function VehicleInformationScreen({ navigation }: Props) {
           </View>
 
           {/* Vehicle Details */}
-          <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+          <View className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             {/* Make */}
-            <View className="p-4 border-b border-gray-200">
-              <Text className="text-sm font-semibold text-gray-700 mb-2">Make</Text>
+            <View className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Make</Text>
               <TextInput
                 value={vehicle.make}
                 onChangeText={(text) => setVehicle({ ...vehicle, make: text })}
                 placeholder="e.g., Toyota"
                 placeholderTextColor="#9ca3af"
-                className="text-base text-gray-900 py-2"
+                className="text-base text-gray-900 dark:text-white py-2"
               />
             </View>
 
             {/* Model */}
-            <View className="p-4 border-b border-gray-200">
-              <Text className="text-sm font-semibold text-gray-700 mb-2">Model</Text>
+            <View className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Model</Text>
               <TextInput
                 value={vehicle.model}
                 onChangeText={(text) => setVehicle({ ...vehicle, model: text })}
                 placeholder="e.g., Camry"
                 placeholderTextColor="#9ca3af"
-                className="text-base text-gray-900 py-2"
+                className="text-base text-gray-900 dark:text-white py-2"
               />
             </View>
 
             {/* Year */}
-            <View className="p-4 border-b border-gray-200">
-              <Text className="text-sm font-semibold text-gray-700 mb-2">Year</Text>
+            <View className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Year</Text>
               <TextInput
                 value={vehicle.year}
                 onChangeText={(text) => setVehicle({ ...vehicle, year: text })}
                 placeholder="e.g., 2020"
                 placeholderTextColor="#9ca3af"
                 keyboardType="numeric"
-                className="text-base text-gray-900 py-2"
+                className="text-base text-gray-900 dark:text-white py-2"
               />
             </View>
 
             {/* Color */}
-            <View className="p-4 border-b border-gray-200">
-              <Text className="text-sm font-semibold text-gray-700 mb-2">Color</Text>
+            <View className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Color</Text>
               <TextInput
                 value={vehicle.color}
                 onChangeText={(text) => setVehicle({ ...vehicle, color: text })}
                 placeholder="e.g., Silver"
                 placeholderTextColor="#9ca3af"
-                className="text-base text-gray-900 py-2"
+                className="text-base text-gray-900 dark:text-white py-2"
               />
             </View>
 
             {/* License Plate */}
-            <View className="p-4 border-b border-gray-200">
-              <Text className="text-sm font-semibold text-gray-700 mb-2">
+            <View className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                 License Plate
               </Text>
               <TextInput
@@ -163,13 +163,13 @@ export default function VehicleInformationScreen({ navigation }: Props) {
                 placeholder="e.g., ABC-1234"
                 placeholderTextColor="#9ca3af"
                 autoCapitalize="characters"
-                className="text-base text-gray-900 py-2"
+                className="text-base text-gray-900 dark:text-white py-2"
               />
             </View>
 
             {/* Available Seats */}
             <View className="p-4">
-              <Text className="text-sm font-semibold text-gray-700 mb-2">
+              <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                 Available Seats
               </Text>
               <TextInput
@@ -178,18 +178,18 @@ export default function VehicleInformationScreen({ navigation }: Props) {
                 placeholder="e.g., 4"
                 placeholderTextColor="#9ca3af"
                 keyboardType="numeric"
-                className="text-base text-gray-900 py-2"
+                className="text-base text-gray-900 dark:text-white py-2"
               />
-              <Text className="text-xs text-gray-500 mt-1">
+              <Text className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 Number of passenger seats available for riders
               </Text>
             </View>
           </View>
 
           {/* Info Box */}
-          <View className="bg-blue-50 rounded-xl p-4 mt-6 flex-row">
+          <View className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 mt-6 flex-row">
             <Ionicons name="information-circle" size={20} color="#2563eb" />
-            <Text className="flex-1 text-sm text-gray-700 ml-3">
+            <Text className="flex-1 text-sm text-gray-700 dark:text-gray-300 ml-3">
               Your vehicle information helps riders identify your car and ensures
               accurate trip planning. This information is visible to riders when they
               book.
@@ -199,12 +199,12 @@ export default function VehicleInformationScreen({ navigation }: Props) {
       </ScrollView>
 
       {/* Save Button */}
-      <View className="px-6 py-4 bg-white border-t border-gray-200">
+      <View className="px-6 py-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
         <Pressable
           onPress={handleSave}
           disabled={isSaving}
-          className={`bg-blue-600 py-4 rounded-xl items-center ${
-            isSaving ? "opacity-50" : "active:bg-blue-700"
+          className={`bg-blue-600 dark:bg-blue-500 py-4 rounded-xl items-center ${
+            isSaving ? "opacity-50" : "active:bg-blue-700 dark:active:bg-blue-600"
           }`}
         >
           <Text className="text-white font-bold text-lg">

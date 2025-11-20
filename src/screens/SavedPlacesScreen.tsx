@@ -29,17 +29,17 @@ export default function SavedPlacesScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={["top"]}>
       {/* Header */}
-      <View className="bg-white px-6 py-4 border-b border-gray-200">
+      <View className="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <View className="flex-row items-center">
           <Pressable onPress={() => navigation.goBack()} className="mr-3">
             <Ionicons name="arrow-back" size={24} color="#111827" />
           </Pressable>
-          <Text className="text-2xl font-bold text-gray-900 flex-1">
+          <Text className="text-2xl font-bold text-gray-900 dark:text-white flex-1">
             Saved Places
           </Text>
-          <Pressable className="px-3 py-1 bg-blue-600 rounded-lg active:bg-blue-700">
+          <Pressable className="px-3 py-1 bg-blue-600 dark:bg-blue-500 rounded-lg active:bg-blue-700 dark:active:bg-blue-600">
             <Text className="text-white font-semibold text-sm">+ Add</Text>
           </Pressable>
         </View>
@@ -53,7 +53,7 @@ export default function SavedPlacesScreen({ navigation }: Props) {
             return (
               <Pressable
                 key={location.id}
-                className="bg-white rounded-2xl p-4 mb-3 border border-gray-200 active:bg-gray-50"
+                className="bg-white dark:bg-gray-800 rounded-2xl p-4 mb-3 border border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
               >
                 <View className="flex-row items-center">
                   <View
@@ -66,14 +66,14 @@ export default function SavedPlacesScreen({ navigation }: Props) {
                     />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-base font-bold text-gray-900">
+                    <Text className="text-base font-bold text-gray-900 dark:text-white">
                       {location.name}
                     </Text>
-                    <Text className="text-sm text-gray-600 mt-1" numberOfLines={1}>
+                    <Text className="text-sm text-gray-600 dark:text-gray-400 mt-1" numberOfLines={1}>
                       {location.location.address}
                     </Text>
                   </View>
-                  <Pressable className="ml-2 w-10 h-10 items-center justify-center active:bg-gray-100 rounded-full">
+                  <Pressable className="ml-2 w-10 h-10 items-center justify-center active:bg-gray-100 dark:active:bg-gray-700 rounded-full">
                     <Ionicons name="ellipsis-horizontal" size={20} color="#6b7280" />
                   </Pressable>
                 </View>
@@ -84,14 +84,14 @@ export default function SavedPlacesScreen({ navigation }: Props) {
 
         {/* Add Place Button */}
         <View className="px-6 mt-2">
-          <Pressable className="bg-white border-2 border-dashed border-gray-300 rounded-2xl p-6 items-center active:bg-gray-50">
-            <View className="w-16 h-16 bg-purple-50 rounded-full items-center justify-center mb-3">
+          <Pressable className="bg-white dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-6 items-center active:bg-gray-50 dark:active:bg-gray-700">
+            <View className="w-16 h-16 bg-purple-50 dark:bg-purple-900/30 rounded-full items-center justify-center mb-3">
               <Ionicons name="add" size={32} color="#9333ea" />
             </View>
-            <Text className="text-lg font-bold text-gray-900 mb-1">
+            <Text className="text-lg font-bold text-gray-900 dark:text-white mb-1">
               Add New Place
             </Text>
-            <Text className="text-sm text-gray-600 text-center">
+            <Text className="text-sm text-gray-600 dark:text-gray-400 text-center">
               Save your frequently visited locations for quick access
             </Text>
           </Pressable>
@@ -99,7 +99,7 @@ export default function SavedPlacesScreen({ navigation }: Props) {
 
         {/* Quick Add Suggestions */}
         <View className="px-6 mt-6 mb-6">
-          <Text className="text-base font-bold text-gray-900 mb-3">
+          <Text className="text-base font-bold text-gray-900 dark:text-white mb-3">
             Quick Add
           </Text>
           <View className="flex-row flex-wrap gap-2">
@@ -113,10 +113,10 @@ export default function SavedPlacesScreen({ navigation }: Props) {
             ].map((item) => (
               <Pressable
                 key={item.label}
-                className="bg-white border border-gray-200 rounded-xl px-4 py-3 flex-row items-center active:bg-gray-50"
+                className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 flex-row items-center active:bg-gray-50 dark:active:bg-gray-700"
               >
                 <Ionicons name={item.icon as any} size={18} color={item.color} />
-                <Text className="text-sm font-medium text-gray-700 ml-2">
+                <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-2">
                   {item.label}
                 </Text>
               </Pressable>

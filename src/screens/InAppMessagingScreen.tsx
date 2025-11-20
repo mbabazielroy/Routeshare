@@ -136,30 +136,30 @@ export default function InAppMessagingScreen({ navigation, route }: Props) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={["top"]}>
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={0}
       >
         {/* Header */}
-        <View className="bg-white px-6 py-4 border-b border-gray-200">
+        <View className="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
           <View className="flex-row items-center">
             <Pressable onPress={() => navigation.goBack()} className="mr-3">
               <Ionicons name="arrow-back" size={24} color="#111827" />
             </Pressable>
-            <View className="w-10 h-10 bg-blue-100 rounded-full items-center justify-center mr-3">
+            <View className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full items-center justify-center mr-3">
               <Ionicons name="person" size={20} color="#2563eb" />
             </View>
             <View className="flex-1">
-              <Text className="text-lg font-bold text-gray-900">
+              <Text className="text-lg font-bold text-gray-900 dark:text-white">
                 {conversation?.otherUserName || "Driver"}
               </Text>
-              <Text className="text-xs text-gray-600">
+              <Text className="text-xs text-gray-600 dark:text-gray-400">
                 {conversation?.isTyping ? "typing..." : "Active now"}
               </Text>
             </View>
-            <Pressable className="w-10 h-10 items-center justify-center active:bg-gray-100 rounded-full">
+            <Pressable className="w-10 h-10 items-center justify-center active:bg-gray-100 dark:active:bg-gray-700 rounded-full">
               <Ionicons name="call" size={20} color="#16a34a" />
             </Pressable>
           </View>
@@ -181,8 +181,8 @@ export default function InAppMessagingScreen({ navigation, route }: Props) {
               <View
                 className={`max-w-[75%] rounded-2xl px-4 py-3 ${
                   message.sentBy === "me"
-                    ? "bg-blue-600 rounded-tr-sm"
-                    : "bg-white border border-gray-200 rounded-tl-sm"
+                    ? "bg-blue-600 dark:bg-blue-500 rounded-tr-sm"
+                    : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-tl-sm"
                 }`}
               >
                 {message.imageUri && (
@@ -194,13 +194,13 @@ export default function InAppMessagingScreen({ navigation, route }: Props) {
                 )}
                 <Text
                   className={`text-base ${
-                    message.sentBy === "me" ? "text-white" : "text-gray-900"
+                    message.sentBy === "me" ? "text-white" : "text-gray-900 dark:text-white"
                   }`}
                 >
                   {message.text}
                 </Text>
               </View>
-              <Text className="text-xs text-gray-500 mt-1 px-1">
+              <Text className="text-xs text-gray-500 dark:text-gray-400 mt-1 px-1">
                 {formatTime(message.timestamp)}
               </Text>
             </View>
@@ -208,7 +208,7 @@ export default function InAppMessagingScreen({ navigation, route }: Props) {
         </ScrollView>
 
         {/* Input Bar */}
-        <View className="bg-white border-t border-gray-200 px-4 py-3">
+        <View className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 py-3">
           <View className="flex-row items-center">
             <Pressable
               onPress={handlePickImage}
@@ -220,7 +220,7 @@ export default function InAppMessagingScreen({ navigation, route }: Props) {
               value={inputText}
               onChangeText={handleTextChange}
               placeholder="Type a message..."
-              className="flex-1 bg-gray-100 rounded-full px-4 py-3 text-base text-gray-900 mr-2"
+              className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full px-4 py-3 text-base text-gray-900 dark:text-white mr-2"
               placeholderTextColor="#9ca3af"
               multiline
               maxLength={500}
@@ -230,7 +230,7 @@ export default function InAppMessagingScreen({ navigation, route }: Props) {
               onPress={handleSend}
               disabled={!inputText.trim()}
               className={`w-12 h-12 rounded-full items-center justify-center ${
-                inputText.trim() ? "bg-blue-600" : "bg-gray-300"
+                inputText.trim() ? "bg-blue-600 dark:bg-blue-500" : "bg-gray-300 dark:bg-gray-700"
               }`}
             >
               <Ionicons name="send" size={20} color="white" />

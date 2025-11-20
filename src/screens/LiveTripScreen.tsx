@@ -74,8 +74,8 @@ export default function LiveTripScreen({ navigation, route }: Props) {
 
   if (!currentTrip) {
     return (
-      <SafeAreaView className="flex-1 bg-white items-center justify-center">
-        <Text className="text-gray-500">No active trip</Text>
+      <SafeAreaView className="flex-1 bg-white dark:bg-gray-900 items-center justify-center">
+        <Text className="text-gray-500 dark:text-gray-400">No active trip</Text>
       </SafeAreaView>
     );
   }
@@ -192,40 +192,40 @@ export default function LiveTripScreen({ navigation, route }: Props) {
       </View>
 
       {/* Driver Info Card */}
-      <View className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl">
+      <View className="absolute bottom-0 left-0 right-0 bg-white dark:bg-gray-800 rounded-t-3xl shadow-2xl">
         <SafeAreaView edges={["bottom"]}>
           <View className="px-6 py-4">
             {/* Driver Details */}
             <View className="flex-row items-center mb-4">
-              <View className="w-16 h-16 bg-gray-200 rounded-full items-center justify-center mr-4">
+              <View className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full items-center justify-center mr-4">
                 <Ionicons name="person" size={32} color="#6b7280" />
               </View>
               <View className="flex-1">
                 <View className="flex-row items-center">
-                  <Text className="text-xl font-bold text-gray-900">
+                  <Text className="text-xl font-bold text-gray-900 dark:text-white">
                     {driver?.firstName} {driver?.lastName?.[0]}.
                   </Text>
                   <View className="ml-2 flex-row items-center">
                     <Ionicons name="star" size={16} color="#eab308" />
-                    <Text className="ml-1 text-sm font-semibold text-gray-700">
+                    <Text className="ml-1 text-sm font-semibold text-gray-700 dark:text-gray-300">
                       {driver?.rating.toFixed(1)}
                     </Text>
                   </View>
                 </View>
-                <Text className="text-base text-gray-600 mt-1">
+                <Text className="text-base text-gray-600 dark:text-gray-300 mt-1">
                   {profile?.vehicleColor} {profile?.vehicleMake}
                 </Text>
-                <Text className="text-sm text-gray-500">{profile?.licensePlate}</Text>
+                <Text className="text-sm text-gray-500 dark:text-gray-400">{profile?.licensePlate}</Text>
               </View>
             </View>
 
             {/* Trip Info */}
-            <View className="bg-gray-50 rounded-xl p-4 mb-4">
+            <View className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 mb-4">
               <View className="flex-row items-start mb-2">
                 <Ionicons name="location" size={18} color="#10b981" />
                 <View className="flex-1 ml-3">
-                  <Text className="text-xs text-gray-500 mb-1">Pickup</Text>
-                  <Text className="text-sm font-medium text-gray-900">
+                  <Text className="text-xs text-gray-500 dark:text-gray-400 mb-1">Pickup</Text>
+                  <Text className="text-sm font-medium text-gray-900 dark:text-white">
                     {currentTrip.pickup.address}
                   </Text>
                 </View>
@@ -233,8 +233,8 @@ export default function LiveTripScreen({ navigation, route }: Props) {
               <View className="flex-row items-start">
                 <Ionicons name="location" size={18} color="#dc2626" />
                 <View className="flex-1 ml-3">
-                  <Text className="text-xs text-gray-500 mb-1">Dropoff</Text>
-                  <Text className="text-sm font-medium text-gray-900">
+                  <Text className="text-xs text-gray-500 dark:text-gray-400 mb-1">Dropoff</Text>
+                  <Text className="text-sm font-medium text-gray-900 dark:text-white">
                     {currentTrip.dropoff.address}
                   </Text>
                 </View>
@@ -245,21 +245,21 @@ export default function LiveTripScreen({ navigation, route }: Props) {
             <View className="flex-row gap-3">
               <Pressable
                 onPress={handleCall}
-                className="flex-1 bg-gray-100 rounded-xl py-3 flex-row items-center justify-center active:bg-gray-200"
+                className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-xl py-3 flex-row items-center justify-center active:bg-gray-200 dark:active:bg-gray-600"
               >
                 <Ionicons name="call" size={20} color="#1f2937" />
-                <Text className="ml-2 font-semibold text-gray-900">Call</Text>
+                <Text className="ml-2 font-semibold text-gray-900 dark:text-white">Call</Text>
               </Pressable>
 
               <Pressable
                 onPress={() => setShowCancelConfirm(true)}
-                className="flex-1 bg-red-50 rounded-xl py-3 flex-row items-center justify-center active:bg-red-100"
+                className="flex-1 bg-red-50 dark:bg-red-900/30 rounded-xl py-3 flex-row items-center justify-center active:bg-red-100 dark:active:bg-red-900/50"
               >
                 <Ionicons name="close-circle" size={20} color="#dc2626" />
-                <Text className="ml-2 font-semibold text-red-600">Cancel</Text>
+                <Text className="ml-2 font-semibold text-red-600 dark:text-red-400">Cancel</Text>
               </Pressable>
 
-              <Pressable className="bg-blue-600 rounded-xl px-4 py-3 active:bg-blue-700">
+              <Pressable className="bg-blue-600 dark:bg-blue-500 rounded-xl px-4 py-3 active:bg-blue-700 dark:active:bg-blue-600">
                 <Ionicons name="shield-checkmark" size={24} color="white" />
               </Pressable>
             </View>
@@ -267,21 +267,21 @@ export default function LiveTripScreen({ navigation, route }: Props) {
             {/* Cancel Confirmation */}
             {showCancelConfirm && (
               <View className="absolute top-0 left-0 right-0 bottom-0 bg-black/50 items-center justify-center rounded-t-3xl">
-                <View className="bg-white rounded-2xl p-6 mx-6">
-                  <Text className="text-xl font-bold text-gray-900 mb-2">Cancel Trip?</Text>
-                  <Text className="text-gray-600 mb-6">
+                <View className="bg-white dark:bg-gray-800 rounded-2xl p-6 mx-6">
+                  <Text className="text-xl font-bold text-gray-900 dark:text-white mb-2">Cancel Trip?</Text>
+                  <Text className="text-gray-600 dark:text-gray-300 mb-6">
                     Are you sure you want to cancel this trip?
                   </Text>
                   <View className="flex-row gap-3">
                     <Pressable
                       onPress={() => setShowCancelConfirm(false)}
-                      className="flex-1 bg-gray-100 rounded-xl py-3"
+                      className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-xl py-3 active:bg-gray-200 dark:active:bg-gray-600"
                     >
-                      <Text className="text-center font-semibold text-gray-900">No, keep it</Text>
+                      <Text className="text-center font-semibold text-gray-900 dark:text-white">No, keep it</Text>
                     </Pressable>
                     <Pressable
                       onPress={handleCancel}
-                      className="flex-1 bg-red-600 rounded-xl py-3"
+                      className="flex-1 bg-red-600 dark:bg-red-500 rounded-xl py-3 active:bg-red-700 dark:active:bg-red-600"
                     >
                       <Text className="text-center font-semibold text-white">Yes, cancel</Text>
                     </Pressable>

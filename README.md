@@ -142,15 +142,36 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
    - Automatic system theme detection and following
    - StatusBar style updates based on active theme (light/dark)
    - Real-time theme switching without app restart
-   - Comprehensive dark mode styling applied to all major screens:
-     - ✅ WelcomeScreen - full dark mode support
-     - ✅ ThemeSettingsScreen - theme selection with live preview
-     - ✅ RiderHomeScreen - rider dashboard with complete dark styling
-     - ✅ RiderAccountScreen - account management with dark mode
-     - ✅ DriverHomeScreen - driver dashboard with dark theme support
-     - ✅ DriverAccountScreen - driver account with full dark styling
+   - **100% Coverage: ALL screens support dark mode**
+
+   **Rider Screens (All ✅):**
+     - WelcomeScreen, OnboardingScreen
+     - RiderHomeScreen, RiderAccountScreen
+     - TripRequestScreen, DriverSelectionScreen
+     - MyRidesScreen, SavedPlacesScreen, EditProfileScreen
+
+   **Driver Screens (All ✅):**
+     - DriverHomeScreen, DriverAccountScreen
+     - PublishRouteScreen, MyRoutesScreen, EarningsScreen
+     - RiderRequestScreen, VehicleInformationScreen
+     - BankAccountScreen, DocumentsScreen, TaxInformationScreen
+
+   **Shared Screens (All ✅):**
+     - LiveTripScreen, TripRatingScreen, SafetyScreen
+     - HelpCenterScreen, NotificationSettingsScreen, ScheduleRideScreen
+     - InAppMessagingScreen, PaymentMethodsScreen, AddPaymentCardScreen
+
+   **Auth Screens (All ✅):**
+     - PhoneAuthScreen, CountrySelectionScreen, OTPVerificationScreen
+     - UserTypeSelectionScreen, ThemeSettingsScreen
+
+   **Design System:**
    - Pattern: `dark:` class variants (e.g., `bg-white dark:bg-gray-900`)
-   - Color scheme consistency: gray-900/800/700 backgrounds, adjusted borders and text
+   - Backgrounds: `bg-gray-50 dark:bg-gray-900` (screens), `bg-white dark:bg-gray-800` (cards)
+   - Text hierarchy: `text-gray-900 dark:text-white` (primary), `text-gray-600 dark:text-gray-300` (secondary)
+   - Borders: `border-gray-200 dark:border-gray-700`
+   - Colored backgrounds: `bg-{color}-50 dark:bg-{color}-900/30`
+   - Buttons: `bg-blue-600 dark:bg-blue-500`
    - Accessible from both Rider and Driver account screens
    - Beautiful UI with live theme previews and info cards
    - Properly configured Tailwind darkMode: "class" strategy

@@ -55,13 +55,13 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
     onToggle: (value: boolean) => void;
     icon: any;
   }) => (
-    <View className="flex-row items-start p-4 border-b border-gray-200">
-      <View className="w-10 h-10 bg-blue-50 rounded-xl items-center justify-center mr-3">
+    <View className="flex-row items-start p-4 border-b border-gray-200 dark:border-gray-700">
+      <View className="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-xl items-center justify-center mr-3">
         <Ionicons name={icon} size={20} color="#2563eb" />
       </View>
       <View className="flex-1 mr-3">
-        <Text className="text-base font-semibold text-gray-900">{title}</Text>
-        <Text className="text-sm text-gray-600 mt-1">{description}</Text>
+        <Text className="text-base font-semibold text-gray-900 dark:text-white">{title}</Text>
+        <Text className="text-sm text-gray-600 dark:text-gray-300 mt-1">{description}</Text>
       </View>
       <Switch
         value={value}
@@ -73,24 +73,24 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={["top"]}>
       {/* Header */}
-      <View className="bg-white px-6 py-4 border-b border-gray-200">
+      <View className="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <View className="flex-row items-center">
           <Pressable onPress={() => navigation.goBack()} className="mr-3">
             <Ionicons name="arrow-back" size={24} color="#111827" />
           </Pressable>
-          <Text className="text-2xl font-bold text-gray-900 flex-1">Notifications</Text>
+          <Text className="text-2xl font-bold text-gray-900 dark:text-white flex-1">Notifications</Text>
         </View>
       </View>
 
       <ScrollView className="flex-1">
         <View className="px-6 py-6">
           {/* Notification Channels */}
-          <Text className="text-sm font-semibold text-gray-500 mb-3 px-2">
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 px-2">
             NOTIFICATION CHANNELS
           </Text>
-          <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-6">
+          <View className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
             <NotificationToggle
               title="Push Notifications"
               description="Receive notifications on your device"
@@ -115,10 +115,10 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
           </View>
 
           {/* Trip & Ride Notifications */}
-          <Text className="text-sm font-semibold text-gray-500 mb-3 px-2">
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 px-2">
             TRIPS & RIDES
           </Text>
-          <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-6">
+          <View className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
             <NotificationToggle
               title="Trip Updates"
               description="Driver arrival, trip start, and completion"
@@ -143,10 +143,10 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
           </View>
 
           {/* Safety & Security */}
-          <Text className="text-sm font-semibold text-gray-500 mb-3 px-2">
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 px-2">
             SAFETY & SECURITY
           </Text>
-          <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-6">
+          <View className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
             <NotificationToggle
               title="Safety Alerts"
               description="Important safety and security notifications"
@@ -157,10 +157,10 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
           </View>
 
           {/* Financial */}
-          <Text className="text-sm font-semibold text-gray-500 mb-3 px-2">
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 px-2">
             FINANCIAL
           </Text>
-          <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-6">
+          <View className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
             <NotificationToggle
               title="Earnings Updates"
               description="Payouts, earnings milestones, and summaries"
@@ -171,10 +171,10 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
           </View>
 
           {/* Marketing */}
-          <Text className="text-sm font-semibold text-gray-500 mb-3 px-2">
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 px-2">
             MARKETING & UPDATES
           </Text>
-          <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-6">
+          <View className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
             <NotificationToggle
               title="Promotions & Offers"
               description="Special offers, discounts, and promotions"
@@ -192,9 +192,9 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
           </View>
 
           {/* Info Box */}
-          <View className="bg-blue-50 rounded-xl p-4 flex-row">
+          <View className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 flex-row border border-blue-200 dark:border-blue-700">
             <Ionicons name="information-circle" size={20} color="#2563eb" />
-            <Text className="flex-1 text-sm text-gray-700 ml-3">
+            <Text className="flex-1 text-sm text-gray-700 dark:text-gray-300 ml-3">
               You can change these settings at any time. Some notifications like safety
               alerts cannot be disabled.
             </Text>

@@ -75,7 +75,7 @@ export default function PhoneAuthScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-gray-900">
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -90,31 +90,31 @@ export default function PhoneAuthScreen({ navigation }: Props) {
               <Ionicons name="arrow-back" size={24} color="#111827" />
             </Pressable>
 
-            <View className="w-20 h-20 bg-blue-600 rounded-3xl items-center justify-center mb-6">
+            <View className="w-20 h-20 bg-blue-600 dark:bg-blue-500 rounded-3xl items-center justify-center mb-6">
               <Ionicons name="phone-portrait" size={40} color="white" />
             </View>
 
-            <Text className="text-3xl font-bold text-gray-900 mb-3">
+            <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
               Enter your phone number
             </Text>
-            <Text className="text-base text-gray-600">
+            <Text className="text-base text-gray-600 dark:text-gray-300">
               We will send you a verification code to confirm your number
             </Text>
           </View>
 
           {/* Phone Input */}
           <View className="mb-6">
-            <Text className="text-sm font-semibold text-gray-700 mb-2">
+            <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Phone Number
             </Text>
-            <View className="flex-row items-center bg-gray-50 rounded-xl px-4 py-4 border-2 border-gray-200">
+            <View className="flex-row items-center bg-gray-50 dark:bg-gray-800 rounded-xl px-4 py-4 border-2 border-gray-200 dark:border-gray-700">
               {/* Country Selector */}
               <Pressable
                 onPress={handleCountryPress}
                 className="flex-row items-center mr-3 active:opacity-70"
               >
-                <Text className="text-lg font-semibold text-gray-900">{selectedCountry.flag}</Text>
-                <Text className="text-base font-semibold text-gray-900 ml-2">
+                <Text className="text-lg font-semibold text-gray-900 dark:text-white">{selectedCountry.flag}</Text>
+                <Text className="text-base font-semibold text-gray-900 dark:text-white ml-2">
                   {selectedCountry.dialCode}
                 </Text>
                 <View className="ml-1">
@@ -128,7 +128,7 @@ export default function PhoneAuthScreen({ navigation }: Props) {
                 placeholder={selectedCountry.code === "US" || selectedCountry.code === "CA" ? "(555) 123-4567" : "Phone number"}
                 placeholderTextColor="#9ca3af"
                 keyboardType="phone-pad"
-                className="flex-1 text-lg text-gray-900"
+                className="flex-1 text-lg text-gray-900 dark:text-white"
                 maxLength={selectedCountry.maxLength}
                 autoFocus
               />
@@ -139,14 +139,14 @@ export default function PhoneAuthScreen({ navigation }: Props) {
           </View>
 
           {/* Info Box */}
-          <View className="bg-blue-50 rounded-xl p-4 mb-6">
+          <View className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 mb-6">
             <View className="flex-row">
               <Ionicons name="information-circle" size={20} color="#2563eb" />
               <View className="flex-1 ml-3">
-                <Text className="text-sm font-semibold text-gray-900 mb-1">
+                <Text className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
                   Why we need this
                 </Text>
-                <Text className="text-sm text-gray-700">
+                <Text className="text-sm text-gray-700 dark:text-gray-300">
                   Your phone number is used to verify your identity and connect you with drivers
                   and riders in your community.
                 </Text>
@@ -161,8 +161,8 @@ export default function PhoneAuthScreen({ navigation }: Props) {
               disabled={!isValidPhone() || isLoading}
               className={`rounded-2xl py-4 px-6 ${
                 isValidPhone() && !isLoading
-                  ? "bg-blue-600 active:bg-blue-700"
-                  : "bg-gray-300"
+                  ? "bg-blue-600 dark:bg-blue-500 active:bg-blue-700 dark:active:bg-blue-600"
+                  : "bg-gray-300 dark:bg-gray-700"
               }`}
             >
               <Text className="text-white text-center text-lg font-semibold">
@@ -171,7 +171,7 @@ export default function PhoneAuthScreen({ navigation }: Props) {
             </Pressable>
 
             {/* Terms */}
-            <Text className="text-xs text-gray-500 text-center mt-4 px-4">
+            <Text className="text-xs text-gray-500 dark:text-gray-400 text-center mt-4 px-4">
               By continuing, you agree to our Terms of Service and Privacy Policy
             </Text>
           </View>

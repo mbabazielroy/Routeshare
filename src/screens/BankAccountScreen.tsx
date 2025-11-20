@@ -47,29 +47,29 @@ export default function BankAccountScreen({ navigation }: Props) {
 
   if (!hasAccount && !isEditing) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
-        <View className="bg-white px-6 py-4 border-b border-gray-200">
+      <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={["top"]}>
+        <View className="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
           <View className="flex-row items-center">
             <Pressable onPress={() => navigation.goBack()} className="mr-3">
-              <Ionicons name="arrow-back" size={24} color="#111827" />
+              <Ionicons name="arrow-back" size={24} color="#111827" className="dark:text-white" />
             </Pressable>
-            <Text className="text-2xl font-bold text-gray-900 flex-1">Bank Account</Text>
+            <Text className="text-2xl font-bold text-gray-900 dark:text-white flex-1">Bank Account</Text>
           </View>
         </View>
 
         <View className="flex-1 items-center justify-center px-6">
-          <View className="w-20 h-20 bg-blue-50 rounded-full items-center justify-center mb-4">
+          <View className="w-20 h-20 bg-blue-50 dark:bg-blue-900/30 rounded-full items-center justify-center mb-4">
             <Ionicons name="card" size={40} color="#2563eb" />
           </View>
-          <Text className="text-xl font-bold text-gray-900 mb-2 text-center">
+          <Text className="text-xl font-bold text-gray-900 dark:text-white mb-2 text-center">
             No Bank Account Added
           </Text>
-          <Text className="text-base text-gray-600 text-center mb-6">
+          <Text className="text-base text-gray-600 dark:text-gray-300 text-center mb-6">
             Add your bank account to receive payouts from completed trips
           </Text>
           <Pressable
             onPress={() => setIsEditing(true)}
-            className="bg-blue-600 px-8 py-4 rounded-xl active:bg-blue-700"
+            className="bg-blue-600 dark:bg-blue-500 px-8 py-4 rounded-xl active:bg-blue-700 dark:active:bg-blue-600"
           >
             <Text className="text-white font-bold text-base">Add Bank Account</Text>
           </Pressable>
@@ -79,16 +79,16 @@ export default function BankAccountScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
-      <View className="bg-white px-6 py-4 border-b border-gray-200">
+    <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={["top"]}>
+      <View className="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <View className="flex-row items-center">
           <Pressable onPress={() => navigation.goBack()} className="mr-3">
-            <Ionicons name="arrow-back" size={24} color="#111827" />
+            <Ionicons name="arrow-back" size={24} color="#111827" className="dark:text-white" />
           </Pressable>
-          <Text className="text-2xl font-bold text-gray-900 flex-1">Bank Account</Text>
+          <Text className="text-2xl font-bold text-gray-900 dark:text-white flex-1">Bank Account</Text>
           {!isEditing && (
             <Pressable onPress={() => setIsEditing(true)}>
-              <Text className="text-blue-600 font-semibold">Edit</Text>
+              <Text className="text-blue-600 dark:text-blue-400 font-semibold">Edit</Text>
             </Pressable>
           )}
         </View>
@@ -131,25 +131,25 @@ export default function BankAccountScreen({ navigation }: Props) {
               </View>
 
               {/* Payout Schedule */}
-              <View className="bg-white rounded-2xl border border-gray-200 p-5 mb-6">
-                <Text className="text-lg font-bold text-gray-900 mb-4">
+              <View className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 mb-6">
+                <Text className="text-lg font-bold text-gray-900 dark:text-white mb-4">
                   Payout Schedule
                 </Text>
                 <View className="flex-row items-center mb-3">
-                  <View className="w-10 h-10 bg-green-50 rounded-full items-center justify-center mr-3">
+                  <View className="w-10 h-10 bg-green-50 dark:bg-green-900/30 rounded-full items-center justify-center mr-3">
                     <Ionicons name="checkmark-circle" size={24} color="#16a34a" />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-base font-semibold text-gray-900">
+                    <Text className="text-base font-semibold text-gray-900 dark:text-white">
                       Automatic Payouts
                     </Text>
-                    <Text className="text-sm text-gray-600">
+                    <Text className="text-sm text-gray-600 dark:text-gray-300">
                       Every Monday at 9:00 AM
                     </Text>
                   </View>
                 </View>
-                <View className="bg-gray-50 rounded-xl p-3 mt-3">
-                  <Text className="text-sm text-gray-700">
+                <View className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 mt-3">
+                  <Text className="text-sm text-gray-700 dark:text-gray-300">
                     <Text className="font-semibold">Next payout: </Text>
                     Monday, Nov 25, 2024 • $285.00
                   </Text>
@@ -159,11 +159,11 @@ export default function BankAccountScreen({ navigation }: Props) {
               {/* Remove Account */}
               <Pressable
                 onPress={handleRemove}
-                className="bg-white border border-red-200 rounded-xl p-4 active:bg-red-50"
+                className="bg-white dark:bg-gray-800 border border-red-200 dark:border-red-700 rounded-xl p-4 active:bg-red-50 dark:active:bg-red-900/20"
               >
                 <View className="flex-row items-center justify-center">
                   <Ionicons name="trash-outline" size={20} color="#dc2626" />
-                  <Text className="text-red-600 font-semibold ml-2">
+                  <Text className="text-red-600 dark:text-red-400 font-semibold ml-2">
                     Remove Bank Account
                   </Text>
                 </View>
@@ -172,9 +172,9 @@ export default function BankAccountScreen({ navigation }: Props) {
           ) : (
             <>
               {/* Edit Form */}
-              <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-6">
-                <View className="p-4 border-b border-gray-200">
-                  <Text className="text-sm font-semibold text-gray-700 mb-2">
+              <View className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
+                <View className="p-4 border-b border-gray-200 dark:border-gray-700">
+                  <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     Account Holder Name
                   </Text>
                   <TextInput
@@ -184,12 +184,12 @@ export default function BankAccountScreen({ navigation }: Props) {
                     }
                     placeholder="Full name on account"
                     placeholderTextColor="#9ca3af"
-                    className="text-base text-gray-900 py-2"
+                    className="text-base text-gray-900 dark:text-white py-2"
                   />
                 </View>
 
-                <View className="p-4 border-b border-gray-200">
-                  <Text className="text-sm font-semibold text-gray-700 mb-2">
+                <View className="p-4 border-b border-gray-200 dark:border-gray-700">
+                  <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     Bank Name
                   </Text>
                   <TextInput
@@ -199,12 +199,12 @@ export default function BankAccountScreen({ navigation }: Props) {
                     }
                     placeholder="e.g., Chase Bank"
                     placeholderTextColor="#9ca3af"
-                    className="text-base text-gray-900 py-2"
+                    className="text-base text-gray-900 dark:text-white py-2"
                   />
                 </View>
 
-                <View className="p-4 border-b border-gray-200">
-                  <Text className="text-sm font-semibold text-gray-700 mb-2">
+                <View className="p-4 border-b border-gray-200 dark:border-gray-700">
+                  <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     Routing Number
                   </Text>
                   <TextInput
@@ -216,12 +216,12 @@ export default function BankAccountScreen({ navigation }: Props) {
                     placeholderTextColor="#9ca3af"
                     keyboardType="number-pad"
                     maxLength={9}
-                    className="text-base text-gray-900 py-2"
+                    className="text-base text-gray-900 dark:text-white py-2"
                   />
                 </View>
 
-                <View className="p-4 border-b border-gray-200">
-                  <Text className="text-sm font-semibold text-gray-700 mb-2">
+                <View className="p-4 border-b border-gray-200 dark:border-gray-700">
+                  <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     Account Number
                   </Text>
                   <TextInput
@@ -233,12 +233,12 @@ export default function BankAccountScreen({ navigation }: Props) {
                     placeholderTextColor="#9ca3af"
                     keyboardType="number-pad"
                     secureTextEntry
-                    className="text-base text-gray-900 py-2"
+                    className="text-base text-gray-900 dark:text-white py-2"
                   />
                 </View>
 
                 <View className="p-4">
-                  <Text className="text-sm font-semibold text-gray-700 mb-3">
+                  <Text className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                     Account Type
                   </Text>
                   <View className="flex-row gap-3">
@@ -248,15 +248,15 @@ export default function BankAccountScreen({ navigation }: Props) {
                       }
                       className={`flex-1 p-3 rounded-xl border-2 ${
                         editedInfo.accountType === "checking"
-                          ? "bg-blue-50 border-blue-600"
-                          : "bg-white border-gray-200"
+                          ? "bg-blue-50 dark:bg-blue-900/30 border-blue-600 dark:border-blue-500"
+                          : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                       }`}
                     >
                       <Text
                         className={`text-center font-semibold ${
                           editedInfo.accountType === "checking"
-                            ? "text-blue-600"
-                            : "text-gray-700"
+                            ? "text-blue-600 dark:text-blue-400"
+                            : "text-gray-700 dark:text-gray-300"
                         }`}
                       >
                         Checking
@@ -268,15 +268,15 @@ export default function BankAccountScreen({ navigation }: Props) {
                       }
                       className={`flex-1 p-3 rounded-xl border-2 ${
                         editedInfo.accountType === "savings"
-                          ? "bg-blue-50 border-blue-600"
-                          : "bg-white border-gray-200"
+                          ? "bg-blue-50 dark:bg-blue-900/30 border-blue-600 dark:border-blue-500"
+                          : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                       }`}
                     >
                       <Text
                         className={`text-center font-semibold ${
                           editedInfo.accountType === "savings"
-                            ? "text-blue-600"
-                            : "text-gray-700"
+                            ? "text-blue-600 dark:text-blue-400"
+                            : "text-gray-700 dark:text-gray-300"
                         }`}
                       >
                         Savings
@@ -287,9 +287,9 @@ export default function BankAccountScreen({ navigation }: Props) {
               </View>
 
               {/* Security Info */}
-              <View className="bg-blue-50 rounded-xl p-4 mb-6 flex-row">
+              <View className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 mb-6 flex-row">
                 <Ionicons name="shield-checkmark" size={20} color="#2563eb" />
-                <Text className="flex-1 text-sm text-gray-700 ml-3">
+                <Text className="flex-1 text-sm text-gray-700 dark:text-gray-300 ml-3">
                   Your bank information is encrypted and secure. We use bank-level
                   security to protect your data.
                 </Text>
@@ -302,15 +302,15 @@ export default function BankAccountScreen({ navigation }: Props) {
                     setEditedInfo(bankInfo);
                     setIsEditing(false);
                   }}
-                  className="flex-1 bg-gray-100 py-4 rounded-xl items-center active:bg-gray-200"
+                  className="flex-1 bg-gray-100 dark:bg-gray-700 py-4 rounded-xl items-center active:bg-gray-200 dark:active:bg-gray-600"
                 >
-                  <Text className="text-gray-700 font-bold text-base">Cancel</Text>
+                  <Text className="text-gray-700 dark:text-gray-300 font-bold text-base">Cancel</Text>
                 </Pressable>
                 <Pressable
                   onPress={handleSave}
                   disabled={isSaving}
-                  className={`flex-1 bg-blue-600 py-4 rounded-xl items-center ${
-                    isSaving ? "opacity-50" : "active:bg-blue-700"
+                  className={`flex-1 bg-blue-600 dark:bg-blue-500 py-4 rounded-xl items-center ${
+                    isSaving ? "opacity-50" : "active:bg-blue-700 dark:active:bg-blue-600"
                   }`}
                 >
                   <Text className="text-white font-bold text-base">

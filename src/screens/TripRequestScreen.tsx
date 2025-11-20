@@ -49,7 +49,7 @@ export default function TripRequestScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={["top"]}>
       <ScrollView className="flex-1">
         <View className="px-6 py-4">
           {/* Header */}
@@ -57,20 +57,20 @@ export default function TripRequestScreen({ navigation }: Props) {
             <Pressable onPress={() => navigation.goBack()}>
               <Ionicons name="arrow-back" size={28} color="#1f2937" />
             </Pressable>
-            <Text className="text-xl font-bold text-gray-900">Request a Ride</Text>
+            <Text className="text-xl font-bold text-gray-900 dark:text-white">Request a Ride</Text>
             <View className="w-7" />
           </View>
 
           {/* Pickup Location */}
           <View className="mb-4">
-            <Text className="text-sm font-medium text-gray-700 mb-2">Pickup Location</Text>
-            <View className="flex-row items-center border border-gray-300 rounded-xl px-4 py-3">
+            <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Pickup Location</Text>
+            <View className="flex-row items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-3">
               <Ionicons name="locate" size={20} color="#2563eb" />
               <TextInput
                 value={pickupAddress}
                 onChangeText={setPickupAddress}
                 placeholder="Enter pickup address"
-                className="flex-1 ml-3 text-base"
+                className="flex-1 ml-3 text-base text-gray-900 dark:text-white"
                 placeholderTextColor="#9ca3af"
               />
             </View>
@@ -78,14 +78,14 @@ export default function TripRequestScreen({ navigation }: Props) {
 
           {/* Dropoff Location */}
           <View className="mb-4">
-            <Text className="text-sm font-medium text-gray-700 mb-2">Drop-off Location</Text>
-            <View className="flex-row items-center border border-gray-300 rounded-xl px-4 py-3">
+            <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Drop-off Location</Text>
+            <View className="flex-row items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-3">
               <Ionicons name="location" size={20} color="#dc2626" />
               <TextInput
                 value={dropoffAddress}
                 onChangeText={setDropoffAddress}
                 placeholder="Enter destination"
-                className="flex-1 ml-3 text-base"
+                className="flex-1 ml-3 text-base text-gray-900 dark:text-white"
                 placeholderTextColor="#9ca3af"
               />
             </View>
@@ -93,20 +93,20 @@ export default function TripRequestScreen({ navigation }: Props) {
 
           {/* Saved Locations */}
           <View className="mb-6">
-            <Text className="text-sm font-medium text-gray-700 mb-3">Saved Locations</Text>
+            <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Saved Locations</Text>
             <View className="flex-row flex-wrap gap-2">
               {savedLocations.map((location) => (
                 <Pressable
                   key={location.id}
                   onPress={() => selectSavedLocation(location.location.address, "dropoff")}
-                  className="bg-blue-50 rounded-full px-4 py-2 flex-row items-center active:bg-blue-100"
+                  className="bg-blue-50 dark:bg-blue-900/30 rounded-full px-4 py-2 flex-row items-center active:bg-blue-100 dark:active:bg-blue-900/50"
                 >
                   <Ionicons
                     name={location.icon as any}
                     size={16}
                     color="#2563eb"
                   />
-                  <Text className="text-blue-700 font-medium ml-2">
+                  <Text className="text-blue-700 dark:text-blue-400 font-medium ml-2">
                     {location.name}
                   </Text>
                 </Pressable>
@@ -116,19 +116,19 @@ export default function TripRequestScreen({ navigation }: Props) {
 
           {/* When Section */}
           <View className="mb-4">
-            <Text className="text-sm font-medium text-gray-700 mb-3">When</Text>
+            <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">When</Text>
             <View className="flex-row gap-3">
               <Pressable
                 onPress={() => setWhenOption("now")}
                 className={`flex-1 rounded-xl py-3 px-4 ${
                   whenOption === "now"
-                    ? "bg-blue-600"
-                    : "bg-gray-100"
+                    ? "bg-blue-600 dark:bg-blue-500"
+                    : "bg-gray-100 dark:bg-gray-700/50"
                 }`}
               >
                 <Text
                   className={`text-center font-semibold ${
-                    whenOption === "now" ? "text-white" : "text-gray-700"
+                    whenOption === "now" ? "text-white" : "text-gray-700 dark:text-gray-300"
                   }`}
                 >
                   Now
@@ -138,13 +138,13 @@ export default function TripRequestScreen({ navigation }: Props) {
                 onPress={() => setWhenOption("later")}
                 className={`flex-1 rounded-xl py-3 px-4 ${
                   whenOption === "later"
-                    ? "bg-blue-600"
-                    : "bg-gray-100"
+                    ? "bg-blue-600 dark:bg-blue-500"
+                    : "bg-gray-100 dark:bg-gray-700/50"
                 }`}
               >
                 <Text
                   className={`text-center font-semibold ${
-                    whenOption === "later" ? "text-white" : "text-gray-700"
+                    whenOption === "later" ? "text-white" : "text-gray-700 dark:text-gray-300"
                   }`}
                 >
                   Later
@@ -155,18 +155,18 @@ export default function TripRequestScreen({ navigation }: Props) {
 
           {/* Passengers */}
           <View className="mb-6">
-            <Text className="text-sm font-medium text-gray-700 mb-3">Passengers</Text>
-            <View className="flex-row items-center justify-between bg-gray-50 rounded-xl p-4">
+            <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Passengers</Text>
+            <View className="flex-row items-center justify-between bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
               <Pressable
                 onPress={() => setPassengers(Math.max(1, passengers - 1))}
-                className="w-10 h-10 bg-white rounded-full items-center justify-center border border-gray-300"
+                className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full items-center justify-center border border-gray-300 dark:border-gray-700"
               >
                 <Ionicons name="remove" size={20} color="#1f2937" />
               </Pressable>
-              <Text className="text-xl font-semibold text-gray-900">{passengers}</Text>
+              <Text className="text-xl font-semibold text-gray-900 dark:text-white">{passengers}</Text>
               <Pressable
                 onPress={() => setPassengers(Math.min(4, passengers + 1))}
-                className="w-10 h-10 bg-white rounded-full items-center justify-center border border-gray-300"
+                className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full items-center justify-center border border-gray-300 dark:border-gray-700"
               >
                 <Ionicons name="add" size={20} color="#1f2937" />
               </Pressable>
@@ -174,9 +174,9 @@ export default function TripRequestScreen({ navigation }: Props) {
           </View>
 
           {/* Info Tip */}
-          <View className="bg-blue-50 rounded-xl p-4 mb-6 flex-row">
+          <View className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 mb-6 flex-row">
             <Ionicons name="information-circle" size={20} color="#2563eb" />
-            <Text className="flex-1 ml-3 text-sm text-blue-900">
+            <Text className="flex-1 ml-3 text-sm text-blue-900 dark:text-blue-300">
               Scheduling 1 hour ahead increases your chances of finding a match
             </Text>
           </View>
@@ -187,8 +187,8 @@ export default function TripRequestScreen({ navigation }: Props) {
             disabled={!pickupAddress || !dropoffAddress || isSearching}
             className={`rounded-2xl py-4 px-6 ${
               pickupAddress && dropoffAddress && !isSearching
-                ? "bg-blue-600 active:bg-blue-700"
-                : "bg-gray-300"
+                ? "bg-blue-600 dark:bg-blue-500 active:bg-blue-700 dark:active:bg-blue-600"
+                : "bg-gray-300 dark:bg-gray-700"
             }`}
           >
             <Text className="text-white text-center text-lg font-semibold">

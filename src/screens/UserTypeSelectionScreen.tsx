@@ -44,12 +44,12 @@ export default function UserTypeSelectionScreen({ navigation, route }: Props) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-gray-900">
       <View className="flex-1 px-6 py-4">
-        <Text className="text-3xl font-bold text-gray-900 mb-2">
+        <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
           Welcome to RouteShare
         </Text>
-        <Text className="text-base text-gray-600 mb-8">
+        <Text className="text-base text-gray-600 dark:text-gray-300 mb-8">
           Let us know how you plan to use the app
         </Text>
 
@@ -59,13 +59,13 @@ export default function UserTypeSelectionScreen({ navigation, route }: Props) {
             onPress={() => setSelectedType("rider")}
             className={`border-2 rounded-2xl p-5 flex-row items-center ${
               selectedType === "rider"
-                ? "border-blue-600 bg-blue-50"
-                : "border-gray-300 bg-white"
+                ? "border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/30"
+                : "border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800"
             }`}
           >
             <View
               className={`w-14 h-14 rounded-full items-center justify-center mr-4 ${
-                selectedType === "rider" ? "bg-blue-600" : "bg-gray-100"
+                selectedType === "rider" ? "bg-blue-600 dark:bg-blue-500" : "bg-gray-100 dark:bg-gray-700"
               }`}
             >
               <Ionicons
@@ -75,10 +75,10 @@ export default function UserTypeSelectionScreen({ navigation, route }: Props) {
               />
             </View>
             <View className="flex-1">
-              <Text className="text-lg font-semibold text-gray-900">
+              <Text className="text-lg font-semibold text-gray-900 dark:text-white">
                 I need a ride
               </Text>
-              <Text className="text-sm text-gray-600">
+              <Text className="text-sm text-gray-600 dark:text-gray-400">
                 Find drivers heading your way
               </Text>
             </View>
@@ -91,13 +91,13 @@ export default function UserTypeSelectionScreen({ navigation, route }: Props) {
             onPress={() => setSelectedType("driver")}
             className={`border-2 rounded-2xl p-5 flex-row items-center ${
               selectedType === "driver"
-                ? "border-blue-600 bg-blue-50"
-                : "border-gray-300 bg-white"
+                ? "border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/30"
+                : "border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800"
             }`}
           >
             <View
               className={`w-14 h-14 rounded-full items-center justify-center mr-4 ${
-                selectedType === "driver" ? "bg-blue-600" : "bg-gray-100"
+                selectedType === "driver" ? "bg-blue-600 dark:bg-blue-500" : "bg-gray-100 dark:bg-gray-700"
               }`}
             >
               <Ionicons
@@ -107,10 +107,10 @@ export default function UserTypeSelectionScreen({ navigation, route }: Props) {
               />
             </View>
             <View className="flex-1">
-              <Text className="text-lg font-semibold text-gray-900">
+              <Text className="text-lg font-semibold text-gray-900 dark:text-white">
                 I am a driver
               </Text>
-              <Text className="text-sm text-gray-600">
+              <Text className="text-sm text-gray-600 dark:text-gray-400">
                 Earn money on trips you are already taking
               </Text>
             </View>
@@ -124,33 +124,33 @@ export default function UserTypeSelectionScreen({ navigation, route }: Props) {
         {selectedType && (
           <View className="space-y-4">
             <View>
-              <Text className="text-sm font-medium text-gray-700 mb-2">
+              <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 First Name
               </Text>
               <TextInput
                 value={firstName}
                 onChangeText={setFirstName}
                 placeholder="Enter your first name"
-                className="border border-gray-300 rounded-xl px-4 py-3 text-base"
+                className="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl px-4 py-3 text-base text-gray-900 dark:text-white"
                 placeholderTextColor="#9ca3af"
               />
             </View>
 
             <View>
-              <Text className="text-sm font-medium text-gray-700 mb-2">
+              <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Last Name
               </Text>
               <TextInput
                 value={lastName}
                 onChangeText={setLastName}
                 placeholder="Enter your last name"
-                className="border border-gray-300 rounded-xl px-4 py-3 text-base"
+                className="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl px-4 py-3 text-base text-gray-900 dark:text-white"
                 placeholderTextColor="#9ca3af"
               />
             </View>
 
             <View>
-              <Text className="text-sm font-medium text-gray-700 mb-2">
+              <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Phone Number
               </Text>
               <TextInput
@@ -158,12 +158,12 @@ export default function UserTypeSelectionScreen({ navigation, route }: Props) {
                 onChangeText={setPhone}
                 placeholder="+1 (555) 123-4567"
                 keyboardType="phone-pad"
-                className="border border-gray-300 rounded-xl px-4 py-3 text-base"
+                className="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl px-4 py-3 text-base text-gray-900 dark:text-white"
                 placeholderTextColor="#9ca3af"
                 editable={!route.params?.phone}
               />
               {route.params?.phone && (
-                <Text className="text-xs text-green-600 mt-1">
+                <Text className="text-xs text-green-600 dark:text-green-400 mt-1">
                   Phone number verified
                 </Text>
               )}
@@ -178,8 +178,8 @@ export default function UserTypeSelectionScreen({ navigation, route }: Props) {
             disabled={!selectedType || !firstName || !lastName || !phone}
             className={`rounded-2xl py-4 px-6 ${
               selectedType && firstName && lastName && phone
-                ? "bg-blue-600 active:bg-blue-700"
-                : "bg-gray-300"
+                ? "bg-blue-600 dark:bg-blue-500 active:bg-blue-700 dark:active:bg-blue-600"
+                : "bg-gray-300 dark:bg-gray-700"
             }`}
           >
             <Text className="text-white text-center text-lg font-semibold">

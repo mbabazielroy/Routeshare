@@ -109,51 +109,51 @@ export default function DocumentsScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={["top"]}>
       {/* Header */}
-      <View className="bg-white px-6 py-4 border-b border-gray-200">
+      <View className="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <View className="flex-row items-center">
           <Pressable onPress={() => navigation.goBack()} className="mr-3">
-            <Ionicons name="arrow-back" size={24} color="#111827" />
+            <Ionicons name="arrow-back" size={24} color="#111827" className="dark:text-white" />
           </Pressable>
-          <Text className="text-2xl font-bold text-gray-900 flex-1">Documents</Text>
+          <Text className="text-2xl font-bold text-gray-900 dark:text-white flex-1">Documents</Text>
         </View>
       </View>
 
       <ScrollView className="flex-1">
         <View className="px-6 py-6">
           {/* Status Summary */}
-          <View className="bg-white rounded-2xl p-4 mb-6 border border-gray-200">
-            <Text className="text-lg font-bold text-gray-900 mb-4">
+          <View className="bg-white dark:bg-gray-800 rounded-2xl p-4 mb-6 border border-gray-200 dark:border-gray-700">
+            <Text className="text-lg font-bold text-gray-900 dark:text-white mb-4">
               Verification Status
             </Text>
             <View className="flex-row justify-between">
               <View className="items-center flex-1">
-                <View className="w-12 h-12 bg-green-50 rounded-full items-center justify-center mb-2">
-                  <Text className="text-xl font-bold text-green-600">2</Text>
+                <View className="w-12 h-12 bg-green-50 dark:bg-green-900/30 rounded-full items-center justify-center mb-2">
+                  <Text className="text-xl font-bold text-green-600 dark:text-green-400">2</Text>
                 </View>
-                <Text className="text-xs text-gray-600 text-center">Verified</Text>
+                <Text className="text-xs text-gray-600 dark:text-gray-300 text-center">Verified</Text>
               </View>
               <View className="items-center flex-1">
-                <View className="w-12 h-12 bg-yellow-50 rounded-full items-center justify-center mb-2">
-                  <Text className="text-xl font-bold text-yellow-600">1</Text>
+                <View className="w-12 h-12 bg-yellow-50 dark:bg-yellow-900/30 rounded-full items-center justify-center mb-2">
+                  <Text className="text-xl font-bold text-yellow-600 dark:text-yellow-400">1</Text>
                 </View>
-                <Text className="text-xs text-gray-600 text-center">Pending</Text>
+                <Text className="text-xs text-gray-600 dark:text-gray-300 text-center">Pending</Text>
               </View>
               <View className="items-center flex-1">
-                <View className="w-12 h-12 bg-gray-50 rounded-full items-center justify-center mb-2">
-                  <Text className="text-xl font-bold text-gray-600">1</Text>
+                <View className="w-12 h-12 bg-gray-50 dark:bg-gray-700 rounded-full items-center justify-center mb-2">
+                  <Text className="text-xl font-bold text-gray-600 dark:text-gray-300">1</Text>
                 </View>
-                <Text className="text-xs text-gray-600 text-center">Missing</Text>
+                <Text className="text-xs text-gray-600 dark:text-gray-300 text-center">Missing</Text>
               </View>
             </View>
           </View>
 
           {/* Documents List */}
-          <Text className="text-sm font-semibold text-gray-500 mb-3 px-2">
+          <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 px-2">
             REQUIRED DOCUMENTS
           </Text>
-          <View className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+          <View className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             {documents.map((doc, index) => {
               const statusStyle = getStatusStyle(doc.status);
               const isLast = index === documents.length - 1;
@@ -161,10 +161,10 @@ export default function DocumentsScreen({ navigation }: Props) {
               return (
                 <View
                   key={doc.id}
-                  className={`p-4 ${!isLast ? "border-b border-gray-200" : ""}`}
+                  className={`p-4 ${!isLast ? "border-b border-gray-200 dark:border-gray-700" : ""}`}
                 >
                   <View className="flex-row items-start">
-                    <View className="w-12 h-12 bg-blue-50 rounded-xl items-center justify-center mr-3">
+                    <View className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-xl items-center justify-center mr-3">
                       <Ionicons
                         name={getDocumentIcon(doc.type) as any}
                         size={24}
@@ -173,7 +173,7 @@ export default function DocumentsScreen({ navigation }: Props) {
                     </View>
                     <View className="flex-1">
                       <View className="flex-row items-center justify-between mb-1">
-                        <Text className="text-base font-semibold text-gray-900">
+                        <Text className="text-base font-semibold text-gray-900 dark:text-white">
                           {doc.name}
                         </Text>
                         <View
@@ -191,13 +191,13 @@ export default function DocumentsScreen({ navigation }: Props) {
                       </View>
 
                       {doc.uploadedAt && (
-                        <Text className="text-sm text-gray-600 mb-1">
+                        <Text className="text-sm text-gray-600 dark:text-gray-300 mb-1">
                           Uploaded: {new Date(doc.uploadedAt).toLocaleDateString()}
                         </Text>
                       )}
 
                       {doc.expiresAt && (
-                        <Text className="text-sm text-gray-600 mb-1">
+                        <Text className="text-sm text-gray-600 dark:text-gray-300 mb-1">
                           Expires: {new Date(doc.expiresAt).toLocaleDateString()}
                         </Text>
                       )}
@@ -207,7 +207,7 @@ export default function DocumentsScreen({ navigation }: Props) {
                         {doc.status === "missing" ? (
                           <Pressable
                             onPress={() => handleUpload(doc.id)}
-                            className="bg-blue-600 px-4 py-2 rounded-lg active:bg-blue-700"
+                            className="bg-blue-600 dark:bg-blue-500 px-4 py-2 rounded-lg active:bg-blue-700 dark:active:bg-blue-600"
                           >
                             <Text className="text-white font-semibold text-sm">Upload</Text>
                           </Pressable>
@@ -215,17 +215,17 @@ export default function DocumentsScreen({ navigation }: Props) {
                           <>
                             <Pressable
                               onPress={() => handleView(doc.id)}
-                              className="bg-gray-100 px-4 py-2 rounded-lg active:bg-gray-200"
+                              className="bg-gray-100 dark:bg-gray-700 px-4 py-2 rounded-lg active:bg-gray-200 dark:active:bg-gray-600"
                             >
-                              <Text className="text-gray-700 font-semibold text-sm">
+                              <Text className="text-gray-700 dark:text-gray-300 font-semibold text-sm">
                                 View
                               </Text>
                             </Pressable>
                             <Pressable
                               onPress={() => handleUpload(doc.id)}
-                              className="bg-gray-100 px-4 py-2 rounded-lg active:bg-gray-200"
+                              className="bg-gray-100 dark:bg-gray-700 px-4 py-2 rounded-lg active:bg-gray-200 dark:active:bg-gray-600"
                             >
-                              <Text className="text-gray-700 font-semibold text-sm">
+                              <Text className="text-gray-700 dark:text-gray-300 font-semibold text-sm">
                                 Replace
                               </Text>
                             </Pressable>
@@ -240,13 +240,13 @@ export default function DocumentsScreen({ navigation }: Props) {
           </View>
 
           {/* Info Box */}
-          <View className="bg-blue-50 rounded-xl p-4 mt-6 flex-row">
+          <View className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 mt-6 flex-row">
             <Ionicons name="information-circle" size={20} color="#2563eb" />
             <View className="flex-1 ml-3">
-              <Text className="text-sm font-semibold text-gray-900 mb-1">
+              <Text className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
                 Document Requirements
               </Text>
-              <Text className="text-sm text-gray-700">
+              <Text className="text-sm text-gray-700 dark:text-gray-300">
                 All documents must be current and valid. We verify your documents within
                 24-48 hours. You will receive a notification once verification is complete.
               </Text>

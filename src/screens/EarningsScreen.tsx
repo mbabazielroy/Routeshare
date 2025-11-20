@@ -60,12 +60,12 @@ export default function EarningsScreen({ navigation }: Props) {
   const maxAmount = Math.max(...weeklyData.map((d) => d.amount));
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900">
       <ScrollView className="flex-1">
         {/* Header */}
-        <View className="bg-white px-6 py-6 border-b border-gray-200">
-          <Text className="text-3xl font-bold text-gray-900 mb-1">Earnings</Text>
-          <Text className="text-base text-gray-600">
+        <View className="bg-white dark:bg-gray-800 px-6 py-6 border-b border-gray-200 dark:border-gray-700">
+          <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Earnings</Text>
+          <Text className="text-base text-gray-600 dark:text-gray-300">
             Track your income and performance
           </Text>
         </View>
@@ -78,13 +78,13 @@ export default function EarningsScreen({ navigation }: Props) {
                 onPress={() => setSelectedPeriod("today")}
                 className={`px-4 py-2 rounded-xl ${
                   selectedPeriod === "today"
-                    ? "bg-blue-600"
-                    : "bg-white border border-gray-200"
+                    ? "bg-blue-600 dark:bg-blue-500"
+                    : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
                 }`}
               >
                 <Text
                   className={`font-semibold ${
-                    selectedPeriod === "today" ? "text-white" : "text-gray-700"
+                    selectedPeriod === "today" ? "text-white" : "text-gray-700 dark:text-gray-300"
                   }`}
                 >
                   Today
@@ -94,13 +94,13 @@ export default function EarningsScreen({ navigation }: Props) {
                 onPress={() => setSelectedPeriod("week")}
                 className={`px-4 py-2 rounded-xl ${
                   selectedPeriod === "week"
-                    ? "bg-blue-600"
-                    : "bg-white border border-gray-200"
+                    ? "bg-blue-600 dark:bg-blue-500"
+                    : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
                 }`}
               >
                 <Text
                   className={`font-semibold ${
-                    selectedPeriod === "week" ? "text-white" : "text-gray-700"
+                    selectedPeriod === "week" ? "text-white" : "text-gray-700 dark:text-gray-300"
                   }`}
                 >
                   This Week
@@ -110,13 +110,13 @@ export default function EarningsScreen({ navigation }: Props) {
                 onPress={() => setSelectedPeriod("month")}
                 className={`px-4 py-2 rounded-xl ${
                   selectedPeriod === "month"
-                    ? "bg-blue-600"
-                    : "bg-white border border-gray-200"
+                    ? "bg-blue-600 dark:bg-blue-500"
+                    : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
                 }`}
               >
                 <Text
                   className={`font-semibold ${
-                    selectedPeriod === "month" ? "text-white" : "text-gray-700"
+                    selectedPeriod === "month" ? "text-white" : "text-gray-700 dark:text-gray-300"
                   }`}
                 >
                   This Month
@@ -126,13 +126,13 @@ export default function EarningsScreen({ navigation }: Props) {
                 onPress={() => setSelectedPeriod("all")}
                 className={`px-4 py-2 rounded-xl ${
                   selectedPeriod === "all"
-                    ? "bg-blue-600"
-                    : "bg-white border border-gray-200"
+                    ? "bg-blue-600 dark:bg-blue-500"
+                    : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
                 }`}
               >
                 <Text
                   className={`font-semibold ${
-                    selectedPeriod === "all" ? "text-white" : "text-gray-700"
+                    selectedPeriod === "all" ? "text-white" : "text-gray-700 dark:text-gray-300"
                   }`}
                 >
                   All Time
@@ -163,23 +163,23 @@ export default function EarningsScreen({ navigation }: Props) {
         {/* Stats Grid */}
         <View className="mx-6 mt-4">
           <View className="flex-row gap-3">
-            <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-200">
-              <View className="w-10 h-10 bg-green-50 rounded-full items-center justify-center mb-3">
+            <View className="flex-1 bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-200 dark:border-gray-700">
+              <View className="w-10 h-10 bg-green-50 dark:bg-green-900/30 rounded-full items-center justify-center mb-3">
                 <Ionicons name="cash" size={20} color="#16a34a" />
               </View>
-              <Text className="text-2xl font-bold text-gray-900">
+              <Text className="text-2xl font-bold text-gray-900 dark:text-white">
                 ${avgPerTrip.toFixed(2)}
               </Text>
-              <Text className="text-sm text-gray-600 mt-1">Avg per Trip</Text>
+              <Text className="text-sm text-gray-600 dark:text-gray-300 mt-1">Avg per Trip</Text>
             </View>
-            <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-200">
-              <View className="w-10 h-10 bg-purple-50 rounded-full items-center justify-center mb-3">
+            <View className="flex-1 bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-200 dark:border-gray-700">
+              <View className="w-10 h-10 bg-purple-50 dark:bg-purple-900/30 rounded-full items-center justify-center mb-3">
                 <Ionicons name="car" size={20} color="#9333ea" />
               </View>
-              <Text className="text-2xl font-bold text-gray-900">
+              <Text className="text-2xl font-bold text-gray-900 dark:text-white">
                 {currentTrips}
               </Text>
-              <Text className="text-sm text-gray-600 mt-1">Total Trips</Text>
+              <Text className="text-sm text-gray-600 dark:text-gray-300 mt-1">Total Trips</Text>
             </View>
           </View>
         </View>
@@ -187,8 +187,8 @@ export default function EarningsScreen({ navigation }: Props) {
         {/* Weekly Chart */}
         {selectedPeriod === "week" && (
           <View className="mx-6 mt-4">
-            <View className="bg-white rounded-2xl p-5 border border-gray-200">
-              <Text className="text-lg font-bold text-gray-900 mb-4">
+            <View className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700">
+              <Text className="text-lg font-bold text-gray-900 dark:text-white mb-4">
                 This Week
               </Text>
               <View className="flex-row items-end justify-between h-48">
@@ -197,15 +197,15 @@ export default function EarningsScreen({ navigation }: Props) {
                   return (
                     <View key={index} className="flex-1 items-center">
                       <View className="w-full items-center mb-2">
-                        <Text className="text-xs font-semibold text-gray-900 mb-1">
+                        <Text className="text-xs font-semibold text-gray-900 dark:text-white mb-1">
                           ${day.amount.toFixed(0)}
                         </Text>
                         <View
-                          className="w-8 bg-blue-600 rounded-t-lg"
+                          className="w-8 bg-blue-600 dark:bg-blue-500 rounded-t-lg"
                           style={{ height: `${height}%` }}
                         />
                       </View>
-                      <Text className="text-xs text-gray-600 mt-2">{day.day}</Text>
+                      <Text className="text-xs text-gray-600 dark:text-gray-400 mt-2">{day.day}</Text>
                     </View>
                   );
                 })}
@@ -216,28 +216,28 @@ export default function EarningsScreen({ navigation }: Props) {
 
         {/* Earnings Breakdown */}
         <View className="mx-6 mt-4">
-          <Text className="text-lg font-bold text-gray-900 mb-3 px-2">
+          <Text className="text-lg font-bold text-gray-900 dark:text-white mb-3 px-2">
             Earnings Breakdown
           </Text>
-          <View className="bg-white rounded-2xl p-5 border border-gray-200">
+          <View className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700">
             <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-sm text-gray-600">Your Earnings (85%)</Text>
-              <Text className="text-base font-bold text-gray-900">
+              <Text className="text-sm text-gray-600 dark:text-gray-300">Your Earnings (85%)</Text>
+              <Text className="text-base font-bold text-gray-900 dark:text-white">
                 ${(currentEarnings * 0.85).toFixed(2)}
               </Text>
             </View>
             <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-sm text-gray-600">Platform Fee (15%)</Text>
-              <Text className="text-base font-bold text-gray-900">
+              <Text className="text-sm text-gray-600 dark:text-gray-300">Platform Fee (15%)</Text>
+              <Text className="text-base font-bold text-gray-900 dark:text-white">
                 ${(currentEarnings * 0.15).toFixed(2)}
               </Text>
             </View>
-            <View className="h-px bg-gray-200 my-2" />
+            <View className="h-px bg-gray-200 dark:bg-gray-700 my-2" />
             <View className="flex-row justify-between items-center">
-              <Text className="text-sm font-semibold text-gray-900">
+              <Text className="text-sm font-semibold text-gray-900 dark:text-white">
                 Total Fares
               </Text>
-              <Text className="text-lg font-bold text-gray-900">
+              <Text className="text-lg font-bold text-gray-900 dark:text-white">
                 ${currentEarnings.toFixed(2)}
               </Text>
             </View>
@@ -246,7 +246,7 @@ export default function EarningsScreen({ navigation }: Props) {
 
         {/* Cash Out */}
         <View className="mx-6 mt-4 mb-6">
-          <Pressable className="bg-green-600 rounded-2xl py-4 px-6 active:bg-green-700">
+          <Pressable className="bg-green-600 dark:bg-green-500 rounded-2xl py-4 px-6 active:bg-green-700 dark:active:bg-green-600">
             <View className="flex-row items-center justify-center">
               <Ionicons name="wallet" size={20} color="white" />
               <Text className="ml-2 text-white font-bold text-base">
@@ -254,7 +254,7 @@ export default function EarningsScreen({ navigation }: Props) {
               </Text>
             </View>
           </Pressable>
-          <Text className="text-center text-xs text-gray-500 mt-3">
+          <Text className="text-center text-xs text-gray-500 dark:text-gray-400 mt-3">
             Available balance • Instant transfer to your bank
           </Text>
         </View>

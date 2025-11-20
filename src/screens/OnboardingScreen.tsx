@@ -83,11 +83,11 @@ export default function OnboardingScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-gray-900">
       {/* Skip Button */}
       <View className="px-6 py-4 flex-row justify-end">
         <Pressable onPress={handleSkip} className="px-4 py-2">
-          <Text className="text-blue-600 font-semibold text-base">Skip</Text>
+          <Text className="text-blue-600 dark:text-blue-400 font-semibold text-base">Skip</Text>
         </Pressable>
       </View>
 
@@ -116,12 +116,12 @@ export default function OnboardingScreen({ navigation }: Props) {
             </View>
 
             {/* Title */}
-            <Text className="text-3xl font-bold text-gray-900 text-center mb-4">
+            <Text className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-4">
               {slide.title}
             </Text>
 
             {/* Description */}
-            <Text className="text-base text-gray-600 text-center leading-6">
+            <Text className="text-base text-gray-600 dark:text-gray-300 text-center leading-6">
               {slide.description}
             </Text>
           </View>
@@ -137,8 +137,8 @@ export default function OnboardingScreen({ navigation }: Props) {
               key={index}
               className={`h-2 rounded-full mx-1 ${
                 index === currentIndex
-                  ? "w-8 bg-blue-600"
-                  : "w-2 bg-gray-300"
+                  ? "w-8 bg-blue-600 dark:bg-blue-500"
+                  : "w-2 bg-gray-300 dark:bg-gray-700"
               }`}
             />
           ))}
@@ -147,7 +147,7 @@ export default function OnboardingScreen({ navigation }: Props) {
         {/* Next/Get Started Button */}
         <Pressable
           onPress={handleNext}
-          className="bg-blue-600 rounded-2xl py-4 items-center active:bg-blue-700"
+          className="bg-blue-600 dark:bg-blue-500 rounded-2xl py-4 items-center active:bg-blue-700 dark:active:bg-blue-600"
         >
           <Text className="text-white font-bold text-lg">
             {currentIndex === slides.length - 1 ? "Get Started" : "Next"}
