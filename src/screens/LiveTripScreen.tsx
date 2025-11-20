@@ -252,11 +252,18 @@ export default function LiveTripScreen({ navigation, route }: Props) {
               </Pressable>
 
               <Pressable
+                onPress={() => navigation.navigate("InAppMessaging", { conversationId: `trip_${currentTrip.id}` })}
+                className="flex-1 bg-blue-50 dark:bg-blue-900/30 rounded-xl py-3 flex-row items-center justify-center active:bg-blue-100 dark:active:bg-blue-900/50"
+              >
+                <Ionicons name="chatbubble" size={20} color="#2563eb" />
+                <Text className="ml-2 font-semibold text-blue-600 dark:text-blue-400">Message</Text>
+              </Pressable>
+
+              <Pressable
                 onPress={() => setShowCancelConfirm(true)}
-                className="flex-1 bg-red-50 dark:bg-red-900/30 rounded-xl py-3 flex-row items-center justify-center active:bg-red-100 dark:active:bg-red-900/50"
+                className="bg-red-50 dark:bg-red-900/30 rounded-xl px-4 py-3 active:bg-red-100 dark:active:bg-red-900/50"
               >
                 <Ionicons name="close-circle" size={20} color="#dc2626" />
-                <Text className="ml-2 font-semibold text-red-600 dark:text-red-400">Cancel</Text>
               </Pressable>
 
               <Pressable className="bg-blue-600 dark:bg-blue-500 rounded-xl px-4 py-3 active:bg-blue-700 dark:active:bg-blue-600">

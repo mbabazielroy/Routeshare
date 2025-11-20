@@ -46,8 +46,8 @@ export default function RiderRequestScreen({ route, navigation }: Props) {
   };
 
   const handleMessage = () => {
-    // In production, this would open in-app messaging
-    console.log("Open messaging");
+    // Navigate to in-app messaging with the rider
+    navigation.navigate("InAppMessaging", { conversationId: `request_${requestId}` });
   };
 
   // Calculate estimated detour and earnings
