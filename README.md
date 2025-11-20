@@ -135,20 +135,25 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
    - Driver/rider ratings calculated
    - Ready for written reviews
 
-9. ✅ **Dark Mode** - Complete theme customization with NativeWind
+9. ✅ **Dark Mode** - Complete theme customization with NativeWind v4
    - Theme settings screen with Light/Dark/System options
    - Theme state persisted with AsyncStorage across app restarts
    - NativeWind v4 integration with useColorScheme hook
    - Automatic system theme detection and following
-   - StatusBar style updates based on theme
-   - Dark mode styling applied to key screens:
-     - WelcomeScreen - full dark mode support
-     - ThemeSettingsScreen - theme selection with preview
-     - RiderHomeScreen - rider dashboard with dark styling
-     - RiderAccountScreen - account management with dark mode
+   - StatusBar style updates based on active theme (light/dark)
+   - Real-time theme switching without app restart
+   - Comprehensive dark mode styling applied to all major screens:
+     - ✅ WelcomeScreen - full dark mode support
+     - ✅ ThemeSettingsScreen - theme selection with live preview
+     - ✅ RiderHomeScreen - rider dashboard with complete dark styling
+     - ✅ RiderAccountScreen - account management with dark mode
+     - ✅ DriverHomeScreen - driver dashboard with dark theme support
+     - ✅ DriverAccountScreen - driver account with full dark styling
    - Pattern: `dark:` class variants (e.g., `bg-white dark:bg-gray-900`)
+   - Color scheme consistency: gray-900/800/700 backgrounds, adjusted borders and text
    - Accessible from both Rider and Driver account screens
    - Beautiful UI with live theme previews and info cards
+   - Properly configured Tailwind darkMode: "class" strategy
 
 10. ✅ **Onboarding Tutorial** - First-time user experience
     - Beautiful 4-slide tutorial showcasing key features

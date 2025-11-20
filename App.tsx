@@ -34,21 +34,20 @@ const openai_api_key = Constants.expoConfig.extra.apikey;
 export default function App() {
   const startNetworkListener = useOfflineStore((s) => s.startNetworkListener);
   const theme = useThemeStore((s) => s.theme);
-  const { setColorScheme } = useColorScheme();
+  const { colorScheme, setColorScheme } = useColorScheme();
 
   useEffect(() => {
     // Initialize network status monitoring
     startNetworkListener();
   }, []);
 
-  // Apply theme when it changes
+  // Apply theme when it changes - force immediate update
   useEffect(() => {
-    if (theme === "system") {
-      setColorScheme("system");
-    } else {
-      setColorScheme(theme);
+    const newScheme = theme === "system" ? "system" : theme;
+    if (colorScheme !== newScheme) {
+      setColorScheme(newScheme);
     }
-  }, [theme, setColorScheme]);
+  }, [theme, colorScheme, setColorScheme]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -57,7 +56,7 @@ export default function App() {
           <RootNavigator />
           <OfflineIndicator />
           <Toast />
-          <StatusBar style="auto" />
+          <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
         </NavigationContainer>
       </SafeAreaProvider>
     </GestureHandlerRootView>
