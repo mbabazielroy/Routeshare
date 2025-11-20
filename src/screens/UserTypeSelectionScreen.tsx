@@ -18,7 +18,7 @@ export default function UserTypeSelectionScreen({ navigation, route }: Props) {
 
   const isNewUser = route.params?.isNewUser ?? true;
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!selectedType || !firstName || !lastName || !phone) return;
 
     const user: User = {
@@ -33,7 +33,7 @@ export default function UserTypeSelectionScreen({ navigation, route }: Props) {
       createdAt: new Date().toISOString(),
     };
 
-    setUser(user);
+    await setUser(user, "phone");
 
     // Navigate based on user type
     if (selectedType === "rider") {

@@ -1,13 +1,71 @@
-import React from "react";
-import { View, Text, Pressable, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Pressable, Image, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
+import { signInWithApple, signInWithGoogle, isAppleSignInAvailable } from "../services/oauthService";
+import { useAuthStore } from "../state/authStore";
+import { useToast } from "../components/Toast";
+import { getUserProfile } from "../services/firebaseAuth";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Welcome">;
 
 export default function WelcomeScreen({ navigation }: Props) {
+  const [isAppleAvailable, setIsAppleAvailable] = useState(false);
+  const [isLoadingApple, setIsLoadingApple] = useState(false);
+  const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
+  const setUser = useAuthStore((s) => s.setUser);
+  const showToast = useToast((s) => s.show);
+
+  useEffect(() => {
+    setIsAppleAvailable(isAppleSignInAvailable());
+  }, []);
+
+  const handleAppleSignIn = async () => {
+    setIsLoadingApple(true);
+    try {
+      const result = await signInWithApple();
+
+      // Get full user profile from Firestore
+      const userProfile = await getUserProfile(result.uid);
+
+      if (userProfile) {
+        await setUser(userProfile as any, "apple");
+        showToast("Successfully signed in with Apple", "success");
+      } else {
+        // User needs to complete profile setup
+        navigation.navigate("UserTypeSelection");
+      }
+    } catch (error: any) {
+      showToast(error.message || "Failed to sign in with Apple", "error");
+    } finally {
+      setIsLoadingApple(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsLoadingGoogle(true);
+    try {
+      const result = await signInWithGoogle();
+
+      // Get full user profile from Firestore
+      const userProfile = await getUserProfile(result.uid);
+
+      if (userProfile) {
+        await setUser(userProfile as any, "google");
+        showToast("Successfully signed in with Google", "success");
+      } else {
+        // User needs to complete profile setup
+        navigation.navigate("UserTypeSelection");
+      }
+    } catch (error: any) {
+      showToast(error.message || "Failed to sign in with Google", "error");
+    } finally {
+      setIsLoadingGoogle(false);
+    }
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-gray-900">
       <View className="flex-1 px-6 justify-between py-8">
@@ -73,23 +131,84 @@ export default function WelcomeScreen({ navigation }: Props) {
 
         {/* CTA Buttons */}
         <View className="space-y-3">
+          {/* Apple Sign-In Button (iOS only) */}
+          {isAppleAvailable && (
+            <Pressable
+              onPress={handleAppleSignIn}
+              disabled={isLoadingApple}
+              className="bg-black dark:bg-white rounded-2xl py-4 px-6 flex-row items-center justify-center active:opacity-80"
+            >
+              {isLoadingApple ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <>
+                  <Ionicons name="logo-apple" size={24} color="white" className="mr-3" />
+                  <Text className="text-white dark:text-black text-center text-lg font-semibold ml-3">
+                    Continue with Apple
+                  </Text>
+                </>
+              )}
+            </Pressable>
+          )}
+
+          {/* Google Sign-In Button */}
+          <Pressable
+            onPress={handleGoogleSignIn}
+            disabled={isLoadingGoogle}
+            className="bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-2xl py-4 px-6 flex-row items-center justify-center active:bg-gray-50 dark:active:bg-gray-700"
+          >
+            {isLoadingGoogle ? (
+              <ActivityIndicator color="#2563eb" />
+            ) : (
+              <>
+                <Ionicons name="logo-google" size={24} color="#EA4335" className="mr-3" />
+                <Text className="text-gray-700 dark:text-gray-200 text-center text-lg font-semibold ml-3">
+                  Continue with Google
+                </Text>
+              </>
+            )}
+          </Pressable>
+
+          {/* Divider */}
+          <View className="flex-row items-center my-4">
+            <View className="flex-1 h-px bg-gray-300 dark:bg-gray-600" />
+            <Text className="mx-4 text-gray-500 dark:text-gray-400 text-sm font-medium">
+              OR
+            </Text>
+            <View className="flex-1 h-px bg-gray-300 dark:bg-gray-600" />
+          </View>
+
+          {/* Phone Auth Button */}
           <Pressable
             onPress={() => navigation.navigate("PhoneAuth")}
             className="bg-blue-600 dark:bg-blue-500 rounded-2xl py-4 px-6 active:bg-blue-700"
           >
             <Text className="text-white text-center text-lg font-semibold">
-              Get Started
+              Continue with Phone
             </Text>
           </Pressable>
 
-          <Pressable
-            onPress={() => navigation.navigate("PhoneAuth")}
-            className="border-2 border-gray-300 dark:border-gray-600 rounded-2xl py-4 px-6 active:bg-gray-50 dark:active:bg-gray-800"
-          >
-            <Text className="text-gray-700 dark:text-gray-200 text-center text-lg font-semibold">
-              Sign In
-            </Text>
-          </Pressable>
+          {/* Security Notice */}
+          <View className="bg-green-50 dark:bg-green-900/30 rounded-xl p-4 mt-4">
+            <View className="flex-row items-start">
+              <Ionicons name="lock-closed" size={20} color="#16a34a" />
+              <View className="flex-1 ml-3">
+                <Text className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
+                  Your data is secure
+                </Text>
+                <Text className="text-xs text-gray-700 dark:text-gray-300">
+                  We use industry-standard encryption and never share your personal
+                  information without your consent. Apple and Google Sign-In provide
+                  additional security through two-factor authentication.
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Terms */}
+          <Text className="text-xs text-gray-500 dark:text-gray-400 text-center mt-4 px-4">
+            By continuing, you agree to our Terms of Service and Privacy Policy
+          </Text>
         </View>
       </View>
     </SafeAreaView>

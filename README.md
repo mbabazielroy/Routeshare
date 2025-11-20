@@ -15,15 +15,21 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 ## 📱 Features Implemented
 
 ### Authentication
+- **Multiple Sign-In Methods:** Phone, Apple Sign-In (iOS), and Google Sign-In
+- **Apple Sign-In:** Native iOS authentication with secure credential handling
+- **Google Sign-In:** OAuth authentication with Firebase integration
 - **Phone Number Verification:** Beautiful phone authentication screen with real-time formatting
 - **Country Selection:** Choose from 15+ countries with flag emojis and dial codes
 - **International Support:** Automatic phone formatting based on selected country
 - **OTP Verification:** 6-digit OTP input with auto-focus and countdown timer
 - **User Registration:** Seamless flow from phone verification to user type selection
 - **Pre-filled Phone:** Verified phone number automatically populated in registration
-- **Persistent Auth:** Auto-login on app launch with AsyncStorage
+- **Persistent Auth:** Auto-login on app launch with secure storage
+- **Secure Storage:** Uses expo-secure-store for sensitive authentication tokens
 - **Smart Navigation:** Automatically routes to appropriate screen based on user type
-- **Logout Functionality:** Secure logout with confirmation modal
+- **Auth Provider Tracking:** Remembers how users signed in (phone/apple/google)
+- **Logout Functionality:** Secure logout with confirmation modal that clears all stored data
+- **Security Notice:** Clear messaging about data protection and privacy
 
 ### For Riders
 - **Trip Request Flow:** Enter pickup and destination, view matched drivers
@@ -255,6 +261,7 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 │   │   └── offlineStore.ts        # Network status and sync queue
 │   ├── services/
 │   │   ├── firebaseAuth.ts        # Firebase authentication service
+│   │   ├── oauthService.ts        # Apple & Google Sign-In service
 │   │   ├── firebaseTrips.ts       # Real-time trip tracking service
 │   │   ├── firebaseMessages.ts    # Real-time messaging service
 │   │   └── firebaseRoutes.ts      # Route publishing and matching service
@@ -344,7 +351,91 @@ EXPO_PUBLIC_FIREBASE_APP_ID=your_app_id
 ### 4. Enable Firebase in Config
 Uncomment the Firebase configuration in `src/config/firebase.ts`
 
-### 5. Firestore Collections Structure
+### 5. Configure Apple Sign-In (iOS Only)
+
+Apple Sign-In provides secure authentication and is **required** for iOS apps that offer third-party sign-in options.
+
+**Steps:**
+1. **Firebase Console:**
+   - Go to Authentication > Sign-in method
+   - Enable Apple as a provider
+   - Note down the Service ID and Redirect URL
+
+2. **Apple Developer Account:**
+   - Create an App ID with Sign in with Apple capability
+   - Create a Services ID for your app
+   - Configure the redirect URL from Firebase
+   - Create a Sign in with Apple key
+
+3. **Add Configuration to Firebase:**
+   - Enter your Apple Team ID
+   - Upload your Apple Sign-in Key (`.p8` file)
+   - Enter your Key ID
+
+4. **App Configuration:**
+   - Update `app.json` with your Apple Team ID
+   - The app already includes the necessary code in `src/services/oauthService.ts`
+
+**Security Benefits:**
+- Apple-managed credentials (no password leaks)
+- Two-factor authentication built-in
+- Hide My Email feature for privacy
+- Face ID/Touch ID support
+
+### 6. Configure Google Sign-In
+
+Google Sign-In provides secure OAuth authentication across iOS and Android.
+
+**Steps:**
+1. **Firebase Console:**
+   - Go to Authentication > Sign-in method
+   - Enable Google as a provider
+   - The Web Client ID is automatically generated
+
+2. **Get OAuth Client IDs:**
+   - Visit Google Cloud Console
+   - Create OAuth 2.0 Client IDs for:
+     - iOS (Bundle ID required)
+     - Android (SHA-1 fingerprint required)
+
+3. **Download Configuration Files:**
+   - **iOS:** Download `GoogleService-Info.plist`
+   - **Android:** Download `google-services.json`
+
+4. **App Configuration:**
+   - Add the configuration files to your project
+   - Update `app.json` with Google Sign-In configuration
+   - The app already includes the necessary code in `src/services/oauthService.ts`
+
+**Security Benefits:**
+- Industry-standard OAuth 2.0 protocol
+- Multi-device sign-in
+- Two-factor authentication support
+- Secure token management
+
+### 7. Security Best Practices
+
+The app implements several security measures to protect user data:
+
+**Authentication Security:**
+- **Secure Token Storage:** Uses `expo-secure-store` for authentication tokens (encrypted storage)
+- **Session Management:** Automatic session refresh and expiration
+- **Provider Tracking:** Records which method users signed in with for audit purposes
+- **Secure Logout:** Completely clears all stored authentication data
+
+**Data Protection:**
+- **Non-Sensitive Data:** User profiles stored in AsyncStorage (not encrypted)
+- **Sensitive Data:** Authentication tokens stored in SecureStore (hardware-encrypted on iOS)
+- **No Plain-Text Passwords:** OAuth providers handle all password management
+- **HTTPS Only:** All network requests use secure connections
+
+**Privacy Measures:**
+- Clear security notice on Welcome screen explaining data practices
+- No sharing of personal information without user consent
+- Option to use "Hide My Email" with Apple Sign-In
+- Minimal data collection (only what's needed for the service)
+
+### 8. Firestore Collections Structure
 ```
 users/
   - {userId}
@@ -412,19 +503,35 @@ routes/
 
 ### Authentication Flow
 1. Open the app → You'll see the Welcome screen
-2. Tap "Get Started" or "Sign In" (both lead to phone auth)
-3. **NEW:** Tap the country selector (shows 🇺🇸 +1 by default) to change country
-4. **NEW:** Select from 15+ countries including US, Canada, UK, India, and more
-5. Enter your phone number (format adjusts based on selected country)
-6. For US/Canada: Enter 10 digits, automatically formats as (555) 123-4567
-7. For other countries: Enter 6-15 digits based on country requirements
-8. Green checkmark appears when phone number is valid
-9. Tap "Send Verification Code"
-10. Enter any 6-digit code (e.g., "123456") - demo accepts all codes
-11. Watch auto-focus move through the OTP fields
-12. After verification, choose rider or driver
-13. Notice your phone number is pre-filled and marked as verified
-14. Complete your profile with name and continue
+2. **NEW: Multiple Sign-In Options:**
+   - **Apple Sign-In (iOS only):** Tap "Continue with Apple" for secure native authentication
+   - **Google Sign-In:** Tap "Continue with Google" for OAuth authentication
+   - **Phone Auth:** Tap "Continue with Phone" for SMS verification
+3. **Apple Sign-In Flow:**
+   - Uses native iOS authentication
+   - Face ID/Touch ID verification
+   - Option to hide your email for privacy
+   - Automatically creates/updates your profile
+4. **Google Sign-In Flow:**
+   - OAuth 2.0 secure authentication
+   - One-tap sign-in if already logged into Google
+   - Multi-device support
+   - Automatically creates/updates your profile
+5. **Phone Auth Flow:**
+   - Tap the country selector (shows 🇺🇸 +1 by default) to change country
+   - Select from 15+ countries including US, Canada, UK, India, and more
+   - Enter your phone number (format adjusts based on selected country)
+   - For US/Canada: Enter 10 digits, automatically formats as (555) 123-4567
+   - For other countries: Enter 6-15 digits based on country requirements
+   - Green checkmark appears when phone number is valid
+   - Tap "Send Verification Code"
+   - Enter any 6-digit code (e.g., "123456") - demo accepts all codes
+   - Watch auto-focus move through the OTP fields
+6. After verification (any method), choose rider or driver if new user
+7. Notice your information is pre-filled from the OAuth provider
+8. Complete your profile and continue
+9. **Security Notice:** See the green lock icon with privacy information
+10. Your sign-in method is remembered (shown in Account settings)
 
 ### As a Rider
 1. After authentication, you'll be on the Rider Home screen
