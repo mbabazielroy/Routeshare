@@ -121,7 +121,7 @@ export default function LiveTripScreen({ navigation, route }: Props) {
       <MapView
         ref={mapRef}
         provider={PROVIDER_DEFAULT}
-        className="flex-1"
+        style={{ flex: 1 }}
         initialRegion={{
           latitude: currentTrip.pickup.latitude,
           longitude: currentTrip.pickup.longitude,

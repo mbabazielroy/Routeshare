@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { View, Text, Pressable, ScrollView, TextInput, KeyboardAvoidingView, Platform, Image } from "react-native";
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import { View, Text, Pressable, ScrollView, TextInput, KeyboardAvoidingView, Platform, Image, useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -12,14 +12,19 @@ type Props = NativeStackScreenProps<RootStackParamList, "InAppMessaging">;
 
 export default function InAppMessagingScreen({ navigation, route }: Props) {
   const conversationId = route.params?.conversationId || "demo_conversation";
+  const colorScheme = useColorScheme();
 
-  // Fix: Select data directly from state instead of using getter methods
-  const messages = useMessagingStore((s) => s.messages[conversationId] || []);
-  const conversation = useMessagingStore((s) => s.conversations[conversationId]);
+  // Fix: Use individual primitive selectors and memoize derived data
+  const allMessages = useMessagingStore((s) => s.messages);
+  const allConversations = useMessagingStore((s) => s.conversations);
   const addMessage = useMessagingStore((s) => s.addMessage);
   const markAsRead = useMessagingStore((s) => s.markAsRead);
   const setTyping = useMessagingStore((s) => s.setTyping);
   const showToast = useToast((s) => s.show);
+
+  // Memoize derived values to avoid creating new references
+  const messages = useMemo(() => allMessages[conversationId] || [], [allMessages, conversationId]);
+  const conversation = useMemo(() => allConversations[conversationId], [allConversations, conversationId]);
 
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -148,7 +153,7 @@ export default function InAppMessagingScreen({ navigation, route }: Props) {
         <View className="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
           <View className="flex-row items-center">
             <Pressable onPress={() => navigation.goBack()} className="mr-3">
-              <Ionicons name="arrow-back" size={24} color="#111827" />
+              <Ionicons name="arrow-back" size={24} color={colorScheme === "dark" ? "#ffffff" : "#111827"} />
             </Pressable>
             <View className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full items-center justify-center mr-3">
               <Ionicons name="person" size={20} color="#2563eb" />

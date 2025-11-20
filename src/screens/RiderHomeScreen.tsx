@@ -147,10 +147,10 @@ export default function RiderHomeScreen({ navigation }: Props) {
         {/* Quick Actions */}
         <View className="px-6 mt-2 pb-8">
           <Text className="text-lg font-bold text-gray-900 dark:text-white mb-3">Quick Actions</Text>
-          <View className="flex-row gap-3">
+          <View className="flex-row flex-wrap gap-3">
             <Pressable
               onPress={() => navigation.navigate("ScheduleRide")}
-              className="flex-1 bg-white dark:bg-gray-800 rounded-xl p-4 items-center border border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
+              className="flex-1 min-w-[30%] bg-white dark:bg-gray-800 rounded-xl p-4 items-center border border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
             >
               <View className="w-12 h-12 bg-purple-50 dark:bg-purple-900/30 rounded-full items-center justify-center mb-2">
                 <Ionicons name="calendar" size={24} color="#9333ea" />
@@ -159,8 +159,18 @@ export default function RiderHomeScreen({ navigation }: Props) {
             </Pressable>
 
             <Pressable
+              onPress={() => navigation.navigate("InAppMessaging", { conversationId: "rider_general" })}
+              className="flex-1 min-w-[30%] bg-white dark:bg-gray-800 rounded-xl p-4 items-center border border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
+            >
+              <View className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-full items-center justify-center mb-2">
+                <Ionicons name="chatbubbles" size={24} color="#2563eb" />
+              </View>
+              <Text className="text-sm font-medium text-gray-900 dark:text-white">Messages</Text>
+            </Pressable>
+
+            <Pressable
               onPress={() => showToast("Carpool feature coming soon!", "info")}
-              className="flex-1 bg-white dark:bg-gray-800 rounded-xl p-4 items-center border border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
+              className="flex-1 min-w-[30%] bg-white dark:bg-gray-800 rounded-xl p-4 items-center border border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
             >
               <View className="w-12 h-12 bg-green-50 dark:bg-green-900/30 rounded-full items-center justify-center mb-2">
                 <Ionicons name="people" size={24} color="#16a34a" />
@@ -170,7 +180,7 @@ export default function RiderHomeScreen({ navigation }: Props) {
 
             <Pressable
               onPress={() => navigation.navigate("HelpCenter")}
-              className="flex-1 bg-white dark:bg-gray-800 rounded-xl p-4 items-center border border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
+              className="flex-1 min-w-[30%] bg-white dark:bg-gray-800 rounded-xl p-4 items-center border border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
             >
               <View className="w-12 h-12 bg-orange-50 dark:bg-orange-900/30 rounded-full items-center justify-center mb-2">
                 <Ionicons name="help-circle" size={24} color="#ea580c" />

@@ -7,8 +7,19 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "plugins": [
+      [
+        "react-native-maps",
+        {
+          "useGoogleMaps": false
+        }
+      ]
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to show nearby drivers and track your trips."
+      }
     },
     "android": {
       "edgeToEdgeEnabled": true

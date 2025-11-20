@@ -185,7 +185,7 @@ export default function DriverHomeScreen({ navigation }: Props) {
         )}
 
         {/* Quick Stats */}
-        <View className="px-6 mt-6 pb-8">
+        <View className="px-6 mt-6">
           <Text className="text-lg font-bold text-gray-900 dark:text-white mb-3">Your Stats</Text>
           <View className="flex-row gap-3">
             <View className="flex-1 bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
@@ -211,6 +211,42 @@ export default function DriverHomeScreen({ navigation }: Props) {
               </Text>
               <Text className="text-sm text-gray-600 dark:text-gray-400">Total Earned</Text>
             </View>
+          </View>
+        </View>
+
+        {/* Quick Actions */}
+        <View className="px-6 mt-6 pb-8">
+          <Text className="text-lg font-bold text-gray-900 dark:text-white mb-3">Quick Actions</Text>
+          <View className="flex-row gap-3">
+            <Pressable
+              onPress={() => navigation.navigate("InAppMessaging", { conversationId: "driver_general" })}
+              className="flex-1 bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 items-center border border-blue-200 dark:border-blue-700 active:bg-blue-100 dark:active:bg-blue-900/50"
+            >
+              <View className="w-12 h-12 bg-blue-600 dark:bg-blue-500 rounded-full items-center justify-center mb-2">
+                <Ionicons name="chatbubbles" size={24} color="white" />
+              </View>
+              <Text className="text-sm font-medium text-blue-700 dark:text-blue-300">Messages</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => navigation.navigate("MyRoutes")}
+              className="flex-1 bg-purple-50 dark:bg-purple-900/30 rounded-xl p-4 items-center border border-purple-200 dark:border-purple-700 active:bg-purple-100 dark:active:bg-purple-900/50"
+            >
+              <View className="w-12 h-12 bg-purple-600 dark:bg-purple-500 rounded-full items-center justify-center mb-2">
+                <Ionicons name="map" size={24} color="white" />
+              </View>
+              <Text className="text-sm font-medium text-purple-700 dark:text-purple-300">My Routes</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => navigation.navigate("Earnings")}
+              className="flex-1 bg-green-50 dark:bg-green-900/30 rounded-xl p-4 items-center border border-green-200 dark:border-green-700 active:bg-green-100 dark:active:bg-green-900/50"
+            >
+              <View className="w-12 h-12 bg-green-600 dark:bg-green-500 rounded-full items-center justify-center mb-2">
+                <Ionicons name="cash" size={24} color="white" />
+              </View>
+              <Text className="text-sm font-medium text-green-700 dark:text-green-300">Earnings</Text>
+            </Pressable>
           </View>
         </View>
       </ScrollView>
