@@ -242,33 +242,42 @@ export default function LiveTripScreen({ navigation, route }: Props) {
             </View>
 
             {/* Action Buttons */}
-            <View className="flex-row gap-3">
-              <Pressable
-                onPress={handleCall}
-                className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-xl py-3 flex-row items-center justify-center active:bg-gray-200 dark:active:bg-gray-600"
-              >
-                <Ionicons name="call" size={20} color="#1f2937" />
-                <Text className="ml-2 font-semibold text-gray-900 dark:text-white">Call</Text>
-              </Pressable>
+            <View className="gap-3">
+              {/* Primary Actions */}
+              <View className="flex-row gap-3">
+                <Pressable
+                  onPress={handleCall}
+                  className="flex-1 bg-green-50 dark:bg-green-900/30 rounded-xl py-3 flex-row items-center justify-center active:bg-green-100 dark:active:bg-green-900/50 border border-green-200 dark:border-green-700"
+                >
+                  <Ionicons name="call" size={20} color="#16a34a" />
+                  <Text className="ml-2 font-semibold text-green-700 dark:text-green-300">Call</Text>
+                </Pressable>
 
-              <Pressable
-                onPress={() => navigation.navigate("InAppMessaging", { conversationId: `trip_${currentTrip.id}` })}
-                className="flex-1 bg-blue-50 dark:bg-blue-900/30 rounded-xl py-3 flex-row items-center justify-center active:bg-blue-100 dark:active:bg-blue-900/50"
-              >
-                <Ionicons name="chatbubble" size={20} color="#2563eb" />
-                <Text className="ml-2 font-semibold text-blue-600 dark:text-blue-400">Message</Text>
-              </Pressable>
+                <Pressable
+                  onPress={() => navigation.navigate("InAppMessaging", { conversationId: `trip_${currentTrip.id}` })}
+                  className="flex-1 bg-blue-50 dark:bg-blue-900/30 rounded-xl py-3 flex-row items-center justify-center active:bg-blue-100 dark:active:bg-blue-900/50 border border-blue-200 dark:border-blue-700"
+                >
+                  <Ionicons name="chatbubble" size={20} color="#2563eb" />
+                  <Text className="ml-2 font-semibold text-blue-600 dark:text-blue-400">Message</Text>
+                </Pressable>
+              </View>
 
-              <Pressable
-                onPress={() => setShowCancelConfirm(true)}
-                className="bg-red-50 dark:bg-red-900/30 rounded-xl px-4 py-3 active:bg-red-100 dark:active:bg-red-900/50"
-              >
-                <Ionicons name="close-circle" size={20} color="#dc2626" />
-              </Pressable>
+              {/* Secondary Actions */}
+              <View className="flex-row gap-3">
+                <Pressable
+                  onPress={() => setShowCancelConfirm(true)}
+                  className="flex-1 bg-red-50 dark:bg-red-900/30 rounded-xl py-3 flex-row items-center justify-center active:bg-red-100 dark:active:bg-red-900/50 border border-red-200 dark:border-red-700"
+                >
+                  <Ionicons name="close-circle" size={20} color="#dc2626" />
+                  <Text className="ml-2 font-semibold text-red-600 dark:text-red-400">Cancel Trip</Text>
+                </Pressable>
 
-              <Pressable className="bg-blue-600 dark:bg-blue-500 rounded-xl px-4 py-3 active:bg-blue-700 dark:active:bg-blue-600">
-                <Ionicons name="shield-checkmark" size={24} color="white" />
-              </Pressable>
+                <Pressable
+                  className="bg-blue-600 dark:bg-blue-500 rounded-xl px-6 py-3 items-center justify-center active:bg-blue-700 dark:active:bg-blue-600"
+                >
+                  <Ionicons name="shield-checkmark" size={24} color="white" />
+                </Pressable>
+              </View>
             </View>
 
             {/* Cancel Confirmation */}
