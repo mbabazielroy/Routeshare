@@ -34,30 +34,30 @@ export interface OAuthResult {
  * This provides a secure authentication flow through Firebase
  */
 export const signInWithApple = async (): Promise<OAuthResult> => {
-  try {
-    // Apple Sign-In is only available on iOS
-    if (Platform.OS !== "ios") {
-      throw new Error("Apple Sign-In is only available on iOS devices");
-    }
-
-    if (!auth) {
-      throw new Error("Firebase Auth is not initialized");
-    }
-
-    // Create Apple OAuth provider
-    const provider = new OAuthProvider("apple.com");
-    provider.addScope("email");
-    provider.addScope("name");
-
-    // For now, we'll show a message to the user that they need to configure this
-    // In production, this requires proper Apple OAuth configuration in Firebase Console
-    throw new Error(
-      "Apple Sign-In requires configuration in Firebase Console. Please:\n1. Enable Apple as a sign-in provider in Firebase Console\n2. Configure your Apple Developer account\n3. Add the OAuth redirect URL to your Apple Services ID"
-    );
-  } catch (error: any) {
-    console.error("Apple Sign-In error:", error);
-    throw error;
+  // Apple Sign-In is only available on iOS
+  if (Platform.OS !== "ios") {
+    throw new Error("Apple Sign-In is only available on iOS devices");
   }
+
+  if (!auth) {
+    throw new Error("Firebase Auth is not initialized");
+  }
+
+  // Check if Firebase Auth is properly configured
+  const isConfigured = process.env.EXPO_PUBLIC_FIREBASE_API_KEY &&
+                       process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID;
+
+  if (!isConfigured) {
+    throw new Error(
+      "Apple Sign-In requires Firebase configuration. Please add your Firebase credentials to enable this feature."
+    );
+  }
+
+  // For now, show a user-friendly message that configuration is needed
+  // In production, this will use the actual OAuth flow
+  throw new Error(
+    "Apple Sign-In is not yet configured. Please contact support to enable this authentication method."
+  );
 };
 
 /**
@@ -65,25 +65,25 @@ export const signInWithApple = async (): Promise<OAuthResult> => {
  * This provides a secure authentication flow through Firebase
  */
 export const signInWithGoogle = async (): Promise<OAuthResult> => {
-  try {
-    if (!auth) {
-      throw new Error("Firebase Auth is not initialized");
-    }
-
-    // Create Google OAuth provider
-    const provider = new GoogleAuthProvider();
-    provider.addScope("profile");
-    provider.addScope("email");
-
-    // For now, we'll show a message to the user that they need to configure this
-    // In production, this requires proper Google OAuth configuration in Firebase Console
-    throw new Error(
-      "Google Sign-In requires configuration in Firebase Console. Please:\n1. Enable Google as a sign-in provider in Firebase Console\n2. Add your iOS and Android OAuth client IDs\n3. Download and add the GoogleService-Info.plist (iOS) and google-services.json (Android)"
-    );
-  } catch (error: any) {
-    console.error("Google Sign-In error:", error);
-    throw error;
+  if (!auth) {
+    throw new Error("Firebase Auth is not initialized");
   }
+
+  // Check if Firebase Auth is properly configured
+  const isConfigured = process.env.EXPO_PUBLIC_FIREBASE_API_KEY &&
+                       process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID;
+
+  if (!isConfigured) {
+    throw new Error(
+      "Google Sign-In requires Firebase configuration. Please add your Firebase credentials to enable this feature."
+    );
+  }
+
+  // For now, show a user-friendly message that configuration is needed
+  // In production, this will use the actual OAuth flow
+  throw new Error(
+    "Google Sign-In is not yet configured. Please contact support to enable this authentication method."
+  );
 };
 
 /**
