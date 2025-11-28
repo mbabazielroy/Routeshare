@@ -42,3 +42,6 @@ expo.log
 
 # Environment variables
 .env
+
+# Supabase Edge Functions (exclude from TS/ESLint checks)
+supabase/
