@@ -6,14 +6,8 @@
 
 import * as WebBrowser from "expo-web-browser";
 import * as AuthSession from "expo-auth-session";
-import {
-  signInWithCredential,
-  OAuthProvider,
-  GoogleAuthProvider,
-  Auth,
-} from "firebase/auth";
-import { auth } from "../config/firebase";
-import { createUserProfile, getUserProfile } from "./firebaseAuth";
+import { supabase } from "../config/supabase";
+import { getUserProfile } from "./supabaseAuth";
 import { Platform } from "react-native";
 
 // Required for expo-auth-session to work properly
@@ -39,17 +33,17 @@ export const signInWithApple = async (): Promise<OAuthResult> => {
     throw new Error("Apple Sign-In is only available on iOS devices");
   }
 
-  if (!auth) {
-    throw new Error("Firebase Auth is not initialized");
+  if (!supabase) {
+    throw new Error("Supabase Auth is not initialized");
   }
 
-  // Check if Firebase Auth is properly configured
-  const isConfigured = process.env.EXPO_PUBLIC_FIREBASE_API_KEY &&
-                       process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID;
+  // Check if Supabase is properly configured
+  const isConfigured = process.env.EXPO_PUBLIC_SUPABASE_URL &&
+                       process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!isConfigured) {
     throw new Error(
-      "Apple Sign-In requires Firebase configuration. Please add your Firebase credentials to enable this feature."
+      "Apple Sign-In requires Supabase configuration. Please add your Supabase credentials to enable this feature."
     );
   }
 
@@ -65,17 +59,17 @@ export const signInWithApple = async (): Promise<OAuthResult> => {
  * This provides a secure authentication flow through Firebase
  */
 export const signInWithGoogle = async (): Promise<OAuthResult> => {
-  if (!auth) {
-    throw new Error("Firebase Auth is not initialized");
+  if (!supabase) {
+    throw new Error("Supabase Auth is not initialized");
   }
 
-  // Check if Firebase Auth is properly configured
-  const isConfigured = process.env.EXPO_PUBLIC_FIREBASE_API_KEY &&
-                       process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID;
+  // Check if Supabase is properly configured
+  const isConfigured = process.env.EXPO_PUBLIC_SUPABASE_URL &&
+                       process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!isConfigured) {
     throw new Error(
-      "Google Sign-In requires Firebase configuration. Please add your Firebase credentials to enable this feature."
+      "Google Sign-In requires Supabase configuration. Please add your Supabase credentials to enable this feature."
     );
   }
 
@@ -109,7 +103,7 @@ export const getOAuthConfigInstructions = (provider: "apple" | "google") => {
     return {
       title: "Configure Apple Sign-In",
       steps: [
-        "Go to Firebase Console > Authentication > Sign-in method",
+        "Go to Supabase Dashboard > Authentication > Providers",
         "Enable Apple as a sign-in provider",
         "Add your Apple Services ID and Team ID",
         "Configure OAuth redirect URLs in Apple Developer Console",
@@ -119,10 +113,10 @@ export const getOAuthConfigInstructions = (provider: "apple" | "google") => {
     return {
       title: "Configure Google Sign-In",
       steps: [
-        "Go to Firebase Console > Authentication > Sign-in method",
+        "Go to Supabase Dashboard > Authentication > Providers",
         "Enable Google as a sign-in provider",
-        "Add your Web Client ID from Google Cloud Console",
-        "Download configuration files for iOS and Android",
+        "Add your OAuth Client ID from Google Cloud Console",
+        "Configure authorized redirect URIs",
       ],
     };
   }

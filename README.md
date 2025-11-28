@@ -17,7 +17,7 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 ### Authentication
 - **Multiple Sign-In Methods:** Phone, Apple Sign-In (iOS), and Google Sign-In
 - **Apple Sign-In:** Native iOS authentication with secure credential handling
-- **Google Sign-In:** OAuth authentication with Firebase integration
+- **Google Sign-In:** OAuth authentication with Supabase integration
 - **Phone Number Verification:** Beautiful phone authentication screen with real-time formatting
 - **Country Selection:** Choose from 15+ countries with flag emojis and dial codes
 - **International Support:** Automatic phone formatting based on selected country
@@ -192,25 +192,25 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
     - First-launch detection with AsyncStorage
     - Automatic navigation to Welcome screen after completion
 
-11. ✅ **Firebase Cloud Integration** - Production-ready backend services
-    - **Authentication Service:** Phone auth with OTP, user profile management
+11. ✅ **Supabase Cloud Integration** - Production-ready backend services
+    - **Authentication Service:** Phone auth with OTP, OAuth providers (Apple/Google)
     - **Trips Service:** Real-time trip tracking, driver location updates, trip history
     - **Messages Service:** Real-time chat, conversation management, read receipts
     - **Routes Service:** Route publishing, matching algorithm, seat management
-    - **Firestore Database:** Structured collections for users, trips, routes, conversations
-    - **Real-time Listeners:** Live updates via onSnapshot for instant sync
-    - **Security Rules:** Production-ready Firestore and Storage rules
+    - **PostgreSQL Database:** Structured tables with Row Level Security
+    - **Real-time Listeners:** Live updates via Supabase Realtime for instant sync
+    - **Security Rules:** Production-ready RLS policies for data protection
     - **Hybrid Architecture:** Local-first with cloud sync for offline support
     - **Multi-device Sync:** Access data from any device
-    - See `FIREBASE_INTEGRATION_GUIDE.md` for complete documentation
+    - See setup instructions in README (Section: Supabase Setup)
 
 ### Core Technology
 - **Smart Matching Algorithm:** Finds drivers traveling the same direction with minimal detour
 - **GPS Simulation:** Realistic driver location updates during trips
 - **MapView Integration:** react-native-maps configured with Apple Maps (iOS) for live trip tracking
-- **Firebase Backend:** Complete cloud services (Auth, Firestore, Storage, Real-time sync)
+- **Supabase Backend:** Complete cloud services (Auth, PostgreSQL, Storage, Real-time sync)
 - **State Management:** Zustand with AsyncStorage persistence across all stores
-- **Hybrid Architecture:** Local-first with Firebase cloud sync for multi-device support
+- **Hybrid Architecture:** Local-first with Supabase cloud sync for multi-device support
 - **Offline Support:** Network status monitoring with automatic sync queue
 - **Payment Management:** Full CRUD for payment cards with validation
 - **Custom Modals:** Beautiful confirmation dialogs (no system alerts)
@@ -260,13 +260,13 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 │   │   ├── themeStore.ts          # Theme preference (light/dark/system)
 │   │   └── offlineStore.ts        # Network status and sync queue
 │   ├── services/
-│   │   ├── firebaseAuth.ts        # Firebase authentication service
-│   │   ├── oauthService.ts        # Apple & Google Sign-In service
-│   │   ├── firebaseTrips.ts       # Real-time trip tracking service
-│   │   ├── firebaseMessages.ts    # Real-time messaging service
-│   │   └── firebaseRoutes.ts      # Route publishing and matching service
+│   │   ├── supabaseAuth.ts         # Supabase authentication service
+│   │   ├── oauthService.ts         # Apple & Google Sign-In service
+│   │   ├── supabaseTrips.ts        # Real-time trip tracking service
+│   │   ├── supabaseMessages.ts     # Real-time messaging service
+│   │   └── supabaseRoutes.ts       # Route publishing and matching service
 │   ├── config/
-│   │   └── firebase.ts            # Firebase initialization
+│   │   └── supabase.ts             # Supabase initialization
 │   ├── types/
 │   │   └── routeshare.ts          # TypeScript interfaces
 │   ├── components/
@@ -277,8 +277,6 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 │       └── mockData.ts            # Demo drivers and routes
 ├── App.tsx                        # App entry point
 ├── README.md                      # This file
-├── FIREBASE_INTEGRATION_GUIDE.md  # Complete Firebase integration docs
-├── BACKEND_STATUS_REPORT.md       # Backend configuration status
 └── RURAL_RIDESHARE_CONCEPT.md     # Complete product specification
 ```
 
@@ -319,62 +317,187 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 - **Maps:** react-native-maps with Mapbox
 - **Icons:** @expo/vector-icons (Ionicons)
 - **TypeScript:** Fully typed for safety
-- **Backend (Ready):** Firebase configuration prepared for easy integration
+- **Backend (Ready):** Supabase configuration prepared for easy integration
 
-## 🔥 Firebase Setup (Optional Backend Integration)
+## 🔥 Supabase Setup (Optional Backend Integration)
 
-The app is currently using mock data but is ready for Firebase integration. To connect to a real backend:
+The app is currently using mock data but is ready for Supabase integration. To connect to a real backend:
 
-### 1. Create a Firebase Project
+### 1. Create a Supabase Project
 ```bash
-# Visit https://console.firebase.google.com
-# Create a new project
-# Enable Authentication, Firestore, and Storage
+# Visit https://supabase.com/dashboard
+# Click "New Project"
+# Choose a name, database password, and region
+# Wait for project to be provisioned (2-3 minutes)
 ```
 
-### 2. Install Firebase
+### 2. Get Your Project Credentials
 ```bash
-bun add firebase
+# In your Supabase dashboard:
+# Go to Settings > API
+# Copy your Project URL and anon/public key
 ```
 
 ### 3. Configure Environment Variables
-Create a `.env` file in the root directory:
+Add to the **ENV tab** in your Vibecode app:
 ```env
-EXPO_PUBLIC_FIREBASE_API_KEY=your_api_key
-EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-EXPO_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-EXPO_PUBLIC_FIREBASE_APP_ID=your_app_id
+EXPO_PUBLIC_SUPABASE_URL=your_project_url
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 ```
 
-### 4. Enable Firebase in Config
-Uncomment the Firebase configuration in `src/config/firebase.ts`
+### 4. Set Up Database Tables
+Run these SQL commands in the Supabase SQL Editor (Dashboard > SQL Editor):
 
-### 5. Configure Apple Sign-In (iOS Only)
+```sql
+-- Users table
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  email TEXT,
+  phone TEXT,
+  "firstName" TEXT,
+  "lastName" TEXT,
+  "userType" TEXT CHECK ("userType" IN ('rider', 'driver')),
+  "profilePhoto" TEXT,
+  "authProvider" TEXT,
+  "createdAt" TIMESTAMPTZ DEFAULT NOW()
+);
 
-Apple Sign-In provides secure authentication and is **required** for iOS apps that offer third-party sign-in options.
+-- Trips table
+CREATE TABLE trips (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  "riderId" UUID REFERENCES users(id),
+  "driverId" UUID REFERENCES users(id),
+  pickup JSONB NOT NULL,
+  dropoff JSONB NOT NULL,
+  fare DECIMAL(10,2),
+  status TEXT CHECK (status IN ('pending', 'accepted', 'arriving', 'in_progress', 'completed', 'cancelled')),
+  "driverLocation" JSONB,
+  passengers INTEGER,
+  distance DECIMAL(10,2),
+  duration INTEGER,
+  "createdAt" TIMESTAMPTZ DEFAULT NOW(),
+  "updatedAt" TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Routes table
+CREATE TABLE routes (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  "driverId" UUID REFERENCES users(id),
+  origin JSONB NOT NULL,
+  destination JSONB NOT NULL,
+  "departureTime" TIMESTAMPTZ,
+  "availableSeats" INTEGER,
+  distance DECIMAL(10,2),
+  duration INTEGER,
+  status TEXT CHECK (status IN ('active', 'completed', 'cancelled')),
+  "createdAt" TIMESTAMPTZ DEFAULT NOW(),
+  "updatedAt" TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Conversations table
+CREATE TABLE conversations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  "participant1Id" UUID REFERENCES users(id),
+  "participant2Id" UUID REFERENCES users(id),
+  "lastMessage" TEXT,
+  "lastMessageTimestamp" TIMESTAMPTZ,
+  "createdAt" TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Messages table
+CREATE TABLE messages (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  "conversationId" UUID REFERENCES conversations(id),
+  "senderId" UUID REFERENCES users(id),
+  "recipientId" UUID REFERENCES users(id),
+  text TEXT NOT NULL,
+  "imageUri" TEXT,
+  timestamp TIMESTAMPTZ DEFAULT NOW(),
+  read BOOLEAN DEFAULT FALSE
+);
+
+-- Rider requests table
+CREATE TABLE rider_requests (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  "routeId" UUID REFERENCES routes(id),
+  "riderId" UUID REFERENCES users(id),
+  pickup JSONB NOT NULL,
+  dropoff JSONB NOT NULL,
+  passengers INTEGER,
+  status TEXT CHECK (status IN ('pending', 'accepted', 'declined')),
+  "estimatedFare" DECIMAL(10,2),
+  "createdAt" TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable Row Level Security
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE trips ENABLE ROW LEVEL SECURITY;
+ALTER TABLE routes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE rider_requests ENABLE ROW LEVEL SECURITY;
+
+-- Create policies (allow authenticated users to access their own data)
+CREATE POLICY "Users can read own data" ON users FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users can update own data" ON users FOR UPDATE USING (auth.uid() = id);
+
+CREATE POLICY "Users can read own trips" ON trips FOR SELECT USING (auth.uid() = "riderId" OR auth.uid() = "driverId");
+CREATE POLICY "Users can create trips" ON trips FOR INSERT WITH CHECK (true);
+CREATE POLICY "Users can update own trips" ON trips FOR UPDATE USING (auth.uid() = "riderId" OR auth.uid() = "driverId");
+
+CREATE POLICY "Users can read routes" ON routes FOR SELECT USING (true);
+CREATE POLICY "Drivers can create routes" ON routes FOR INSERT WITH CHECK (auth.uid() = "driverId");
+CREATE POLICY "Drivers can update own routes" ON routes FOR UPDATE USING (auth.uid() = "driverId");
+
+CREATE POLICY "Users can read own conversations" ON conversations FOR SELECT USING (auth.uid() = "participant1Id" OR auth.uid() = "participant2Id");
+CREATE POLICY "Users can create conversations" ON conversations FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Users can read own messages" ON messages FOR SELECT USING (auth.uid() = "senderId" OR auth.uid() = "recipientId");
+CREATE POLICY "Users can send messages" ON messages FOR INSERT WITH CHECK (auth.uid() = "senderId");
+
+CREATE POLICY "Users can read requests" ON rider_requests FOR SELECT USING (true);
+CREATE POLICY "Riders can create requests" ON rider_requests FOR INSERT WITH CHECK (auth.uid() = "riderId");
+```
+
+### 5. Configure Phone Authentication
+
+Supabase supports SMS authentication out of the box:
 
 **Steps:**
-1. **Firebase Console:**
-   - Go to Authentication > Sign-in method
+1. **Supabase Dashboard:**
+   - Go to Authentication > Providers
+   - Enable Phone authentication
+   - Configure your SMS provider (Twilio recommended)
+
+2. **Add Twilio Credentials:**
+   - Sign up for Twilio (free trial available)
+   - Get your Account SID and Auth Token
+   - Add to Supabase Phone Auth settings
+
+3. **The app is ready:**
+   - Phone auth code already implemented in `src/services/supabaseAuth.ts`
+   - Works automatically once Supabase is configured
+
+### 6. Configure Apple Sign-In (iOS Only)
+
+Apple Sign-In is available through Supabase and is **required** for iOS apps with third-party sign-in.
+
+**Steps:**
+1. **Supabase Dashboard:**
+   - Go to Authentication > Providers
    - Enable Apple as a provider
-   - Note down the Service ID and Redirect URL
+   - Note the Redirect URL
 
 2. **Apple Developer Account:**
    - Create an App ID with Sign in with Apple capability
-   - Create a Services ID for your app
-   - Configure the redirect URL from Firebase
-   - Create a Sign in with Apple key
+   - Create a Services ID
+   - Configure the redirect URL from Supabase
+   - Create a Sign in with Apple key (.p8 file)
 
-3. **Add Configuration to Firebase:**
+3. **Add to Supabase:**
    - Enter your Apple Team ID
-   - Upload your Apple Sign-in Key (`.p8` file)
-   - Enter your Key ID
-
-4. **App Configuration:**
-   - Update `app.json` with your Apple Team ID
-   - The app already includes the necessary code in `src/services/oauthService.ts`
+   - Upload your .p8 key file
+   - Enter Key ID and Services ID
 
 **Security Benefits:**
 - Apple-managed credentials (no password leaks)
@@ -382,30 +505,25 @@ Apple Sign-In provides secure authentication and is **required** for iOS apps th
 - Hide My Email feature for privacy
 - Face ID/Touch ID support
 
-### 6. Configure Google Sign-In
+### 7. Configure Google Sign-In
 
-Google Sign-In provides secure OAuth authentication across iOS and Android.
+Google Sign-In through Supabase works across iOS and Android.
 
 **Steps:**
-1. **Firebase Console:**
-   - Go to Authentication > Sign-in method
+1. **Supabase Dashboard:**
+   - Go to Authentication > Providers
    - Enable Google as a provider
-   - The Web Client ID is automatically generated
+   - Note the Redirect URL
 
-2. **Get OAuth Client IDs:**
-   - Visit Google Cloud Console
-   - Create OAuth 2.0 Client IDs for:
-     - iOS (Bundle ID required)
-     - Android (SHA-1 fingerprint required)
+2. **Google Cloud Console:**
+   - Create a new project
+   - Enable Google+ API
+   - Create OAuth 2.0 credentials
+   - Add Supabase redirect URL to authorized URIs
 
-3. **Download Configuration Files:**
-   - **iOS:** Download `GoogleService-Info.plist`
-   - **Android:** Download `google-services.json`
-
-4. **App Configuration:**
-   - Add the configuration files to your project
-   - Update `app.json` with Google Sign-In configuration
-   - The app already includes the necessary code in `src/services/oauthService.ts`
+3. **Add to Supabase:**
+   - Enter your Google Client ID
+   - Enter your Google Client Secret
 
 **Security Benefits:**
 - Industry-standard OAuth 2.0 protocol
@@ -413,21 +531,32 @@ Google Sign-In provides secure OAuth authentication across iOS and Android.
 - Two-factor authentication support
 - Secure token management
 
-### 7. Security Best Practices
+### 8. Enable Real-time Features (Optional)
+
+For live updates (driver location, messages), enable Realtime:
+
+```sql
+-- Enable realtime for specific tables
+ALTER PUBLICATION supabase_realtime ADD TABLE trips;
+ALTER PUBLICATION supabase_realtime ADD TABLE messages;
+ALTER PUBLICATION supabase_realtime ADD TABLE routes;
+```
+
+### 9. Security Best Practices
 
 The app implements several security measures to protect user data:
 
 **Authentication Security:**
 - **Secure Token Storage:** Uses `expo-secure-store` for authentication tokens (encrypted storage)
-- **Session Management:** Automatic session refresh and expiration
-- **Provider Tracking:** Records which method users signed in with for audit purposes
+- **Session Management:** Automatic session refresh via Supabase
+- **Row Level Security:** Database policies ensure users only access their own data
 - **Secure Logout:** Completely clears all stored authentication data
 
 **Data Protection:**
 - **Non-Sensitive Data:** User profiles stored in AsyncStorage (not encrypted)
 - **Sensitive Data:** Authentication tokens stored in SecureStore (hardware-encrypted on iOS)
 - **No Plain-Text Passwords:** OAuth providers handle all password management
-- **HTTPS Only:** All network requests use secure connections
+- **HTTPS Only:** All network requests use secure connections via Supabase
 
 **Privacy Measures:**
 - Clear security notice on Welcome screen explaining data practices
@@ -435,25 +564,51 @@ The app implements several security measures to protect user data:
 - Option to use "Hide My Email" with Apple Sign-In
 - Minimal data collection (only what's needed for the service)
 
-### 8. Firestore Collections Structure
+### 10. Database Schema
 ```
 users/
-  - {userId}
-    - firstName, lastName, email, phone
-    - userType, verificationLevel, rating
-    - createdAt
+  - id (UUID)
+  - firstName, lastName, email, phone
+  - userType (rider/driver)
+  - profilePhoto, authProvider
+  - createdAt
 
 trips/
-  - {tripId}
-    - driverId, riderId
-    - pickup, dropoff, fare
-    - status, createdAt
+  - id (UUID)
+  - riderId, driverId (references users)
+  - pickup, dropoff (JSONB: address + coordinates)
+  - fare, status, passengers
+  - distance, duration
+  - driverLocation (JSONB)
+  - createdAt, updatedAt
 
 routes/
-  - {routeId}
-    - driverId, origin, destination
-    - availableSeats, status
-    - createdAt
+  - id (UUID)
+  - driverId (references users)
+  - origin, destination (JSONB)
+  - departureTime, availableSeats
+  - distance, duration, status
+  - createdAt, updatedAt
+
+conversations/
+  - id (UUID)
+  - participant1Id, participant2Id (references users)
+  - lastMessage, lastMessageTimestamp
+  - createdAt
+
+messages/
+  - id (UUID)
+  - conversationId (references conversations)
+  - senderId, recipientId (references users)
+  - text, imageUri, timestamp, read
+
+rider_requests/
+  - id (UUID)
+  - routeId (references routes)
+  - riderId (references users)
+  - pickup, dropoff (JSONB)
+  - passengers, status, estimatedFare
+  - createdAt
 ```
 
 ## 🚀 How to Test

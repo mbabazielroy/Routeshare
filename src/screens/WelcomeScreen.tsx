@@ -7,7 +7,7 @@ import { RootStackParamList } from "../navigation/types";
 import { signInWithApple, signInWithGoogle, isAppleSignInAvailable } from "../services/oauthService";
 import { useAuthStore } from "../state/authStore";
 import { useToast } from "../components/Toast";
-import { getUserProfile } from "../services/firebaseAuth";
+import { getUserProfile } from "../services/supabaseAuth";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Welcome">;
 
