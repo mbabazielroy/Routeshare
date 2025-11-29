@@ -49,7 +49,15 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
       },
     });
 
-    if (error) throw error;
+    if (error) {
+      // Check if it's a configuration error
+      if (error.message?.includes('validation_failed') || error.message?.includes('OAuth secret')) {
+        throw new Error(
+          "Google Sign-In is not configured in Supabase yet. Please follow the setup instructions in the README to enable Google authentication."
+        );
+      }
+      throw error;
+    }
 
     // Open the OAuth URL in browser
     if (data?.url) {
@@ -144,7 +152,15 @@ export const signInWithApple = async (): Promise<OAuthResult> => {
       },
     });
 
-    if (error) throw error;
+    if (error) {
+      // Check if it's a configuration error
+      if (error.message?.includes('validation_failed') || error.message?.includes('OAuth')) {
+        throw new Error(
+          "Apple Sign-In is not configured in Supabase yet. Please follow the setup instructions in the README to enable Apple authentication."
+        );
+      }
+      throw error;
+    }
 
     // Open the OAuth URL in browser
     if (data?.url) {
