@@ -73,9 +73,17 @@ export default function WelcomeScreen({ navigation }: Props) {
     setIsLoadingGoogle(true);
     try {
       const result = await signInWithGoogle();
+      console.log("Google OAuth result:", { uid: result.uid, email: result.email, name: result.displayName });
 
       // Get full user profile from Supabase
       const userProfile = await getUserProfile(result.uid);
+      console.log("User profile from database:", userProfile ? {
+        id: userProfile.id,
+        email: userProfile.email,
+        firstName: userProfile.firstName,
+        lastName: userProfile.lastName,
+        userType: userProfile.userType
+      } : null);
 
       if (userProfile && userProfile.userType) {
         // User has complete profile, log them in
@@ -89,10 +97,12 @@ export default function WelcomeScreen({ navigation }: Props) {
           rating: userProfile.rating || 5.0,
           totalTrips: userProfile.totalTrips || 0,
         };
+        console.log("Logging in with complete user profile, userType:", completeUser.userType);
         setUser(completeUser as any);
         showToast("Successfully signed in with Google", "success");
       } else {
         // User needs to complete profile setup
+        console.log("User profile incomplete, navigating to UserTypeSelection");
         showToast("Welcome! Please complete your profile", "success");
         navigation.navigate("UserTypeSelection", {
           phone: result.email,
