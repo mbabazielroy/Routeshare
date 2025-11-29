@@ -32,17 +32,18 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
   }
 
   try {
-    // Get the Supabase callback URL - this is what Google will redirect to
-    const redirectTo = 'https://wftmjiiamhmemnchuxeu.supabase.co/auth/v1/callback';
+    console.log("Starting Google Sign-In with PKCE flow...");
 
-    console.log("Google OAuth redirect URL:", redirectTo);
-
-    // Start Google OAuth flow
+    // Use PKCE flow for mobile apps - more secure and doesn't require custom redirect
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo,
-        skipBrowserRedirect: false,
+        skipBrowserRedirect: true,
+        // Use query params instead of hash for better mobile compatibility
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
       },
     });
 
@@ -61,41 +62,40 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
     if (data?.url) {
       console.log("Opening OAuth URL:", data.url);
 
-      // Use the Supabase callback URL as the redirect
-      const result = await WebBrowser.openAuthSessionAsync(
-        data.url,
-        redirectTo
-      );
+      // Open with WebBrowser - it will handle the OAuth flow
+      const result = await WebBrowser.openAuthSessionAsync(data.url);
 
-      console.log("WebBrowser result:", JSON.stringify(result, null, 2));
+      console.log("WebBrowser result type:", result.type);
 
       if (result.type === 'success' && result.url) {
-        // Extract tokens from the URL
-        const url = result.url;
-        console.log("Success URL:", url);
+        console.log("OAuth success, extracting tokens...");
 
-        // Try parsing from both hash fragment and query parameters
+        // Extract tokens from the URL - try multiple formats
+        const url = result.url;
         let accessToken: string | null = null;
         let refreshToken: string | null = null;
 
-        // Check hash fragment first (Supabase uses this)
+        // Parse hash fragment (Supabase typically uses this)
         if (url.includes('#')) {
-          const hashParams = new URLSearchParams(url.split('#')[1]);
+          const hash = url.split('#')[1];
+          const hashParams = new URLSearchParams(hash);
           accessToken = hashParams.get('access_token');
           refreshToken = hashParams.get('refresh_token');
+          console.log("Tokens from hash - access:", !!accessToken, "refresh:", !!refreshToken);
         }
 
-        // Fallback to query parameters
-        if (!accessToken) {
-          const queryParams = new URL(url).searchParams;
+        // Parse query parameters as fallback
+        if (!accessToken && url.includes('?')) {
+          const query = url.split('?')[1]?.split('#')[0];
+          const queryParams = new URLSearchParams(query);
           accessToken = queryParams.get('access_token');
           refreshToken = queryParams.get('refresh_token');
+          console.log("Tokens from query - access:", !!accessToken, "refresh:", !!refreshToken);
         }
 
-        console.log("Access token present:", !!accessToken);
-        console.log("Refresh token present:", !!refreshToken);
-
         if (accessToken) {
+          console.log("Setting session with tokens...");
+
           // Set the session with the tokens
           const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
             access_token: accessToken,
@@ -110,13 +110,15 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
           const user = sessionData.user;
           if (!user) throw new Error("No user data received from Google");
 
-          console.log("User authenticated:", user.id);
+          console.log("User authenticated successfully:", user.id);
 
           // Extract user info
           const email = user.email || '';
           const fullName = user.user_metadata?.full_name || user.user_metadata?.name || '';
           const [firstName, ...lastNameParts] = fullName.split(' ');
           const lastName = lastNameParts.join(' ');
+
+          console.log("Creating/updating user profile...");
 
           // Update user profile in database
           await updateUserProfile(user.id, {
@@ -136,26 +138,25 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
             lastName: lastName || '',
           };
         } else {
-          throw new Error("No access token received from Google. Please make sure Google OAuth is properly configured in Supabase.");
+          console.error("No access token found in URL:", url);
+          throw new Error("No access token received from Google. Please try again.");
         }
       } else if (result.type === 'cancel') {
-        throw new Error("Google Sign-In was cancelled. Please make sure Google OAuth is configured in your Supabase dashboard.");
-      } else if (result.type === 'dismiss' || result.type === 'locked') {
+        console.log("User cancelled Google Sign-In");
         throw new Error("Sign-in was cancelled");
       } else {
         console.error("WebBrowser result:", result);
-        // Handle the error - result.type will be 'cancel' with possible error info
         if ('error' in result && result.error) {
-          throw new Error(`Google sign-in failed: ${result.error}. Please check your Supabase OAuth configuration.`);
+          console.error("WebBrowser error:", result.error);
         }
-        throw new Error("Google sign-in failed. Please check your Supabase OAuth configuration.");
+        throw new Error("Google sign-in failed. Please try again.");
       }
     }
 
     throw new Error("Failed to start Google sign-in");
   } catch (error: any) {
-    // Only log unexpected errors, not configuration messages
-    if (!error.message?.includes('not configured') && !error.message?.includes('OAuth') && !error.message?.includes('cancelled')) {
+    // Only log unexpected errors, not user cancellations
+    if (!error.message?.includes('cancelled') && !error.message?.includes('not configured')) {
       console.error("Google sign-in error:", error);
     }
     throw error;
