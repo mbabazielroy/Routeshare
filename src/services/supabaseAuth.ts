@@ -137,7 +137,7 @@ const getOrCreateUserProfile = async (
   }
 };
 
-// Update user profile
+// Update user profile (or create if doesn't exist)
 export const updateUserProfile = async (
   userId: string,
   updates: Partial<User>
@@ -157,10 +157,17 @@ export const updateUserProfile = async (
   }
 
   try {
+    // Use upsert to create user if they don't exist
     const { data, error } = await supabase
       .from('users')
-      .update(updates)
-      .eq('id', userId)
+      .upsert({
+        id: userId,
+        ...updates,
+        createdAt: new Date().toISOString(),
+      }, {
+        onConflict: 'id',
+        ignoreDuplicates: false,
+      })
       .select()
       .single();
 
