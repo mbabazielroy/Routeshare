@@ -1,11 +1,13 @@
-import React, { useState } from "react";
-import { View, Text, Pressable, TextInput } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Pressable, TextInput, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import { useAuthStore } from "../state/authStore";
 import { UserType, User } from "../types/routeshare";
+import { updateUserProfile, getUserProfile } from "../services/supabaseAuth";
+import { useToast } from "../components/Toast";
 
 type Props = NativeStackScreenProps<RootStackParamList, "UserTypeSelection">;
 
@@ -14,32 +16,107 @@ export default function UserTypeSelectionScreen({ navigation, route }: Props) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState(route.params?.phone || "");
+  const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
   const setUser = useAuthStore((s) => s.setUser);
+  const showToast = useToast((s) => s.show);
 
   const isNewUser = route.params?.isNewUser ?? true;
+  const oauthData = route.params?.oauthData;
+
+  // Pre-fill form with OAuth data if available
+  useEffect(() => {
+    if (oauthData) {
+      setFirstName(oauthData.firstName || "");
+      setLastName(oauthData.lastName || "");
+      setPhone(oauthData.email || phone);
+    }
+  }, [oauthData]);
+
+  // Get the current user's ID from Supabase session
+  useEffect(() => {
+    const getCurrentUserId = async () => {
+      const { supabase } = await import("../config/supabase");
+      if (supabase) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user?.id) {
+          setUserId(session.user.id);
+          console.log("Current user ID from session:", session.user.id);
+        }
+      }
+    };
+    getCurrentUserId();
+  }, []);
 
   const handleContinue = async () => {
-    if (!selectedType || !firstName || !lastName || !phone) return;
+    if (!selectedType || !firstName || !lastName) {
+      showToast("Please fill in all fields", "error");
+      return;
+    }
 
-    const user: User = {
-      id: selectedType === "rider" ? "rider_1" : "driver_1",
-      firstName,
-      lastName,
-      phone,
-      userType: selectedType,
-      verificationLevel: "basic",
-      rating: selectedType === "driver" ? 4.9 : 5.0,
-      totalTrips: selectedType === "driver" ? 127 : 0,
-      createdAt: new Date().toISOString(),
-    };
+    if (!userId) {
+      showToast("User session not found. Please sign in again.", "error");
+      return;
+    }
 
-    await setUser(user, "phone");
+    setIsLoading(true);
 
-    // Navigate based on user type
-    if (selectedType === "rider") {
-      navigation.replace("RiderTabs");
-    } else {
-      navigation.replace("DriverTabs");
+    try {
+      console.log("Updating user profile with userType:", selectedType);
+
+      // Update the user profile in Supabase
+      const result = await updateUserProfile(userId, {
+        firstName,
+        lastName,
+        phone,
+        userType: selectedType,
+        authProvider: oauthData ? 'google' : 'phone',
+        email: oauthData?.email || undefined,
+        profilePhoto: oauthData?.photoURL || undefined,
+      });
+
+      if (!result.success) {
+        throw new Error(result.error || "Failed to update profile");
+      }
+
+      console.log("Profile updated successfully:", result.user);
+
+      // Get the complete updated profile
+      const updatedProfile = await getUserProfile(userId);
+
+      if (!updatedProfile) {
+        throw new Error("Failed to fetch updated profile");
+      }
+
+      // Set the user in the app state
+      const completeUser: User = {
+        ...updatedProfile,
+        firstName: updatedProfile.firstName!,
+        lastName: updatedProfile.lastName!,
+        phone: updatedProfile.phone || phone,
+        userType: updatedProfile.userType!,
+        verificationLevel: updatedProfile.verificationLevel || 'basic',
+        rating: updatedProfile.rating || 5.0,
+        totalTrips: updatedProfile.totalTrips || 0,
+      };
+
+      await setUser(completeUser, oauthData ? 'google' : 'phone');
+
+      showToast("Profile completed successfully!", "success");
+
+      // Navigate based on user type
+      setTimeout(() => {
+        if (selectedType === "rider") {
+          navigation.replace("RiderTabs");
+        } else {
+          navigation.replace("DriverTabs");
+        }
+      }, 500);
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      showToast(error.message || "Failed to update profile", "error");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -175,16 +252,20 @@ export default function UserTypeSelectionScreen({ navigation, route }: Props) {
         <View className="flex-1 justify-end pb-4">
           <Pressable
             onPress={handleContinue}
-            disabled={!selectedType || !firstName || !lastName || !phone}
+            disabled={!selectedType || !firstName || !lastName || !phone || isLoading}
             className={`rounded-2xl py-4 px-6 ${
-              selectedType && firstName && lastName && phone
+              selectedType && firstName && lastName && phone && !isLoading
                 ? "bg-blue-600 dark:bg-blue-500 active:bg-blue-700 dark:active:bg-blue-600"
                 : "bg-gray-300 dark:bg-gray-700"
             }`}
           >
-            <Text className="text-white text-center text-lg font-semibold">
-              Continue
-            </Text>
+            {isLoading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text className="text-white text-center text-lg font-semibold">
+                Continue
+              </Text>
+            )}
           </Pressable>
         </View>
       </View>

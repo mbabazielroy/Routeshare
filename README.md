@@ -566,37 +566,38 @@ Apple Sign-In is available through Supabase and is **required** for iOS apps wit
 - Hide My Email feature for privacy
 - Face ID/Touch ID support
 
-### 7. Configure Google Sign-In ✅ READY TO TEST
+### 7. Configure Google Sign-In ✅ WORKING
 
-Google Sign-In is fully implemented and ready to test!
+Google Sign-In is fully implemented and working!
 
-**Current Status:** Code is ready ✅ | Ready for testing ✅
+**Current Status:** Code is ready ✅ | Fully functional ✅
 
-**Setup Steps:**
+**What's Working:**
+- ✅ OAuth 2.0 flow with Supabase using `vibecode://` redirect URI
+- ✅ Automatic user profile creation in database
+- ✅ Email and name extraction from Google
+- ✅ Profile photo from Google account
+- ✅ Proper user ID tracking (no more mock accounts)
+- ✅ Form pre-filling with Google data
+- ✅ Secure token management
+- ✅ Works on both iOS and Android
+- ✅ Clear error messages
+
+**Recent Fixes:**
+- Fixed redirect URI to use `vibecode://auth/callback` (required by Vibecode environment)
+- Fixed token extraction from URL hash fragments
+- Fixed UserTypeSelection to use real user IDs instead of mock IDs (`rider_1`, `driver_1`)
+- Added automatic form pre-filling from OAuth data
+- Profile updates now properly save to Supabase database
+
+**Setup Requirements:**
 1. **Supabase Dashboard:**
    - Go to Authentication > Settings (or URL Configuration)
-   - Find "Redirect URLs" or "Additional Redirect URLs"
-   - Add this URL: `vibecode://auth/callback`
-   - Click "Save"
+   - Add redirect URL: `vibecode://auth/callback`
+   - Ensure INSERT policy exists: `CREATE POLICY "Users can insert own data" ON users FOR INSERT WITH CHECK (auth.uid() = id);`
 
-2. **Google Cloud Console (if not already done):**
-   - Go to [console.cloud.google.com](https://console.cloud.google.com)
-   - Navigate to your project > APIs & Services > Credentials
-   - Click on your OAuth 2.0 Client ID
-   - In "Authorized redirect URIs", ensure you have:
-     - `https://wftmjiiamhmemnchuxeu.supabase.co/auth/v1/callback` (Supabase callback)
-   - Click "Save"
-
-3. **Test It:**
-   - The app has been updated automatically
-   - Tap "Continue with Google"
-   - Sign in with your Google account
-   - You'll be redirected back to the app
-   - Your profile is automatically created! ✅
-
-**What's Already Implemented:**
-- ✅ OAuth 2.0 flow with Supabase
-- ✅ Automatic user profile creation
+2. **Google Cloud Console:**
+   - Authorized redirect URI: `https://wftmjiiamhmemnchuxeu.supabase.co/auth/v1/callback`
 - ✅ Email and name extraction from Google
 - ✅ Profile photo from Google account
 - ✅ Secure token management
