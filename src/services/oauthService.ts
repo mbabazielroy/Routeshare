@@ -32,13 +32,17 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
   }
 
   try {
-    // For mobile apps, we need to use the Supabase redirect without custom scheme
-    // Supabase will handle the redirect internally
+    // Get the Supabase callback URL - this is what Google will redirect to
+    const redirectTo = 'https://wftmjiiamhmemnchuxeu.supabase.co/auth/v1/callback';
+
+    console.log("Google OAuth redirect URL:", redirectTo);
+
+    // Start Google OAuth flow
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        // Don't specify redirectTo for mobile - let Supabase handle it
-        skipBrowserRedirect: true,
+        redirectTo,
+        skipBrowserRedirect: false,
       },
     });
 
@@ -57,9 +61,10 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
     if (data?.url) {
       console.log("Opening OAuth URL:", data.url);
 
+      // Use the Supabase callback URL as the redirect
       const result = await WebBrowser.openAuthSessionAsync(
         data.url,
-        null // Let the browser handle the redirect
+        redirectTo
       );
 
       console.log("WebBrowser result:", JSON.stringify(result, null, 2));
@@ -69,10 +74,23 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
         const url = result.url;
         console.log("Success URL:", url);
 
-        // Parse the URL - Supabase returns tokens in the hash fragment
-        const hashParams = new URLSearchParams(url.split('#')[1] || '');
-        const accessToken = hashParams.get('access_token');
-        const refreshToken = hashParams.get('refresh_token');
+        // Try parsing from both hash fragment and query parameters
+        let accessToken: string | null = null;
+        let refreshToken: string | null = null;
+
+        // Check hash fragment first (Supabase uses this)
+        if (url.includes('#')) {
+          const hashParams = new URLSearchParams(url.split('#')[1]);
+          accessToken = hashParams.get('access_token');
+          refreshToken = hashParams.get('refresh_token');
+        }
+
+        // Fallback to query parameters
+        if (!accessToken) {
+          const queryParams = new URL(url).searchParams;
+          accessToken = queryParams.get('access_token');
+          refreshToken = queryParams.get('refresh_token');
+        }
 
         console.log("Access token present:", !!accessToken);
         console.log("Refresh token present:", !!refreshToken);
@@ -118,15 +136,19 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
             lastName: lastName || '',
           };
         } else {
-          throw new Error("No access token received from Google");
+          throw new Error("No access token received from Google. Please make sure Google OAuth is properly configured in Supabase.");
         }
       } else if (result.type === 'cancel') {
-        throw new Error("Google Sign-In is not configured yet. Please set up Google OAuth in your Supabase dashboard (see README for instructions).");
+        throw new Error("Google Sign-In was cancelled. Please make sure Google OAuth is configured in your Supabase dashboard.");
       } else if (result.type === 'dismiss' || result.type === 'locked') {
         throw new Error("Sign-in was cancelled");
       } else {
         console.error("WebBrowser result:", result);
-        throw new Error("Google sign-in failed. Please try again.");
+        // Handle the error - result.type will be 'cancel' with possible error info
+        if ('error' in result && result.error) {
+          throw new Error(`Google sign-in failed: ${result.error}. Please check your Supabase OAuth configuration.`);
+        }
+        throw new Error("Google sign-in failed. Please check your Supabase OAuth configuration.");
       }
     }
 
