@@ -213,10 +213,10 @@ export const useRiderStore = create<RiderState>()(
       // Save trip to Supabase
       if (supabase) {
         console.log("Saving completed trip to Supabase...");
+        // Don't pass the local ID - let Supabase generate a UUID
         const { error } = await supabase
           .from('trips')
           .insert({
-            id: currentTrip.id,
             riderId: currentTrip.riderId,
             driverId: currentTrip.driverId,
             pickup: currentTrip.pickup,
