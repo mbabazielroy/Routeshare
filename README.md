@@ -565,20 +565,17 @@ Apple Sign-In is available through Supabase and is **required** for iOS apps wit
 - Hide My Email feature for privacy
 - Face ID/Touch ID support
 
-### 7. Configure Google Sign-In 🔧 NEEDS ADDITIONAL REDIRECT URI
+### 7. Configure Google Sign-In ✅ READY TO TEST
 
-Google Sign-In is fully implemented! Just needs one more redirect URI configured.
+Google Sign-In is fully implemented and ready to test!
 
-**Current Status:** Code is ready ✅ | Additional redirect URI needed ⚠️
-
-**Why you're seeing "Safari can't connect to server":**
-The OAuth flow needs a custom redirect URI (`routeshare://auth/callback`) to properly return to the app after authentication.
+**Current Status:** Code is ready ✅ | Ready for testing ✅
 
 **Setup Steps:**
 1. **Supabase Dashboard:**
    - Go to Authentication > Settings (or URL Configuration)
    - Find "Redirect URLs" or "Additional Redirect URLs"
-   - Add this URL: `routeshare://auth/callback`
+   - Add this URL: `vibecode://auth/callback`
    - Click "Save"
 
 2. **Google Cloud Console (if not already done):**
@@ -590,7 +587,7 @@ The OAuth flow needs a custom redirect URI (`routeshare://auth/callback`) to pro
    - Click "Save"
 
 3. **Test It:**
-   - Reload your app (it should pick up the changes automatically)
+   - The app has been updated automatically
    - Tap "Continue with Google"
    - Sign in with your Google account
    - You'll be redirected back to the app

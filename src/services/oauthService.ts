@@ -40,9 +40,9 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
     await supabase.auth.signOut();
 
     // Get the redirect URL for OAuth
-    // Use 'routeshare' scheme for app compatibility
+    // Use 'vibecode' scheme as configured in the Vibecode environment
     const redirectTo = makeRedirectUri({
-      scheme: 'routeshare',
+      scheme: 'vibecode',
       path: 'auth/callback',
     });
 
@@ -95,12 +95,27 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
 
     if (result.type === 'success' && result.url) {
       console.log("OAuth success! Processing redirect URL...");
+      console.log("Redirect URL received:", result.url);
 
       // Extract tokens from the redirect URL
-      const url = new URL(result.url);
-      const params = url.searchParams;
-      const accessToken = params.get('access_token');
-      const refreshToken = params.get('refresh_token');
+      // Supabase returns tokens in the hash fragment (#access_token=...)
+      const url = result.url;
+      let accessToken: string | null = null;
+      let refreshToken: string | null = null;
+
+      // Try hash fragment first (Supabase default)
+      if (url.includes('#')) {
+        const hashParams = new URLSearchParams(url.split('#')[1]);
+        accessToken = hashParams.get('access_token');
+        refreshToken = hashParams.get('refresh_token');
+      }
+
+      // Fallback to query parameters
+      if (!accessToken && url.includes('?')) {
+        const queryParams = new URLSearchParams(url.split('?')[1]);
+        accessToken = queryParams.get('access_token');
+        refreshToken = queryParams.get('refresh_token');
+      }
 
       console.log("Access token found:", !!accessToken);
 
@@ -213,9 +228,22 @@ export const signInWithApple = async (): Promise<OAuthResult> => {
       if (result.type === 'success') {
         // Extract tokens from the URL
         const url = result.url;
-        const params = new URL(url).searchParams;
-        const accessToken = params.get('access_token');
-        const refreshToken = params.get('refresh_token');
+        let accessToken: string | null = null;
+        let refreshToken: string | null = null;
+
+        // Try hash fragment first (Supabase default)
+        if (url.includes('#')) {
+          const hashParams = new URLSearchParams(url.split('#')[1]);
+          accessToken = hashParams.get('access_token');
+          refreshToken = hashParams.get('refresh_token');
+        }
+
+        // Fallback to query parameters
+        if (!accessToken && url.includes('?')) {
+          const queryParams = new URLSearchParams(url.split('?')[1]);
+          accessToken = queryParams.get('access_token');
+          refreshToken = queryParams.get('refresh_token');
+        }
 
         if (accessToken) {
           // Set the session with the tokens
