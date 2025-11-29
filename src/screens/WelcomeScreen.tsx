@@ -106,8 +106,8 @@ export default function WelcomeScreen({ navigation }: Props) {
         });
       }
     } catch (error: any) {
-      // Only log real errors, not configuration messages
-      if (!error.message?.includes('not configured')) {
+      // Only log real errors, not configuration messages or cancellations
+      if (!error.message?.includes('not configured') && !error.message?.includes('cancelled')) {
         console.error("Google sign-in error:", error);
       }
       showToast(error.message || "Failed to sign in with Google", "error");
