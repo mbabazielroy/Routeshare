@@ -27,13 +27,8 @@ export const getOrCreateConversation = async (
   userId2: string
 ): Promise<Conversation | null> => {
   if (!supabase) {
-    // Return mock conversation for local mode
-    return {
-      id: `conv-${Date.now()}`,
-      participant1Id: userId1,
-      participant2Id: userId2,
-      createdAt: new Date().toISOString(),
-    };
+    console.error('Supabase not configured - cannot create conversation');
+    return null;
   }
 
   try {
@@ -76,17 +71,8 @@ export const sendMessage = async (
   imageUri?: string
 ): Promise<Message | null> => {
   if (!supabase) {
-    // Return mock message for local mode
-    return {
-      id: `msg-${Date.now()}`,
-      conversationId,
-      senderId,
-      recipientId,
-      text,
-      imageUri,
-      timestamp: new Date().toISOString(),
-      read: false,
-    };
+    console.error('Supabase not configured - cannot send message');
+    return null;
   }
 
   try {

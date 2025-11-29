@@ -29,35 +29,72 @@ export default function EarningsScreen({ navigation }: Props) {
   };
 
   const getTripsForPeriod = () => {
-    // Mock data - in production, filter by actual dates
-    switch (selectedPeriod) {
-      case "today":
-        return Math.floor(tripHistory.length * 0.1) || 0;
-      case "week":
-        return Math.floor(tripHistory.length * 0.3) || tripHistory.length;
-      case "month":
-        return Math.floor(tripHistory.length * 0.7) || tripHistory.length;
-      case "all":
-        return tripHistory.length;
-    }
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay()); // Sunday
+    startOfWeek.setHours(0, 0, 0, 0);
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const filteredTrips = tripHistory.filter((trip) => {
+      if (trip.status !== "completed") return false;
+      const tripDate = new Date(trip.completedAt || trip.createdAt);
+
+      switch (selectedPeriod) {
+        case "today":
+          return tripDate >= startOfToday;
+        case "week":
+          return tripDate >= startOfWeek;
+        case "month":
+          return tripDate >= startOfMonth;
+        case "all":
+          return true;
+        default:
+          return false;
+      }
+    });
+
+    return filteredTrips.length;
   };
 
   const currentEarnings = getEarningsForPeriod();
   const currentTrips = getTripsForPeriod();
   const avgPerTrip = currentTrips > 0 ? currentEarnings / currentTrips : 0;
 
-  // Mock weekly breakdown
-  const weeklyData = [
-    { day: "Mon", amount: 45.5, trips: 2 },
-    { day: "Tue", amount: 67.8, trips: 3 },
-    { day: "Wed", amount: 89.2, trips: 4 },
-    { day: "Thu", amount: 52.3, trips: 2 },
-    { day: "Fri", amount: 98.7, trips: 5 },
-    { day: "Sat", amount: 123.4, trips: 6 },
-    { day: "Sun", amount: 78.9, trips: 3 },
-  ];
+  // Calculate real weekly breakdown from trip history
+  const getWeeklyData = () => {
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
 
-  const maxAmount = Math.max(...weeklyData.map((d) => d.amount));
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const weeklyData = days.map((day, index) => {
+      const dayStart = new Date(startOfWeek);
+      dayStart.setDate(startOfWeek.getDate() + index);
+      const dayEnd = new Date(dayStart);
+      dayEnd.setHours(23, 59, 59, 999);
+
+      const dayTrips = tripHistory.filter((trip) => {
+        if (trip.status !== "completed") return false;
+        const tripDate = new Date(trip.completedAt || trip.createdAt);
+        return tripDate >= dayStart && tripDate <= dayEnd;
+      });
+
+      const dayEarnings = dayTrips.reduce((sum, trip) => sum + (trip.driverEarnings || 0), 0);
+
+      return {
+        day,
+        amount: Math.round(dayEarnings * 100) / 100,
+        trips: dayTrips.length,
+      };
+    });
+
+    return weeklyData;
+  };
+
+  const weeklyData = getWeeklyData();
+  const maxAmount = Math.max(...weeklyData.map((d) => d.amount), 1); // Min 1 to avoid division by zero
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900">

@@ -26,13 +26,8 @@ export interface Trip {
 // Create a new trip
 export const createTrip = async (tripData: Omit<Trip, 'id' | 'createdAt' | 'updatedAt'>): Promise<Trip | null> => {
   if (!supabase) {
-    // Return mock trip for local mode
-    return {
-      id: `trip-${Date.now()}`,
-      ...tripData,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    console.error('Supabase not configured - cannot create trip');
+    throw new Error('Database connection not available');
   }
 
   try {
@@ -50,13 +45,14 @@ export const createTrip = async (tripData: Omit<Trip, 'id' | 'createdAt' | 'upda
     return data;
   } catch (error) {
     console.error('Error creating trip:', error);
-    return null;
+    throw error;
   }
 };
 
 // Get trip by ID
 export const getTrip = async (tripId: string): Promise<Trip | null> => {
   if (!supabase) {
+    console.error('Supabase not configured');
     return null;
   }
 

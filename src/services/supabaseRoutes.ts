@@ -42,13 +42,8 @@ export interface RiderRequest {
 // Create a new route
 export const createRoute = async (routeData: Omit<Route, 'id' | 'createdAt' | 'updatedAt'>): Promise<Route | null> => {
   if (!supabase) {
-    // Return mock route for local mode
-    return {
-      id: `route-${Date.now()}`,
-      ...routeData,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    console.error('Supabase not configured - cannot create route');
+    throw new Error('Database connection not available');
   }
 
   try {
@@ -66,13 +61,14 @@ export const createRoute = async (routeData: Omit<Route, 'id' | 'createdAt' | 'u
     return data;
   } catch (error) {
     console.error('Error creating route:', error);
-    return null;
+    throw error;
   }
 };
 
 // Get route by ID
 export const getRoute = async (routeId: string): Promise<Route | null> => {
   if (!supabase) {
+    console.error('Supabase not configured');
     return null;
   }
 
@@ -143,12 +139,8 @@ export const createRiderRequest = async (
   requestData: Omit<RiderRequest, 'id' | 'createdAt'>
 ): Promise<RiderRequest | null> => {
   if (!supabase) {
-    // Return mock request for local mode
-    return {
-      id: `request-${Date.now()}`,
-      ...requestData,
-      createdAt: new Date().toISOString(),
-    };
+    console.error('Supabase not configured - cannot create rider request');
+    throw new Error('Database connection not available');
   }
 
   try {
@@ -165,7 +157,7 @@ export const createRiderRequest = async (
     return data;
   } catch (error) {
     console.error('Error creating rider request:', error);
-    return null;
+    throw error;
   }
 };
 
