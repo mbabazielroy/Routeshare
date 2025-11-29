@@ -25,13 +25,13 @@ export default function TaxInformationScreen({ navigation }: Props) {
 
   const [taxInfo, setTaxInfo] = useState<TaxInfo>({
     filingStatus: "w9",
-    taxId: "•••-••-4321",
+    taxId: "",
     businessName: "",
-    addressLine1: "123 Oak Street",
+    addressLine1: "",
     addressLine2: "",
-    city: "Millville",
-    state: "VA",
-    zipCode: "22150",
+    city: "",
+    state: "",
+    zipCode: "",
   });
 
   const handleSave = async () => {

@@ -22,13 +22,13 @@ export default function VehicleInformationScreen({ navigation }: Props) {
   const showToast = useToast((s) => s.show);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Mock current vehicle data
+  // Empty vehicle data - user needs to fill it in
   const [vehicle, setVehicle] = useState<VehicleInfo>({
-    make: "Toyota",
-    model: "Camry",
-    year: "2020",
-    color: "Silver",
-    licensePlate: "ABC-1234",
+    make: "",
+    model: "",
+    year: "",
+    color: "",
+    licensePlate: "",
     seats: "4",
     type: "sedan",
   });

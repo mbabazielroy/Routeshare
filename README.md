@@ -49,10 +49,10 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 - **Interactive Menu:** All menu items functional with beautiful UI
 
 ### For Drivers
-- **Route Publishing:** Share your planned route and available seats
+- **Route Publishing:** Share your planned route and available seats (saves to Supabase)
 - **Earnings Dashboard:** Detailed analytics with daily, weekly, monthly, and total earnings
 - **Earnings Screen:** Visual charts, time period selector, and breakdown
-- **My Routes:** Route history and management with status filters
+- **My Routes:** Route history and management with status filters (loads from Supabase on login)
 - **Rider Requests:** Detailed request screen with earnings preview and route impact
 - **In-App Messaging:** Real-time chat accessible from home screen, rider requests, and active trips
 - **Quick Actions:** Messages, My Routes, and Earnings buttons on home screen
@@ -60,10 +60,10 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 - **Online/Offline Toggle:** Control when you're available for rides
 - **Stats Tracking:** Total trips, rating, and lifetime earnings
 - **Account Management:** Complete driver profile management
-- **Vehicle Information:** Add and manage vehicle details
-- **Documents:** Upload and verify driver documents (license, insurance, etc.)
-- **Bank Account:** Add payout information
-- **Tax Information:** Manage tax filing details
+- **Vehicle Information:** Add and manage vehicle details (clean slate - no mock data)
+- **Documents:** Upload and verify driver documents (all missing by default - no mock data)
+- **Bank Account:** Add payout information (empty by default - no mock data)
+- **Tax Information:** Manage tax filing details (empty by default - no mock data)
 - **Interactive Menu:** All features accessible with smooth navigation
 
 ### Shared Features

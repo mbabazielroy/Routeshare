@@ -1,46 +1,89 @@
-import React, { useState } from "react";
-import { View, Text, Pressable, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Pressable, ScrollView, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import { useFocusEffect } from "@react-navigation/native";
 import { DriverTabParamList } from "../navigation/types";
 import { useDriverStore } from "../state/driverStore";
-import { Route } from "../types/routeshare";
+import { useAuthStore } from "../state/authStore";
+import { Route as AppRoute } from "../types/routeshare";
+import { getDriverRoutes, Route as SupabaseRoute } from "../services/supabaseRoutes";
 
 type Props = BottomTabScreenProps<DriverTabParamList, "MyRoutes">;
 
 type FilterType = "active" | "completed" | "cancelled";
 
 export default function MyRoutesScreen({ navigation }: Props) {
+  const user = useAuthStore((s) => s.user);
   const currentRoute = useDriverStore((s) => s.currentRoute);
-  const tripHistory = useDriverStore((s) => s.tripHistory);
   const [filter, setFilter] = useState<FilterType>("active");
+  const [routes, setRoutes] = useState<AppRoute[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Mock routes from trip history
-  const allRoutes = tripHistory.map((trip) => ({
-    id: trip.routeId,
-    driverId: trip.driverId,
-    origin: trip.pickup,
-    destination: trip.dropoff,
-    departureTime: trip.createdAt,
-    availableSeats: 3,
+  // Convert Supabase Route to App Route
+  const convertRoute = (supabaseRoute: SupabaseRoute): AppRoute => ({
+    id: supabaseRoute.id,
+    driverId: supabaseRoute.driverId,
+    origin: {
+      latitude: supabaseRoute.origin.coordinates.lat,
+      longitude: supabaseRoute.origin.coordinates.lng,
+      address: supabaseRoute.origin.address,
+    },
+    destination: {
+      latitude: supabaseRoute.destination.coordinates.lat,
+      longitude: supabaseRoute.destination.coordinates.lng,
+      address: supabaseRoute.destination.address,
+    },
+    departureTime: supabaseRoute.departureTime,
+    availableSeats: supabaseRoute.availableSeats,
     isRecurring: false,
-    status: trip.status === "completed" ? "completed" : "cancelled",
-    estimatedDuration: 30,
-    distance: 20,
-    createdAt: trip.createdAt,
-  })) as Route[];
+    status: supabaseRoute.status as AppRoute['status'],
+    estimatedDuration: supabaseRoute.duration,
+    distance: supabaseRoute.distance,
+    createdAt: supabaseRoute.createdAt,
+  });
 
-  if (currentRoute) {
+  // Load routes from Supabase
+  const loadRoutes = async () => {
+    if (!user?.id) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      console.log("Loading routes for driver:", user.id);
+      setIsLoading(true);
+      const driverRoutes = await getDriverRoutes(user.id);
+      console.log("Loaded routes from Supabase:", driverRoutes.length);
+      const convertedRoutes = driverRoutes.map(convertRoute);
+      setRoutes(convertedRoutes);
+    } catch (error) {
+      console.error("Error loading routes:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Load routes when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      loadRoutes();
+    }, [user?.id])
+  );
+
+  // Build list of all routes (current + loaded)
+  const allRoutes = [...routes];
+  if (currentRoute && !routes.find(r => r.id === currentRoute.id)) {
     allRoutes.unshift(currentRoute);
   }
 
   const filteredRoutes = allRoutes.filter((route) => {
-    if (filter === "active") return route.status === "active" || route.status === "in_progress";
+    if (filter === "active") return route.status === "active";
     return route.status === filter;
   });
 
-  const renderRouteCard = (route: Route) => {
+  const renderRouteCard = (route: AppRoute) => {
     const isActive = route.status === "active" || route.status === "in_progress";
     const isCompleted = route.status === "completed";
     const statusColor = isActive

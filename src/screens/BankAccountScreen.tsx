@@ -19,14 +19,14 @@ interface BankAccountInfo {
 export default function BankAccountScreen({ navigation }: Props) {
   const showToast = useToast((s) => s.show);
   const [isSaving, setIsSaving] = useState(false);
-  const [hasAccount, setHasAccount] = useState(true);
+  const [hasAccount, setHasAccount] = useState(false);
 
   const [bankInfo, setBankInfo] = useState<BankAccountInfo>({
-    accountHolderName: "John Davis",
-    routingNumber: "•••••••21",
-    accountNumber: "••••••4567",
+    accountHolderName: "",
+    routingNumber: "",
+    accountNumber: "",
     accountType: "checking",
-    bankName: "Chase Bank",
+    bankName: "",
   });
 
   const [isEditing, setIsEditing] = useState(false);
