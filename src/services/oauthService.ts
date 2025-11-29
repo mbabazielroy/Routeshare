@@ -32,21 +32,13 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
   }
 
   try {
-    // Get the redirect URL for OAuth
-    // Use 'vibecode' scheme for Vibecode environment compatibility
-    const redirectTo = makeRedirectUri({
-      scheme: 'vibecode',
-      path: 'auth/callback',
-    });
-
-    console.log("Google OAuth redirect URL:", redirectTo);
-
-    // Start Google OAuth flow
+    // For mobile apps, we need to use the Supabase redirect without custom scheme
+    // Supabase will handle the redirect internally
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo,
-        skipBrowserRedirect: false,
+        // Don't specify redirectTo for mobile - let Supabase handle it
+        skipBrowserRedirect: true,
       },
     });
 
@@ -67,19 +59,20 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
 
       const result = await WebBrowser.openAuthSessionAsync(
         data.url,
-        redirectTo
+        null // Let the browser handle the redirect
       );
 
       console.log("WebBrowser result:", JSON.stringify(result, null, 2));
 
-      if (result.type === 'success') {
+      if (result.type === 'success' && result.url) {
         // Extract tokens from the URL
         const url = result.url;
         console.log("Success URL:", url);
 
-        const params = new URL(url).searchParams;
-        const accessToken = params.get('access_token');
-        const refreshToken = params.get('refresh_token');
+        // Parse the URL - Supabase returns tokens in the hash fragment
+        const hashParams = new URLSearchParams(url.split('#')[1] || '');
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
 
         console.log("Access token present:", !!accessToken);
         console.log("Refresh token present:", !!refreshToken);
@@ -129,15 +122,20 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
         }
       } else if (result.type === 'cancel') {
         throw new Error("Google Sign-In is not configured yet. Please set up Google OAuth in your Supabase dashboard (see README for instructions).");
+      } else if (result.type === 'dismiss' || result.type === 'locked') {
+        throw new Error("Sign-in was cancelled");
       } else {
-        console.error("WebBrowser result type:", result.type);
+        console.error("WebBrowser result:", result);
         throw new Error("Google sign-in failed. Please try again.");
       }
     }
 
     throw new Error("Failed to start Google sign-in");
   } catch (error: any) {
-    console.error("Google sign-in error:", error);
+    // Only log unexpected errors, not configuration messages
+    if (!error.message?.includes('not configured') && !error.message?.includes('OAuth') && !error.message?.includes('cancelled')) {
+      console.error("Google sign-in error:", error);
+    }
     throw error;
   }
 };
@@ -241,7 +239,10 @@ export const signInWithApple = async (): Promise<OAuthResult> => {
 
     throw new Error("Failed to start Apple sign-in");
   } catch (error: any) {
-    console.error("Apple sign-in error:", error);
+    // Only log unexpected errors, not configuration messages
+    if (!error.message?.includes('not configured') && !error.message?.includes('OAuth')) {
+      console.error("Apple sign-in error:", error);
+    }
     throw error;
   }
 };
