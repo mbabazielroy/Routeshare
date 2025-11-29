@@ -42,8 +42,19 @@ export default function WelcomeScreen({ navigation }: Props) {
           rating: userProfile.rating || 5.0,
           totalTrips: userProfile.totalTrips || 0,
         };
-        setUser(completeUser as any);
+        console.log("Logging in with complete user profile, userType:", completeUser.userType);
+        await setUser(completeUser as any, 'apple');
         showToast("Successfully signed in with Apple", "success");
+
+        // Navigate to appropriate home screen
+        console.log("🚀 Navigating user to home screen, userType:", completeUser.userType);
+        if (completeUser.userType === 'rider') {
+          console.log("➡️  Navigating to RiderTabs");
+          navigation.replace("RiderTabs");
+        } else {
+          console.log("➡️  Navigating to DriverTabs");
+          navigation.replace("DriverTabs");
+        }
       } else {
         // User needs to complete profile setup
         showToast("Welcome! Please complete your profile", "success");
@@ -98,8 +109,18 @@ export default function WelcomeScreen({ navigation }: Props) {
           totalTrips: userProfile.totalTrips || 0,
         };
         console.log("Logging in with complete user profile, userType:", completeUser.userType);
-        setUser(completeUser as any);
+        await setUser(completeUser as any, 'google');
         showToast("Successfully signed in with Google", "success");
+
+        // Navigate to appropriate home screen
+        console.log("🚀 Navigating user to home screen, userType:", completeUser.userType);
+        if (completeUser.userType === 'rider') {
+          console.log("➡️  Navigating to RiderTabs");
+          navigation.replace("RiderTabs");
+        } else {
+          console.log("➡️  Navigating to DriverTabs");
+          navigation.replace("DriverTabs");
+        }
       } else {
         // User needs to complete profile setup
         console.log("User profile incomplete, navigating to UserTypeSelection");

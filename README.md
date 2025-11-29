@@ -26,8 +26,10 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 - **Pre-filled Phone:** Verified phone number automatically populated in registration
 - **Persistent Auth:** Auto-login on app launch with secure storage
 - **Secure Storage:** Uses expo-secure-store for sensitive authentication tokens
-- **Smart Navigation:** Automatically routes to appropriate screen based on user type
+- **Smart Navigation:** Automatically routes to appropriate screen based on user type (RiderTabs/DriverTabs)
+- **Re-login Support:** Returning users can sign in again after logout with proper navigation
 - **Auth Provider Tracking:** Remembers how users signed in (phone/apple/google)
+- **User Data Isolation:** Complete data clearing on logout and user switch (no data bleed between users)
 - **Logout Functionality:** Secure logout with confirmation modal that clears all stored data
 - **Security Notice:** Clear messaging about data protection and privacy
 
