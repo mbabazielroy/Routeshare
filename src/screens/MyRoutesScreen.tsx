@@ -22,27 +22,48 @@ export default function MyRoutesScreen({ navigation }: Props) {
   const [isLoading, setIsLoading] = useState(true);
 
   // Convert Supabase Route to App Route
-  const convertRoute = (supabaseRoute: SupabaseRoute): AppRoute => ({
-    id: supabaseRoute.id,
-    driverId: supabaseRoute.driverId,
-    origin: {
-      latitude: supabaseRoute.origin.coordinates.lat,
-      longitude: supabaseRoute.origin.coordinates.lng,
-      address: supabaseRoute.origin.address,
-    },
-    destination: {
-      latitude: supabaseRoute.destination.coordinates.lat,
-      longitude: supabaseRoute.destination.coordinates.lng,
-      address: supabaseRoute.destination.address,
-    },
-    departureTime: supabaseRoute.departureTime,
-    availableSeats: supabaseRoute.availableSeats,
-    isRecurring: false,
-    status: supabaseRoute.status as AppRoute['status'],
-    estimatedDuration: supabaseRoute.duration,
-    distance: supabaseRoute.distance,
-    createdAt: supabaseRoute.createdAt,
-  });
+  const convertRoute = (supabaseRoute: SupabaseRoute): AppRoute => {
+    // Handle different possible coordinate structures
+    const getCoordinates = (location: any) => {
+      if (location.coordinates) {
+        // Structure: { address: string, coordinates: { lat: number, lng: number } }
+        return {
+          latitude: location.coordinates.lat,
+          longitude: location.coordinates.lng,
+          address: location.address,
+        };
+      } else if (location.latitude !== undefined && location.longitude !== undefined) {
+        // Structure: { address: string, latitude: number, longitude: number }
+        return {
+          latitude: location.latitude,
+          longitude: location.longitude,
+          address: location.address,
+        };
+      } else {
+        // Fallback - missing coordinates
+        console.warn("Location missing coordinates, using defaults");
+        return {
+          latitude: 0,
+          longitude: 0,
+          address: location.address || "Unknown location",
+        };
+      }
+    };
+
+    return {
+      id: supabaseRoute.id,
+      driverId: supabaseRoute.driverId,
+      origin: getCoordinates(supabaseRoute.origin),
+      destination: getCoordinates(supabaseRoute.destination),
+      departureTime: supabaseRoute.departureTime,
+      availableSeats: supabaseRoute.availableSeats,
+      isRecurring: false,
+      status: supabaseRoute.status as AppRoute['status'],
+      estimatedDuration: supabaseRoute.duration,
+      distance: supabaseRoute.distance,
+      createdAt: supabaseRoute.createdAt,
+    };
+  };
 
   // Load routes from Supabase
   const loadRoutes = async () => {
