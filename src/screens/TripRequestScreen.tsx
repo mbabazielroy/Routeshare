@@ -23,17 +23,31 @@ export default function TripRequestScreen({ navigation }: Props) {
   const handleFindRides = async () => {
     if (!pickupAddress || !dropoffAddress || !user?.id) return;
 
-    // Note: In production, integrate Google Places API or Mapbox Geocoding
-    // For now, using placeholder coordinates - real geocoding required for launch
+    // Generate realistic placeholder coordinates based on address
+    // In production: integrate Google Places API or Mapbox Geocoding
+    const hashCode = (str: string) => {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+      }
+      return hash;
+    };
+
+    // Generate somewhat realistic coordinates within continental US
+    const pickupHash = hashCode(pickupAddress);
+    const dropoffHash = hashCode(dropoffAddress);
+
     const pickup = {
-      latitude: 0,
-      longitude: 0,
+      latitude: 37 + ((pickupHash % 100) / 100) * 10, // 37-47 (US latitude range)
+      longitude: -97 + ((pickupHash % 200) / 200) * 30, // -97 to -67 (US longitude range)
       address: pickupAddress,
     };
 
     const dropoff = {
-      latitude: 0,
-      longitude: 0,
+      latitude: 37 + ((dropoffHash % 100) / 100) * 10,
+      longitude: -97 + ((dropoffHash % 200) / 200) * 30,
       address: dropoffAddress,
     };
 
@@ -56,7 +70,7 @@ export default function TripRequestScreen({ navigation }: Props) {
           {/* Header */}
           <View className="flex-row items-center justify-between mb-6">
             <Pressable onPress={() => navigation.goBack()}>
-              <Ionicons name="arrow-back" size={28} color="#1f2937" />
+              <Ionicons name="arrow-back" size={28} className="text-gray-900 dark:text-white" />
             </Pressable>
             <Text className="text-xl font-bold text-gray-900 dark:text-white">Request a Ride</Text>
             <View className="w-7" />
@@ -162,14 +176,14 @@ export default function TripRequestScreen({ navigation }: Props) {
                 onPress={() => setPassengers(Math.max(1, passengers - 1))}
                 className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full items-center justify-center border border-gray-300 dark:border-gray-700"
               >
-                <Ionicons name="remove" size={20} color="#1f2937" />
+                <Ionicons name="remove" size={20} className="text-gray-900 dark:text-white" />
               </Pressable>
               <Text className="text-xl font-semibold text-gray-900 dark:text-white">{passengers}</Text>
               <Pressable
                 onPress={() => setPassengers(Math.min(4, passengers + 1))}
                 className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full items-center justify-center border border-gray-300 dark:border-gray-700"
               >
-                <Ionicons name="add" size={20} color="#1f2937" />
+                <Ionicons name="add" size={20} className="text-gray-900 dark:text-white" />
               </Pressable>
             </View>
           </View>

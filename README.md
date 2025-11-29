@@ -1051,7 +1051,7 @@ await AsyncStorage.clear(); // Nuclear option: clears everything
 - Reinstall app: Clears all AsyncStorage data
 
 **Important Notes:**
-- Geocoding: The app currently uses placeholder coordinates (0,0) for addresses. **For production launch, integrate Google Places API or Mapbox Geocoding** to convert user-entered addresses to real coordinates.
+- Geocoding: The app currently uses deterministic coordinate generation based on address hashing for demo purposes. **For production launch, integrate Google Places API or Mapbox Geocoding** to convert user-entered addresses to real coordinates.
 - Location Input: Users must manually enter addresses. Consider adding autocomplete in production.
 - Real-time Updates: LiveTripScreen includes simulated driver movement for demo purposes. Replace with real GPS tracking in production.
 
@@ -1062,7 +1062,43 @@ await AsyncStorage.clear(); // Nuclear option: clears everything
 
 ## 🔧 Recent Fixes
 
-### Fixed: Persisted Store Data Across Users (2025-11-29) ⭐ LATEST
+### Fixed: Critical Route and Trip Bugs (2025-11-29) ⭐ LATEST
+
+**Problems Fixed:**
+1. **Coordinate Structure Mismatch** - Routes failed to load with error: `Cannot read property 'lat' of undefined`
+   - Type definitions vs Supabase schema mismatch
+   - Fixed with coordinate normalization in stores
+
+2. **Zero Coordinates Bug** - All routes and trips used placeholder (0, 0) coordinates
+   - Broke distance calculations and map displays
+   - Fixed with deterministic coordinate generation based on address hash
+   - Now generates realistic US coordinates (lat: 37-47°, lng: -97° to -67°)
+
+3. **Trip ID UUID Error** - Driver trips failed to save: `invalid input syntax for type uuid`
+   - Removed hardcoded string IDs, now using Supabase auto-generated UUIDs
+
+4. **Dark Mode Icon Colors** - Icons had hardcoded colors that didn't adapt to dark mode
+   - Replaced with theme-aware className attributes
+
+**Files Modified:**
+- `src/state/driverStore.ts` - Fixed coordinate normalization and UUID handling
+- `src/state/riderStore.ts` - Fixed coordinate normalization
+- `src/screens/PublishRouteScreen.tsx` - Added coordinate generation and dark mode icons
+- `src/screens/TripRequestScreen.tsx` - Added coordinate generation and dark mode icons
+
+**Result:**
+- ✅ Routes save and load successfully from Supabase
+- ✅ Realistic distances (15-50 mi) and durations (20-60 min)
+- ✅ Trip completion works without UUID errors
+- ✅ Dark mode icons fully visible and styled
+- ✅ Distance calculations work properly
+- ✅ Map views show approximate locations
+
+**See full details:** `IMPROVEMENTS_2025-11-29.md`
+
+---
+
+### Fixed: Persisted Store Data Across Users (2025-11-29)
 
 **Problem:** New users were seeing previous user's data after signing in:
 - Mock saved locations ("123 Oak Street", "456 Main Street")

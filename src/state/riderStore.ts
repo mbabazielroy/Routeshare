@@ -71,6 +71,15 @@ export const useRiderStore = create<RiderState>()(
         return;
       }
 
+      // Normalize location data to match database schema
+      const normalizeLocation = (loc: any) => ({
+        address: loc.address,
+        coordinates: {
+          lat: loc.latitude,
+          lng: loc.longitude,
+        },
+      });
+
       // Query active routes from Supabase
       console.log("Searching for available routes...");
       const { data: routes, error } = await supabase

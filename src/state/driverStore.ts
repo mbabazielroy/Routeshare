@@ -63,13 +63,21 @@ export const useDriverStore = create<DriverState>()(
 
       console.log("Publishing route to Supabase...");
 
-      // Create route in Supabase
+      // Create route in Supabase - normalize coordinates to match database schema
+      const normalizeLocation = (loc: any) => ({
+        address: loc.address,
+        coordinates: {
+          lat: loc.latitude,
+          lng: loc.longitude,
+        },
+      });
+
       const { data, error } = await supabase
         .from('routes')
         .insert([{
           driverId,
-          origin: routeData.origin,
-          destination: routeData.destination,
+          origin: normalizeLocation(routeData.origin),
+          destination: normalizeLocation(routeData.destination),
           departureTime: routeData.departureTime,
           availableSeats: routeData.availableSeats,
           distance: routeData.distance,
@@ -287,10 +295,10 @@ export const useDriverStore = create<DriverState>()(
       // Save trip to Supabase
       if (supabase) {
         console.log("Saving completed trip to Supabase...");
+        // Don't pass the local ID - let Supabase generate a UUID
         const { error } = await supabase
           .from('trips')
           .insert({
-            id: trip.id,
             riderId: trip.riderId,
             driverId: trip.driverId,
             pickup: trip.pickup,

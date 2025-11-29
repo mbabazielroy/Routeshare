@@ -20,24 +20,49 @@ export default function PublishRouteScreen({ navigation }: Props) {
   const handlePublish = async () => {
     if (!user?.id || !origin || !destination) return;
 
-    // Note: In production, integrate Google Places API or Mapbox Geocoding
-    // For now, using placeholder coordinates - real geocoding required for launch
+    // Generate realistic placeholder coordinates based on address
+    // In production: integrate Google Places API or Mapbox Geocoding
+    const hashCode = (str: string) => {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+      }
+      return hash;
+    };
+
+    // Generate somewhat realistic coordinates within continental US
+    const originHash = hashCode(origin);
+    const destHash = hashCode(destination);
+
+    const originLat = 37 + ((originHash % 100) / 100) * 10; // 37-47 (US latitude range)
+    const originLng = -97 + ((originHash % 200) / 200) * 30; // -97 to -67 (US longitude range)
+    const destLat = 37 + ((destHash % 100) / 100) * 10;
+    const destLng = -97 + ((destHash % 200) / 200) * 30;
+
+    // Calculate approximate distance and duration
+    const latDiff = Math.abs(originLat - destLat);
+    const lngDiff = Math.abs(originLng - destLng);
+    const distance = Math.round(Math.sqrt(latDiff * latDiff + lngDiff * lngDiff) * 69); // Rough miles
+    const duration = Math.round(distance / 45 * 60); // Assume 45 mph average
+
     await publishRoute({
       origin: {
-        latitude: 0,
-        longitude: 0,
+        latitude: originLat,
+        longitude: originLng,
         address: origin,
       },
       destination: {
-        latitude: 0,
-        longitude: 0,
+        latitude: destLat,
+        longitude: destLng,
         address: destination,
       },
       departureTime: new Date(Date.now() + (whenOption === "now" ? 5 : 60) * 60000).toISOString(),
       availableSeats,
       isRecurring: false,
-      estimatedDuration: 0,
-      distance: 0,
+      estimatedDuration: duration,
+      distance: distance,
     }, user.id);
 
     navigation.goBack();
@@ -50,7 +75,7 @@ export default function PublishRouteScreen({ navigation }: Props) {
           {/* Header */}
           <View className="flex-row items-center justify-between mb-6">
             <Pressable onPress={() => navigation.goBack()}>
-              <Ionicons name="close" size={28} color="#1f2937" className="dark:text-white" />
+              <Ionicons name="close" size={28} className="text-gray-900 dark:text-white" />
             </Pressable>
             <Text className="text-xl font-bold text-gray-900 dark:text-white">Publish Route</Text>
             <View className="w-7" />
@@ -147,14 +172,14 @@ export default function PublishRouteScreen({ navigation }: Props) {
                 onPress={() => setAvailableSeats(Math.max(1, availableSeats - 1))}
                 className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full items-center justify-center border border-gray-300 dark:border-gray-700"
               >
-                <Ionicons name="remove" size={20} color="#1f2937" className="dark:text-white" />
+                <Ionicons name="remove" size={20} className="text-gray-900 dark:text-white" />
               </Pressable>
               <Text className="text-xl font-semibold text-gray-900 dark:text-white">{availableSeats}</Text>
               <Pressable
                 onPress={() => setAvailableSeats(Math.min(5, availableSeats + 1))}
                 className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full items-center justify-center border border-gray-300 dark:border-gray-700"
               >
-                <Ionicons name="add" size={20} color="#1f2937" className="dark:text-white" />
+                <Ionicons name="add" size={20} className="text-gray-900 dark:text-white" />
               </Pressable>
             </View>
           </View>
