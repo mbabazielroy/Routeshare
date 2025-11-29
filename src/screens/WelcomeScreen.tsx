@@ -59,7 +59,10 @@ export default function WelcomeScreen({ navigation }: Props) {
         });
       }
     } catch (error: any) {
-      console.error("Apple sign-in error:", error);
+      // Only log real errors, not configuration messages
+      if (!error.message?.includes('not configured')) {
+        console.error("Apple sign-in error:", error);
+      }
       showToast(error.message || "Failed to sign in with Apple", "error");
     } finally {
       setIsLoadingApple(false);
@@ -103,7 +106,10 @@ export default function WelcomeScreen({ navigation }: Props) {
         });
       }
     } catch (error: any) {
-      console.error("Google sign-in error:", error);
+      // Only log real errors, not configuration messages
+      if (!error.message?.includes('not configured')) {
+        console.error("Google sign-in error:", error);
+      }
       showToast(error.message || "Failed to sign in with Google", "error");
     } finally {
       setIsLoadingGoogle(false);
