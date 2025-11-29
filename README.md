@@ -297,13 +297,14 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
    - Uses native iOS authentication
    - Face ID/Touch ID verification
    - Option to hide your email for privacy
-   - Automatically creates/updates your profile
-4. **Google Sign-In Flow:** ✅ IMPLEMENTED
+   - Automatically creates/updates your profile in Supabase
+4. **Google Sign-In Flow:** ✅ FULLY WORKING
    - OAuth 2.0 secure authentication via Supabase
    - One-tap sign-in if already logged into Google
    - Multi-device support
-   - Automatically creates/updates your profile
+   - Profile automatically created in Supabase with real user ID
    - Profile photo imported from Google account
+   - Form pre-filled with Google data
 5. **Phone Auth Flow:** ✅ WORKING
    - Tap the country selector (shows 🇺🇸 +1 by default) to change country
    - Select from 15+ countries including US, Canada, UK, India, and more
@@ -311,11 +312,22 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
    - Real SMS sent via Supabase
    - Enter the 6-digit code from your phone
    - Watch auto-focus move through the OTP fields
-6. After verification (any method), choose rider or driver if new user
-7. Notice your information is pre-filled from the OAuth provider
-8. Complete your profile and continue
-9. **Security Notice:** See the green lock icon with privacy information
-10. Your sign-in method is remembered (shown in Account settings)
+6. **Profile Setup (New Users):**
+   - Select user type (Rider or Driver)
+   - Form pre-filled with OAuth/phone data
+   - Real user ID from Supabase used (no mock accounts)
+   - Profile saved to Supabase database
+7. **Returning Users:** ✅ NEW
+   - App checks Supabase session on launch
+   - Loads real user profile from database
+   - Auto-login with valid session
+   - Redirects to appropriate screen based on user type (Rider/Driver)
+   - No mock accounts - all data from Supabase
+8. **Security:**
+   - Green lock icon with privacy information
+   - Sign-in method remembered (shown in Account settings)
+   - Session validation on app start
+   - Automatic logout if session expired
 
 ### Rider Flow
 1. **Rider Home** → Tap "Where to?"

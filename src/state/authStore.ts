@@ -2,6 +2,8 @@ import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 import { User, UserType } from "../types/routeshare";
+import { supabase } from "../config/supabase";
+import { getUserProfile } from "../services/supabaseAuth";
 
 interface AuthState {
   user: User | null;
@@ -11,6 +13,7 @@ interface AuthState {
   setUser: (user: User, provider?: "phone" | "apple" | "google") => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (updates: Partial<User>) => Promise<void>;
+  checkSession: () => Promise<void>;
 }
 
 // Secure storage keys
@@ -32,9 +35,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // Store auth provider
       await AsyncStorage.setItem(AUTH_PROVIDER_KEY, provider);
 
-      // If there's a Firebase auth token, store it securely
-      // This would be passed from Firebase Auth after successful authentication
-
       set({
         user,
         isAuthenticated: true,
@@ -49,6 +49,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   logout: async () => {
     try {
+      // Sign out from Supabase
+      if (supabase) {
+        await supabase.auth.signOut();
+      }
+
       // Clear all stored data
       await AsyncStorage.removeItem(USER_DATA_KEY);
       await AsyncStorage.removeItem(AUTH_PROVIDER_KEY);
@@ -84,33 +89,99 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       throw error;
     }
   },
+
+  checkSession: async () => {
+    try {
+      if (!supabase) {
+        console.log("Supabase not initialized, loading from local storage");
+        // Fall back to local storage if Supabase is not available
+        const [storedUser, storedProvider] = await Promise.all([
+          AsyncStorage.getItem(USER_DATA_KEY),
+          AsyncStorage.getItem(AUTH_PROVIDER_KEY),
+        ]);
+
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          const provider = (storedProvider as "phone" | "apple" | "google") || "phone";
+          set({
+            user,
+            isAuthenticated: true,
+            isLoading: false,
+            authProvider: provider
+          });
+        } else {
+          set({ isLoading: false });
+        }
+        return;
+      }
+
+      console.log("Checking Supabase session...");
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (session?.user) {
+        console.log("Active Supabase session found for user:", session.user.id);
+
+        // Get the full user profile from database
+        const userProfile = await getUserProfile(session.user.id);
+
+        if (userProfile && userProfile.userType) {
+          console.log("User profile loaded from Supabase:", {
+            id: userProfile.id,
+            email: userProfile.email,
+            userType: userProfile.userType
+          });
+
+          // Construct complete user object
+          const completeUser: User = {
+            ...userProfile,
+            firstName: userProfile.firstName!,
+            lastName: userProfile.lastName!,
+            phone: userProfile.phone || '',
+            userType: userProfile.userType!,
+            verificationLevel: userProfile.verificationLevel || 'basic',
+            rating: userProfile.rating || 5.0,
+            totalTrips: userProfile.totalTrips || 0,
+          };
+
+          // Determine auth provider from user metadata
+          const provider = (session.user.app_metadata?.provider as "phone" | "apple" | "google") || "phone";
+
+          // Store in local storage
+          await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(completeUser));
+          await AsyncStorage.setItem(AUTH_PROVIDER_KEY, provider);
+
+          set({
+            user: completeUser,
+            isAuthenticated: true,
+            isLoading: false,
+            authProvider: provider
+          });
+        } else {
+          console.log("User profile incomplete or not found in database");
+          // Clear invalid session
+          await supabase.auth.signOut();
+          await AsyncStorage.removeItem(USER_DATA_KEY);
+          await AsyncStorage.removeItem(AUTH_PROVIDER_KEY);
+          set({ isLoading: false });
+        }
+      } else {
+        console.log("No active Supabase session");
+        // Clear local storage if no session
+        await AsyncStorage.removeItem(USER_DATA_KEY);
+        await AsyncStorage.removeItem(AUTH_PROVIDER_KEY);
+        set({ isLoading: false });
+      }
+    } catch (error) {
+      console.error("Error checking session:", error);
+      set({ isLoading: false });
+    }
+  },
 }));
 
-// Load user from storage on app start
+// Load user from Supabase session on app start
 const initializeAuth = async () => {
-  try {
-    const [storedUser, storedProvider] = await Promise.all([
-      AsyncStorage.getItem(USER_DATA_KEY),
-      AsyncStorage.getItem(AUTH_PROVIDER_KEY),
-    ]);
-
-    if (storedUser) {
-      const user = JSON.parse(storedUser);
-      const provider = (storedProvider as "phone" | "apple" | "google") || "phone";
-
-      useAuthStore.setState({
-        user,
-        isAuthenticated: true,
-        isLoading: false,
-        authProvider: provider
-      });
-    } else {
-      useAuthStore.setState({ isLoading: false });
-    }
-  } catch (error) {
-    console.error("Error loading user from storage:", error);
-    useAuthStore.setState({ isLoading: false });
-  }
+  console.log("Initializing auth...");
+  await useAuthStore.getState().checkSession();
 };
 
 // Initialize auth state
