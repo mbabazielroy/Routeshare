@@ -21,7 +21,7 @@ export default function TripRequestScreen({ navigation }: Props) {
   const [passengers, setPassengers] = useState(1);
 
   const handleFindRides = async () => {
-    if (!pickupAddress || !dropoffAddress) return;
+    if (!pickupAddress || !dropoffAddress || !user?.id) return;
 
     // Mock locations for demo
     const pickup = {
@@ -36,7 +36,7 @@ export default function TripRequestScreen({ navigation }: Props) {
       address: dropoffAddress || "County Medical Center",
     };
 
-    await createTripRequest(pickup, dropoff, new Date().toISOString(), passengers);
+    await createTripRequest(pickup, dropoff, new Date().toISOString(), passengers, user.id);
     navigation.navigate("DriverSelection");
   };
 

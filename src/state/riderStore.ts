@@ -9,7 +9,8 @@ import {
   SavedLocation,
   Location,
 } from "../types/routeshare";
-import { mockDrivers, mockRoutes } from "../utils/mockData";
+import { supabase } from "../config/supabase";
+import { getUserProfile } from "../services/supabaseAuth";
 
 interface RiderState {
   currentRequest: TripRequest | null;
@@ -24,7 +25,8 @@ interface RiderState {
     pickup: Location,
     dropoff: Location,
     requestedTime: string,
-    passengers: number
+    passengers: number,
+    riderId: string
   ) => Promise<void>;
   selectDriver: (routeId: string) => Promise<void>;
   cancelTrip: () => void;
@@ -64,12 +66,12 @@ export const useRiderStore = create<RiderState>()(
   tripHistory: [],
   isSearching: false,
 
-  createTripRequest: async (pickup, dropoff, requestedTime, passengers) => {
+  createTripRequest: async (pickup, dropoff, requestedTime, passengers, riderId) => {
     set({ isSearching: true });
 
     const request: TripRequest = {
       id: `req_${Date.now()}`,
-      riderId: "rider_1",
+      riderId,
       pickup,
       dropoff,
       requestedTime,
@@ -78,41 +80,87 @@ export const useRiderStore = create<RiderState>()(
       createdAt: new Date().toISOString(),
     };
 
-    // Simulate matching algorithm
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      if (!supabase) {
+        console.log("Supabase not available, using empty matches");
+        set({
+          currentRequest: { ...request, status: "pending" },
+          availableMatches: [],
+          isSearching: false,
+        });
+        return;
+      }
 
-    // Find matching routes
-    const matches: RouteMatch[] = mockRoutes
-      .filter((route: Route) => route.availableSeats >= passengers)
-      .map((route: Route) => {
-        const detourDistance = Math.random() * 3 + 0.5;
-        const detourTime = Math.floor(detourDistance * 2);
-        const baseFare = 2.0 + route.distance * 1.0 + (route.estimatedDuration / 60) * 0.15;
-        const matchScore = Math.floor(85 + Math.random() * 15);
+      // Query active routes from Supabase
+      console.log("Searching for available routes...");
+      const { data: routes, error } = await supabase
+        .from('routes')
+        .select('*')
+        .eq('status', 'active')
+        .gte('availableSeats', passengers);
 
-        return {
-          route: {
-            ...route,
-            driver: mockDrivers.find((d: typeof mockDrivers[0]) => d.id === route.driverId),
-            driverProfile: mockDrivers.find((d: typeof mockDrivers[0]) => d.id === route.driverId)?.driverProfile,
-          },
-          detourDistance,
-          detourTime,
-          matchScore,
-          estimatedPickup: new Date(
-            Date.now() + Math.floor(Math.random() * 20 + 5) * 60000
-          ).toISOString(),
-          fare: Math.round(baseFare * 100) / 100,
-        };
-      })
-      .sort((a: RouteMatch, b: RouteMatch) => b.matchScore - a.matchScore)
-      .slice(0, 3);
+      if (error) {
+        console.error("Error fetching routes:", error);
+        set({
+          currentRequest: { ...request, status: "pending" },
+          availableMatches: [],
+          isSearching: false,
+        });
+        return;
+      }
 
-    set({
-      currentRequest: { ...request, status: "pending" },
-      availableMatches: matches,
-      isSearching: false,
-    });
+      console.log(`Found ${routes?.length || 0} available routes`);
+
+      // Fetch driver profiles for each route
+      const matches: RouteMatch[] = [];
+
+      if (routes && routes.length > 0) {
+        for (const route of routes) {
+          // Get driver profile
+          const driverProfile = await getUserProfile(route.driverId);
+
+          if (driverProfile) {
+            const detourDistance = Math.random() * 3 + 0.5;
+            const detourTime = Math.floor(detourDistance * 2);
+            const baseFare = 2.0 + route.distance * 1.0 + (route.duration / 60) * 0.15;
+            const matchScore = Math.floor(85 + Math.random() * 15);
+
+            matches.push({
+              route: {
+                ...route,
+                driver: driverProfile,
+                driverProfile: undefined, // Driver profile is now part of the user object
+              },
+              detourDistance,
+              detourTime,
+              matchScore,
+              estimatedPickup: new Date(
+                Date.now() + Math.floor(Math.random() * 20 + 5) * 60000
+              ).toISOString(),
+              fare: Math.round(baseFare * 100) / 100,
+            });
+          }
+        }
+      }
+
+      // Sort by match score
+      matches.sort((a, b) => b.matchScore - a.matchScore);
+
+      console.log(`Created ${matches.length} route matches`);
+
+      set({
+        currentRequest: { ...request, status: "pending" },
+        availableMatches: matches.slice(0, 3), // Top 3 matches
+        isSearching: false,
+      });
+    } catch (error) {
+      console.error("Error creating trip request:", error);
+      set({
+        currentRequest: { ...request, status: "pending" },
+        availableMatches: [],
+        isSearching: false,
+      });
+    }
   },
 
   selectDriver: async (routeId: string) => {
