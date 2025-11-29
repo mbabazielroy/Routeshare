@@ -23,17 +23,18 @@ export default function TripRequestScreen({ navigation }: Props) {
   const handleFindRides = async () => {
     if (!pickupAddress || !dropoffAddress || !user?.id) return;
 
-    // Mock locations for demo
+    // Note: In production, integrate Google Places API or Mapbox Geocoding
+    // For now, using placeholder coordinates - real geocoding required for launch
     const pickup = {
-      latitude: 38.8951,
-      longitude: -77.0364,
-      address: pickupAddress || "123 Oak Street, Millville, VA",
+      latitude: 0,
+      longitude: 0,
+      address: pickupAddress,
     };
 
     const dropoff = {
-      latitude: 38.92,
-      longitude: -77.05,
-      address: dropoffAddress || "County Medical Center",
+      latitude: 0,
+      longitude: 0,
+      address: dropoffAddress,
     };
 
     await createTripRequest(pickup, dropoff, new Date().toISOString(), passengers, user.id);

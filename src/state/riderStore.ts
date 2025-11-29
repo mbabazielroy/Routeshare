@@ -41,28 +41,7 @@ export const useRiderStore = create<RiderState>()(
       currentRequest: null,
   currentTrip: null,
   availableMatches: [],
-  savedLocations: [
-    {
-      id: "1",
-      name: "Home",
-      location: {
-        latitude: 38.8951,
-        longitude: -77.0364,
-        address: "123 Oak Street, Millville, VA",
-      },
-      icon: "home",
-    },
-    {
-      id: "2",
-      name: "Work",
-      location: {
-        latitude: 38.9072,
-        longitude: -77.0369,
-        address: "456 Main Street, Millville, VA",
-      },
-      icon: "briefcase",
-    },
-  ],
+  savedLocations: [],
   tripHistory: [],
   isSearching: false,
 

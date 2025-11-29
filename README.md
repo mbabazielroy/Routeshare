@@ -998,9 +998,65 @@ The app is now fully connected to Supabase with real data and ready for deployme
 - All production RLS policies configured
 - Ready for TestFlight/App Store submission
 
+### 🔄 App Reset & Clean State
+
+The app has been completely reset and cleared of all mock data:
+
+**What Was Removed:**
+- ❌ Mock saved locations (Home, Work addresses)
+- ❌ Mock trip history
+- ❌ Mock driver earnings ($67.5, $285, etc.)
+- ❌ Hardcoded addresses ("123 Oak Street", "County Medical Center")
+- ❌ Hardcoded coordinates (lat/long placeholders)
+- ❌ Random earnings estimates
+- ❌ Test user accounts
+
+**Current State:**
+- ✅ All stores start with empty data
+- ✅ Driver earnings initialize at $0
+- ✅ Trip history starts empty
+- ✅ Saved locations start empty (users add their own)
+- ✅ All data comes from or saves to Supabase
+- ✅ No hardcoded test values
+
+**Manual Reset Instructions:**
+
+If you need to reset the app during development or testing:
+
+1. **Using the Reset Utility** (Programmatic):
+```typescript
+import { resetApp } from './src/utils/resetApp';
+
+// Complete reset (logs out user, clears all data)
+await resetApp();
+
+// Or use specific reset functions:
+import { clearAuthData, clearTripHistory, listAllStorageKeys } from './src/utils/resetApp';
+
+await clearAuthData();      // Clear only auth
+await clearTripHistory();   // Clear only trips
+await listAllStorageKeys(); // Debug: see what's stored
+```
+
+2. **Manual AsyncStorage Clear** (Development):
+```typescript
+import AsyncStorage from '@react-native-async-storage/async-storage';
+await AsyncStorage.clear(); // Nuclear option: clears everything
+```
+
+3. **User Actions That Clear Data:**
+- Logout: Clears authentication data
+- Reinstall app: Clears all AsyncStorage data
+
+**Important Notes:**
+- Geocoding: The app currently uses placeholder coordinates (0,0) for addresses. **For production launch, integrate Google Places API or Mapbox Geocoding** to convert user-entered addresses to real coordinates.
+- Location Input: Users must manually enter addresses. Consider adding autocomplete in production.
+- Real-time Updates: LiveTripScreen includes simulated driver movement for demo purposes. Replace with real GPS tracking in production.
+
 ## 🐛 Known Issues
 
 - **react-native-maps TypeScript Error:** Compatibility issue with React 19. Does not affect functionality.
+- **Geocoding Not Implemented:** Address to coordinate conversion needs Google Places API or similar service before production launch.
 
 ## 🙏 Acknowledgments
 

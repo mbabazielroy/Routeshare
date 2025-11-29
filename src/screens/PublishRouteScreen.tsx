@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, ScrollView } from "react-native";
+import { View, Text, Pressable, ScrollView, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -12,30 +12,32 @@ type Props = NativeStackScreenProps<RootStackParamList, "PublishRoute">;
 export default function PublishRouteScreen({ navigation }: Props) {
   const user = useAuthStore((s) => s.user);
   const publishRoute = useDriverStore((s) => s.publishRoute);
-  const [origin] = useState("Millville Town Center");
-  const [destination] = useState("County Medical Center");
+  const [origin, setOrigin] = useState("");
+  const [destination, setDestination] = useState("");
   const [availableSeats, setAvailableSeats] = useState(3);
   const [whenOption, setWhenOption] = useState<"now" | "later">("now");
 
   const handlePublish = async () => {
-    if (!user?.id) return;
+    if (!user?.id || !origin || !destination) return;
 
+    // Note: In production, integrate Google Places API or Mapbox Geocoding
+    // For now, using placeholder coordinates - real geocoding required for launch
     await publishRoute({
       origin: {
-        latitude: 38.895,
-        longitude: -77.037,
+        latitude: 0,
+        longitude: 0,
         address: origin,
       },
       destination: {
-        latitude: 38.92,
-        longitude: -77.05,
+        latitude: 0,
+        longitude: 0,
         address: destination,
       },
       departureTime: new Date(Date.now() + (whenOption === "now" ? 5 : 60) * 60000).toISOString(),
       availableSeats,
       isRecurring: false,
-      estimatedDuration: 25,
-      distance: 18.5,
+      estimatedDuration: 0,
+      distance: 0,
     }, user.id);
 
     navigation.goBack();
@@ -69,23 +71,35 @@ export default function PublishRouteScreen({ navigation }: Props) {
             </View>
           </View>
 
-          {/* Route Details (Demo) */}
+          {/* Route Details */}
           <View className="mb-4">
             <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Your Route</Text>
-            <View className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-              <View className="flex-row items-start mb-3">
+
+            {/* Origin Input */}
+            <View className="mb-3">
+              <View className="flex-row items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-3">
                 <Ionicons name="location" size={20} color="#10b981" />
-                <View className="flex-1 ml-3">
-                  <Text className="text-xs text-gray-500 dark:text-gray-400 mb-1">From</Text>
-                  <Text className="text-base font-medium text-gray-900 dark:text-white">{origin}</Text>
-                </View>
+                <TextInput
+                  value={origin}
+                  onChangeText={setOrigin}
+                  placeholder="Enter starting location"
+                  className="flex-1 ml-3 text-base text-gray-900 dark:text-white"
+                  placeholderTextColor="#9ca3af"
+                />
               </View>
-              <View className="flex-row items-start">
+            </View>
+
+            {/* Destination Input */}
+            <View>
+              <View className="flex-row items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-3">
                 <Ionicons name="location" size={20} color="#dc2626" />
-                <View className="flex-1 ml-3">
-                  <Text className="text-xs text-gray-500 dark:text-gray-400 mb-1">To</Text>
-                  <Text className="text-base font-medium text-gray-900 dark:text-white">{destination}</Text>
-                </View>
+                <TextInput
+                  value={destination}
+                  onChangeText={setDestination}
+                  placeholder="Enter destination"
+                  className="flex-1 ml-3 text-base text-gray-900 dark:text-white"
+                  placeholderTextColor="#9ca3af"
+                />
               </View>
             </View>
           </View>
@@ -145,14 +159,14 @@ export default function PublishRouteScreen({ navigation }: Props) {
             </View>
           </View>
 
-          {/* Earnings Estimate */}
+          {/* Earnings Info */}
           <View className="bg-green-50 dark:bg-green-900/30 rounded-2xl p-5 mb-6">
-            <Text className="text-sm text-green-700 dark:text-green-300 mb-1">Estimated Earnings</Text>
-            <Text className="text-3xl font-bold text-green-900 dark:text-green-100">
-              ${(15 + Math.random() * 15).toFixed(2)} - ${(25 + Math.random() * 20).toFixed(2)}
+            <Text className="text-sm text-green-700 dark:text-green-300 mb-1">Potential Earnings</Text>
+            <Text className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">
+              {"Earn 85% of each rider's fare"}
             </Text>
-            <Text className="text-xs text-green-700 dark:text-green-300 mt-1">
-              Based on {availableSeats} rider{availableSeats > 1 ? "s" : ""} on your route
+            <Text className="text-xs text-green-700 dark:text-green-300">
+              {"Earnings depend on distance, duration, and number of riders. You'll see exact amounts when riders request your route."}
             </Text>
           </View>
 
