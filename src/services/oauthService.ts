@@ -128,7 +128,7 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
           throw new Error("No access token received from Google");
         }
       } else if (result.type === 'cancel') {
-        throw new Error("Sign-in was cancelled");
+        throw new Error("Google Sign-In is not configured yet. Please set up Google OAuth in your Supabase dashboard (see README for instructions).");
       } else {
         console.error("WebBrowser result type:", result.type);
         throw new Error("Google sign-in failed. Please try again.");

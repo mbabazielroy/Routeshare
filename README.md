@@ -565,24 +565,28 @@ Apple Sign-In is available through Supabase and is **required** for iOS apps wit
 - Hide My Email feature for privacy
 - Face ID/Touch ID support
 
-### 7. Configure Google Sign-In ✅ READY
+### 7. Configure Google Sign-In 🔧 NEEDS SETUP
 
-Google Sign-In is implemented and ready to use! Just configure it in Supabase.
+Google Sign-In is fully implemented! Just needs to be configured in Supabase.
 
-**Steps:**
+**Current Status:** Code is ready ✅ | Supabase configuration needed ⚠️
+
+**Why you're seeing "Sign-in was cancelled":**
+The OAuth flow opens but immediately closes because Google OAuth credentials are missing in Supabase. Once configured, it will work perfectly!
+
+**Setup Steps:**
 1. **Supabase Dashboard:**
    - Go to Authentication > Providers
    - Enable Google as a provider
-   - Copy the Redirect URL shown (should be: `https://[your-project].supabase.co/auth/v1/callback`)
+   - Copy the Redirect URL shown (looks like: `https://wftmjiiamhmemnchuxeu.supabase.co/auth/v1/callback`)
 
 2. **Google Cloud Console:**
    - Go to [console.cloud.google.com](https://console.cloud.google.com)
    - Create a new project (or select existing)
-   - Enable Google+ API (APIs & Services > Library > search "Google+ API")
    - Go to APIs & Services > Credentials
    - Click "Create Credentials" > "OAuth 2.0 Client ID"
    - Choose "Web application"
-   - Add Supabase redirect URL to "Authorized redirect URIs"
+   - Add your Supabase redirect URL to "Authorized redirect URIs"
    - Copy the Client ID and Client Secret
 
 3. **Add to Supabase:**
@@ -595,15 +599,16 @@ Google Sign-In is implemented and ready to use! Just configure it in Supabase.
    - Open your app
    - Tap "Continue with Google"
    - Sign in with your Google account
-   - Your profile is automatically created!
+   - Your profile is automatically created! ✅
 
-**What's Implemented:**
+**What's Already Implemented:**
 - ✅ OAuth 2.0 flow with Supabase
 - ✅ Automatic user profile creation
 - ✅ Email and name extraction from Google
 - ✅ Profile photo from Google account
 - ✅ Secure token management
 - ✅ Works on both iOS and Android
+- ✅ Clear error messages
 
 **Security Benefits:**
 - Industry-standard OAuth 2.0 protocol
