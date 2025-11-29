@@ -6,6 +6,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import { useToast } from "../components/Toast";
 import { Country, COUNTRIES } from "./CountrySelectionScreen";
+import { sendPhoneOTP } from "../services/supabaseAuth";
 
 type Props = NativeStackScreenProps<RootStackParamList, "PhoneAuth">;
 
@@ -51,17 +52,27 @@ export default function PhoneAuthScreen({ navigation }: Props) {
 
     setIsLoading(true);
 
-    // Simulate API call to send OTP
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      // Format phone number with country code for Supabase
+      const fullPhoneNumber = `${selectedCountry.dialCode}${getCleanPhone()}`;
 
-    setIsLoading(false);
+      // Send OTP via Supabase
+      const result = await sendPhoneOTP(fullPhoneNumber);
 
-    // In production, this would call Firebase Auth or your backend
-    showToast("Verification code sent!", "success");
-
-    navigation.navigate("OTPVerification", {
-      phone: `${selectedCountry.dialCode}${getCleanPhone()}`
-    });
+      if (result.success) {
+        showToast("Verification code sent!", "success");
+        navigation.navigate("OTPVerification", {
+          phone: fullPhoneNumber
+        });
+      } else {
+        showToast(result.error || "Failed to send code. Please try again.", "error");
+      }
+    } catch (error: any) {
+      console.error("Error sending OTP:", error);
+      showToast("Failed to send code. Please check your phone number and try again.", "error");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCountryPress = () => {

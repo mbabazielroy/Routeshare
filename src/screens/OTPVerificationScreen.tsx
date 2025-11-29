@@ -5,12 +5,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import { useToast } from "../components/Toast";
+import { verifyPhoneOTP, sendPhoneOTP } from "../services/supabaseAuth";
+import { useAuthStore } from "../state/authStore";
 
 type Props = NativeStackScreenProps<RootStackParamList, "OTPVerification">;
 
 export default function OTPVerificationScreen({ navigation, route }: Props) {
   const { phone } = route.params;
   const showToast = useToast((s) => s.show);
+  const setUser = useAuthStore((s) => s.setUser);
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isLoading, setIsLoading] = useState(false);
@@ -65,41 +68,73 @@ export default function OTPVerificationScreen({ navigation, route }: Props) {
 
     setIsLoading(true);
 
-    // Simulate API verification
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const otpCode = otp.join("");
 
-    const otpCode = otp.join("");
+      // Verify OTP with Supabase
+      const result = await verifyPhoneOTP(phone, otpCode);
 
-    // In production, verify OTP with backend
-    // For demo, accept any 6-digit code
-    if (otpCode.length === 6) {
-      showToast("Phone verified successfully!", "success");
-      setIsLoading(false);
+      if (result.success && result.user) {
+        showToast("Phone verified successfully!", "success");
 
-      // Navigate to user type selection
-      navigation.navigate("UserTypeSelection", { phone, isNewUser: true });
-    } else {
-      setIsLoading(false);
-      showToast("Invalid verification code", "error");
+        // Check if user profile is complete (has firstName and userType)
+        const isNewUser = !result.user.firstName || !result.user.userType;
+
+        if (isNewUser) {
+          // Navigate to complete profile
+          navigation.navigate("UserTypeSelection", { phone, isNewUser: true });
+        } else {
+          // User already has profile, log them in
+          // Cast to AppUser since we know all fields are present
+          const completeUser = {
+            ...result.user,
+            firstName: result.user.firstName!,
+            lastName: result.user.lastName!,
+            phone: result.user.phone!,
+            userType: result.user.userType!,
+            verificationLevel: result.user.verificationLevel || 'basic',
+            rating: result.user.rating || 5.0,
+            totalTrips: result.user.totalTrips || 0,
+          };
+          setUser(completeUser as any);
+          // Navigation will be handled by App.tsx based on userType
+        }
+      } else {
+        showToast(result.error || "Invalid verification code", "error");
+        setOtp(["", "", "", "", "", ""]);
+        inputRefs.current[0]?.focus();
+      }
+    } catch (error: any) {
+      console.error("Error verifying OTP:", error);
+      showToast("Verification failed. Please try again.", "error");
       setOtp(["", "", "", "", "", ""]);
       inputRefs.current[0]?.focus();
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleResendOTP = async () => {
     if (resendTimer > 0) return;
 
-    // Simulate resending OTP
-    showToast("Sending new code...", "info");
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    showToast("Verification code sent!", "success");
+    try {
+      showToast("Sending new code...", "info");
 
-    // Reset timer
-    setResendTimer(60);
+      // Resend OTP via Supabase
+      const result = await sendPhoneOTP(phone);
 
-    // Clear OTP fields
-    setOtp(["", "", "", "", "", ""]);
-    inputRefs.current[0]?.focus();
+      if (result.success) {
+        showToast("Verification code sent!", "success");
+        setResendTimer(60);
+        setOtp(["", "", "", "", "", ""]);
+        inputRefs.current[0]?.focus();
+      } else {
+        showToast(result.error || "Failed to resend code", "error");
+      }
+    } catch (error) {
+      console.error("Error resending OTP:", error);
+      showToast("Failed to resend code. Please try again.", "error");
+    }
   };
 
   const maskPhone = (phoneNumber: string) => {

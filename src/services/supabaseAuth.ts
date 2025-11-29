@@ -1,6 +1,7 @@
 // Supabase Authentication Service
 import { supabase } from '../config/supabase';
 import * as SecureStore from 'expo-secure-store';
+import { User as AppUser } from '../types/routeshare';
 
 export interface User {
   id: string;
@@ -12,6 +13,9 @@ export interface User {
   profilePhoto?: string;
   createdAt: string;
   authProvider?: 'phone' | 'apple' | 'google';
+  verificationLevel?: 'basic' | 'standard' | 'community' | 'premium';
+  rating?: number;
+  totalTrips?: number;
 }
 
 // Phone Authentication
@@ -81,6 +85,9 @@ const getOrCreateUserProfile = async (
       id: userId,
       ...initialData,
       createdAt: new Date().toISOString(),
+      verificationLevel: 'basic',
+      rating: 5.0,
+      totalTrips: 0,
     } as User;
   }
 
@@ -93,7 +100,13 @@ const getOrCreateUserProfile = async (
       .single();
 
     if (existingUser) {
-      return existingUser;
+      // Add default values for fields not in database
+      return {
+        ...existingUser,
+        verificationLevel: existingUser.verificationLevel || 'basic',
+        rating: existingUser.rating || 5.0,
+        totalTrips: existingUser.totalTrips || 0,
+      };
     }
 
     // Create new user profile
@@ -110,7 +123,14 @@ const getOrCreateUserProfile = async (
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Add default values for fields not in database
+    return {
+      ...data,
+      verificationLevel: 'basic',
+      rating: 5.0,
+      totalTrips: 0,
+    };
   } catch (error) {
     console.error('Error getting/creating user profile:', error);
     throw error;
@@ -124,7 +144,16 @@ export const updateUserProfile = async (
 ): Promise<{ success: boolean; user?: User; error?: string }> => {
   if (!supabase) {
     // Mock mode
-    return { success: true, user: { id: userId, ...updates } as User };
+    return {
+      success: true,
+      user: {
+        id: userId,
+        ...updates,
+        verificationLevel: 'basic',
+        rating: 5.0,
+        totalTrips: 0,
+      } as User
+    };
   }
 
   try {
@@ -136,7 +165,17 @@ export const updateUserProfile = async (
       .single();
 
     if (error) throw error;
-    return { success: true, user: data };
+
+    // Add default values for fields not in database
+    return {
+      success: true,
+      user: {
+        ...data,
+        verificationLevel: data.verificationLevel || 'basic',
+        rating: data.rating || 5.0,
+        totalTrips: data.totalTrips || 0,
+      }
+    };
   } catch (error: any) {
     console.error('Error updating user profile:', error);
     return { success: false, error: error.message };
@@ -157,7 +196,14 @@ export const getUserProfile = async (userId: string): Promise<User | null> => {
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Add default values for fields not in database
+    return {
+      ...data,
+      verificationLevel: data.verificationLevel || 'basic',
+      rating: data.rating || 5.0,
+      totalTrips: data.totalTrips || 0,
+    };
   } catch (error) {
     console.error('Error getting user profile:', error);
     return null;
