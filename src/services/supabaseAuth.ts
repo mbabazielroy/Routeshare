@@ -21,8 +21,7 @@ export interface User {
 // Phone Authentication
 export const sendPhoneOTP = async (phoneNumber: string): Promise<{ success: boolean; error?: string }> => {
   if (!supabase) {
-    // Mock mode - no Supabase configured
-    return { success: true };
+    return { success: false, error: 'Supabase is not configured. Please check your environment variables.' };
   }
 
   try {
@@ -43,14 +42,7 @@ export const verifyPhoneOTP = async (
   otp: string
 ): Promise<{ success: boolean; user?: User; error?: string }> => {
   if (!supabase) {
-    // Mock mode - create local user
-    const mockUser: User = {
-      id: `mock-${Date.now()}`,
-      phone: phoneNumber,
-      createdAt: new Date().toISOString(),
-      authProvider: 'phone',
-    };
-    return { success: true, user: mockUser };
+    return { success: false, error: 'Supabase is not configured. Please check your environment variables.' };
   }
 
   try {
@@ -81,14 +73,7 @@ const getOrCreateUserProfile = async (
   initialData: Partial<User>
 ): Promise<User> => {
   if (!supabase) {
-    return {
-      id: userId,
-      ...initialData,
-      createdAt: new Date().toISOString(),
-      verificationLevel: 'basic',
-      rating: 5.0,
-      totalTrips: 0,
-    } as User;
+    throw new Error('Supabase is not configured. Please check your environment variables.');
   }
 
   try {
@@ -143,17 +128,7 @@ export const updateUserProfile = async (
   updates: Partial<User>
 ): Promise<{ success: boolean; user?: User; error?: string }> => {
   if (!supabase) {
-    // Mock mode
-    return {
-      success: true,
-      user: {
-        id: userId,
-        ...updates,
-        verificationLevel: 'basic',
-        rating: 5.0,
-        totalTrips: 0,
-      } as User
-    };
+    return { success: false, error: 'Supabase is not configured. Please check your environment variables.' };
   }
 
   try {

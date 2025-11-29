@@ -1058,6 +1058,34 @@ await AsyncStorage.clear(); // Nuclear option: clears everything
 - **react-native-maps TypeScript Error:** Compatibility issue with React 19. Does not affect functionality.
 - **Geocoding Not Implemented:** Address to coordinate conversion needs Google Places API or similar service before production launch.
 
+## 🔧 Recent Fixes
+
+### Fixed: Mock Profile Issue (2025-11-29)
+
+**Problem:** Users signing in as riders were being shown mock profiles filled with their information instead of real Supabase data.
+
+**Root Cause:** The `supabaseAuth.ts` service had fallback code that created mock users when Supabase was unavailable or not configured:
+- `sendPhoneOTP()` returned success without checking Supabase
+- `verifyPhoneOTP()` created mock users with `id: 'mock-${Date.now()}'`
+- `getOrCreateUserProfile()` returned mock profiles instead of throwing errors
+- `updateUserProfile()` returned mock success responses
+
+**Solution:** Removed all mock fallback logic from authentication service:
+- All auth functions now require Supabase to be properly configured
+- Functions return clear error messages if Supabase is not available
+- No mock users or profiles are ever created
+- All user data must come from real Supabase database
+
+**Files Modified:**
+- `src/services/supabaseAuth.ts` - Removed mock fallbacks from all functions
+
+**Testing:**
+1. Ensure `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` are set in `.env`
+2. Sign in with phone/Google/Apple auth
+3. Verify user profile shows real Supabase UUID (not `mock-...`)
+4. Check that user data persists across app restarts
+5. Confirm no mock data appears in rider or driver profiles
+
 ## 🙏 Acknowledgments
 
 Built with Vibecode - AI-powered mobile app development platform.
