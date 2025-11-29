@@ -32,14 +32,13 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
   }
 
   try {
-    console.log("Starting Google Sign-In with PKCE flow...");
+    console.log("Starting Google Sign-In...");
 
-    // Use PKCE flow for mobile apps - more secure and doesn't require custom redirect
+    // Start Google OAuth flow
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        skipBrowserRedirect: true,
-        // Use query params instead of hash for better mobile compatibility
+        // Use query params for better compatibility
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -49,7 +48,6 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
 
     if (error) {
       console.error("Supabase OAuth error:", error);
-      // Check if it's a configuration error
       if (error.message?.includes('validation_failed') || error.message?.includes('OAuth secret')) {
         throw new Error(
           "Google Sign-In is not configured in Supabase yet. Please follow the setup instructions in the README to enable Google authentication."
@@ -58,102 +56,61 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
       throw error;
     }
 
-    // Open the OAuth URL in browser
-    if (data?.url) {
-      console.log("Opening OAuth URL:", data.url);
-
-      // Open with WebBrowser - it will handle the OAuth flow
-      const result = await WebBrowser.openAuthSessionAsync(data.url);
-
-      console.log("WebBrowser result type:", result.type);
-
-      if (result.type === 'success' && result.url) {
-        console.log("OAuth success, extracting tokens...");
-
-        // Extract tokens from the URL - try multiple formats
-        const url = result.url;
-        let accessToken: string | null = null;
-        let refreshToken: string | null = null;
-
-        // Parse hash fragment (Supabase typically uses this)
-        if (url.includes('#')) {
-          const hash = url.split('#')[1];
-          const hashParams = new URLSearchParams(hash);
-          accessToken = hashParams.get('access_token');
-          refreshToken = hashParams.get('refresh_token');
-          console.log("Tokens from hash - access:", !!accessToken, "refresh:", !!refreshToken);
-        }
-
-        // Parse query parameters as fallback
-        if (!accessToken && url.includes('?')) {
-          const query = url.split('?')[1]?.split('#')[0];
-          const queryParams = new URLSearchParams(query);
-          accessToken = queryParams.get('access_token');
-          refreshToken = queryParams.get('refresh_token');
-          console.log("Tokens from query - access:", !!accessToken, "refresh:", !!refreshToken);
-        }
-
-        if (accessToken) {
-          console.log("Setting session with tokens...");
-
-          // Set the session with the tokens
-          const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken || '',
-          });
-
-          if (sessionError) {
-            console.error("Session error:", sessionError);
-            throw sessionError;
-          }
-
-          const user = sessionData.user;
-          if (!user) throw new Error("No user data received from Google");
-
-          console.log("User authenticated successfully:", user.id);
-
-          // Extract user info
-          const email = user.email || '';
-          const fullName = user.user_metadata?.full_name || user.user_metadata?.name || '';
-          const [firstName, ...lastNameParts] = fullName.split(' ');
-          const lastName = lastNameParts.join(' ');
-
-          console.log("Creating/updating user profile...");
-
-          // Update user profile in database
-          await updateUserProfile(user.id, {
-            email,
-            firstName: firstName || '',
-            lastName: lastName || '',
-            profilePhoto: user.user_metadata?.avatar_url || user.user_metadata?.picture,
-            authProvider: 'google',
-          });
-
-          return {
-            uid: user.id,
-            email,
-            displayName: fullName,
-            photoURL: user.user_metadata?.avatar_url || user.user_metadata?.picture,
-            firstName: firstName || '',
-            lastName: lastName || '',
-          };
-        } else {
-          console.error("No access token found in URL:", url);
-          throw new Error("No access token received from Google. Please try again.");
-        }
-      } else if (result.type === 'cancel') {
-        console.log("User cancelled Google Sign-In");
-        throw new Error("Sign-in was cancelled");
-      } else {
-        console.error("WebBrowser result:", result);
-        if ('error' in result && result.error) {
-          console.error("WebBrowser error:", result.error);
-        }
-        throw new Error("Google sign-in failed. Please try again.");
-      }
+    if (!data?.url) {
+      throw new Error("Failed to start Google sign-in - no OAuth URL received");
     }
 
-    throw new Error("Failed to start Google sign-in");
+    console.log("Opening OAuth URL in browser...");
+
+    // Open the OAuth URL in browser
+    const result = await WebBrowser.openAuthSessionAsync(data.url);
+
+    console.log("WebBrowser closed with type:", result.type);
+
+    // Check if we have a session after the browser closed
+    // The session might be established even if the browser just closed
+    console.log("Checking for session...");
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+    if (session && session.user) {
+      console.log("Session found! User authenticated:", session.user.id);
+
+      // Extract user info
+      const user = session.user;
+      const email = user.email || '';
+      const fullName = user.user_metadata?.full_name || user.user_metadata?.name || '';
+      const [firstName, ...lastNameParts] = fullName.split(' ');
+      const lastName = lastNameParts.join(' ');
+
+      console.log("Creating/updating user profile...");
+
+      // Update user profile in database
+      await updateUserProfile(user.id, {
+        email,
+        firstName: firstName || '',
+        lastName: lastName || '',
+        profilePhoto: user.user_metadata?.avatar_url || user.user_metadata?.picture,
+        authProvider: 'google',
+      });
+
+      return {
+        uid: user.id,
+        email,
+        displayName: fullName,
+        photoURL: user.user_metadata?.avatar_url || user.user_metadata?.picture,
+        firstName: firstName || '',
+        lastName: lastName || '',
+      };
+    }
+
+    // If no session was found, the user cancelled or it failed
+    if (result.type === 'cancel') {
+      console.log("User cancelled Google Sign-In");
+      throw new Error("Sign-in was cancelled");
+    }
+
+    console.error("No session found after OAuth flow");
+    throw new Error("Google sign-in failed. Please try again.");
   } catch (error: any) {
     // Only log unexpected errors, not user cancellations
     if (!error.message?.includes('cancelled') && !error.message?.includes('not configured')) {
