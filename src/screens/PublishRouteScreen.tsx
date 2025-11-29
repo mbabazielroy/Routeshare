@@ -1,71 +1,88 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, ScrollView, TextInput } from "react-native";
+import { View, Text, Pressable, ScrollView, TextInput, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import { useDriverStore } from "../state/driverStore";
 import { useAuthStore } from "../state/authStore";
+import { geocodeAddress, getRoute } from "../services/googleMapsService";
+import { useToast } from "../components/Toast";
 
 type Props = NativeStackScreenProps<RootStackParamList, "PublishRoute">;
 
 export default function PublishRouteScreen({ navigation }: Props) {
   const user = useAuthStore((s) => s.user);
   const publishRoute = useDriverStore((s) => s.publishRoute);
+  const toast = useToast();
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
   const [availableSeats, setAvailableSeats] = useState(3);
   const [whenOption, setWhenOption] = useState<"now" | "later">("now");
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const handlePublish = async () => {
     if (!user?.id || !origin || !destination) return;
 
-    // Generate realistic placeholder coordinates based on address
-    // In production: integrate Google Places API or Mapbox Geocoding
-    const hashCode = (str: string) => {
-      let hash = 0;
-      for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash;
+    setIsPublishing(true);
+
+    try {
+      // Geocode addresses to get real coordinates
+      console.log("Geocoding origin:", origin);
+      const originCoords = await geocodeAddress(origin);
+
+      if (!originCoords) {
+        toast.show("Could not find origin location. Please check the address.", "error");
+        setIsPublishing(false);
+        return;
       }
-      return hash;
-    };
 
-    // Generate somewhat realistic coordinates within continental US
-    const originHash = hashCode(origin);
-    const destHash = hashCode(destination);
+      console.log("Geocoding destination:", destination);
+      const destCoords = await geocodeAddress(destination);
 
-    const originLat = 37 + ((originHash % 100) / 100) * 10; // 37-47 (US latitude range)
-    const originLng = -97 + ((originHash % 200) / 200) * 30; // -97 to -67 (US longitude range)
-    const destLat = 37 + ((destHash % 100) / 100) * 10;
-    const destLng = -97 + ((destHash % 200) / 200) * 30;
+      if (!destCoords) {
+        toast.show("Could not find destination location. Please check the address.", "error");
+        setIsPublishing(false);
+        return;
+      }
 
-    // Calculate approximate distance and duration
-    const latDiff = Math.abs(originLat - destLat);
-    const lngDiff = Math.abs(originLng - destLng);
-    const distance = Math.round(Math.sqrt(latDiff * latDiff + lngDiff * lngDiff) * 69); // Rough miles
-    const duration = Math.round(distance / 45 * 60); // Assume 45 mph average
+      // Get route information (distance and duration)
+      console.log("Calculating route...");
+      const routeInfo = await getRoute(originCoords, destCoords);
 
-    await publishRoute({
-      origin: {
-        latitude: originLat,
-        longitude: originLng,
-        address: origin,
-      },
-      destination: {
-        latitude: destLat,
-        longitude: destLng,
-        address: destination,
-      },
-      departureTime: new Date(Date.now() + (whenOption === "now" ? 5 : 60) * 60000).toISOString(),
-      availableSeats,
-      isRecurring: false,
-      estimatedDuration: duration,
-      distance: distance,
-    }, user.id);
+      const distance = routeInfo ? routeInfo.distance : 0;
+      const duration = routeInfo ? routeInfo.duration : 0;
 
-    navigation.goBack();
+      console.log("Route calculated:", { distance, duration });
+
+      // Publish route with real coordinates
+      await publishRoute({
+        origin: {
+          latitude: originCoords.lat,
+          longitude: originCoords.lng,
+          address: origin,
+        },
+        destination: {
+          latitude: destCoords.lat,
+          longitude: destCoords.lng,
+          address: destination,
+        },
+        departureTime: new Date(Date.now() + (whenOption === "now" ? 5 : 60) * 60000).toISOString(),
+        availableSeats,
+        isRecurring: false,
+        estimatedDuration: Math.round(duration),
+        distance: Math.round(distance * 10) / 10, // Round to 1 decimal
+      }, user.id);
+
+      toast.show("Route published successfully!", "success");
+
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error publishing route:", error);
+      toast.show("Failed to publish route. Please try again.", "error");
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
   return (
@@ -198,11 +215,25 @@ export default function PublishRouteScreen({ navigation }: Props) {
           {/* Publish Button */}
           <Pressable
             onPress={handlePublish}
-            className="bg-blue-600 dark:bg-blue-500 rounded-2xl py-4 px-6 active:bg-blue-700 dark:active:bg-blue-600"
+            disabled={!origin || !destination || isPublishing}
+            className={`rounded-2xl py-4 px-6 ${
+              origin && destination && !isPublishing
+                ? "bg-blue-600 dark:bg-blue-500 active:bg-blue-700 dark:active:bg-blue-600"
+                : "bg-gray-300 dark:bg-gray-700"
+            }`}
           >
-            <Text className="text-white text-center text-lg font-semibold">
-              Publish Route
-            </Text>
+            {isPublishing ? (
+              <View className="flex-row items-center justify-center">
+                <ActivityIndicator color="white" />
+                <Text className="text-white text-center text-lg font-semibold ml-2">
+                  Publishing...
+                </Text>
+              </View>
+            ) : (
+              <Text className="text-white text-center text-lg font-semibold">
+                Publish Route
+              </Text>
+            )}
           </Pressable>
 
           <Text className="text-center text-xs text-gray-500 dark:text-gray-400 mt-4">

@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, ScrollView, TextInput } from "react-native";
+import { View, Text, Pressable, ScrollView, TextInput, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import { useAuthStore } from "../state/authStore";
 import { useRiderStore } from "../state/riderStore";
+import { geocodeAddress } from "../services/googleMapsService";
+import { useToast } from "../components/Toast";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TripRequest">;
 
@@ -14,6 +16,7 @@ export default function TripRequestScreen({ navigation }: Props) {
   const savedLocations = useRiderStore((s) => s.savedLocations);
   const createTripRequest = useRiderStore((s) => s.createTripRequest);
   const isSearching = useRiderStore((s) => s.isSearching);
+  const toast = useToast();
 
   const [pickupAddress, setPickupAddress] = useState("");
   const [dropoffAddress, setDropoffAddress] = useState("");
@@ -23,36 +26,42 @@ export default function TripRequestScreen({ navigation }: Props) {
   const handleFindRides = async () => {
     if (!pickupAddress || !dropoffAddress || !user?.id) return;
 
-    // Generate realistic placeholder coordinates based on address
-    // In production: integrate Google Places API or Mapbox Geocoding
-    const hashCode = (str: string) => {
-      let hash = 0;
-      for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash;
+    try {
+      // Geocode addresses to get real coordinates
+      console.log("Geocoding pickup:", pickupAddress);
+      const pickupCoords = await geocodeAddress(pickupAddress);
+
+      if (!pickupCoords) {
+        toast.show("Could not find pickup location. Please check the address.", "error");
+        return;
       }
-      return hash;
-    };
 
-    // Generate somewhat realistic coordinates within continental US
-    const pickupHash = hashCode(pickupAddress);
-    const dropoffHash = hashCode(dropoffAddress);
+      console.log("Geocoding dropoff:", dropoffAddress);
+      const dropoffCoords = await geocodeAddress(dropoffAddress);
 
-    const pickup = {
-      latitude: 37 + ((pickupHash % 100) / 100) * 10, // 37-47 (US latitude range)
-      longitude: -97 + ((pickupHash % 200) / 200) * 30, // -97 to -67 (US longitude range)
-      address: pickupAddress,
-    };
+      if (!dropoffCoords) {
+        toast.show("Could not find destination. Please check the address.", "error");
+        return;
+      }
 
-    const dropoff = {
-      latitude: 37 + ((dropoffHash % 100) / 100) * 10,
-      longitude: -97 + ((dropoffHash % 200) / 200) * 30,
-      address: dropoffAddress,
-    };
+      const pickup = {
+        latitude: pickupCoords.lat,
+        longitude: pickupCoords.lng,
+        address: pickupAddress,
+      };
 
-    await createTripRequest(pickup, dropoff, new Date().toISOString(), passengers, user.id);
-    navigation.navigate("DriverSelection");
+      const dropoff = {
+        latitude: dropoffCoords.lat,
+        longitude: dropoffCoords.lng,
+        address: dropoffAddress,
+      };
+
+      await createTripRequest(pickup, dropoff, new Date().toISOString(), passengers, user.id);
+      navigation.navigate("DriverSelection");
+    } catch (error) {
+      console.error("Error finding rides:", error);
+      toast.show("Failed to search for rides. Please try again.", "error");
+    }
   };
 
   const selectSavedLocation = (address: string, type: "pickup" | "dropoff") => {
@@ -206,9 +215,18 @@ export default function TripRequestScreen({ navigation }: Props) {
                 : "bg-gray-300 dark:bg-gray-700"
             }`}
           >
-            <Text className="text-white text-center text-lg font-semibold">
-              {isSearching ? "Searching..." : "Find Rides"}
-            </Text>
+            {isSearching ? (
+              <View className="flex-row items-center justify-center">
+                <ActivityIndicator color="white" />
+                <Text className="text-white text-center text-lg font-semibold ml-2">
+                  Searching...
+                </Text>
+              </View>
+            ) : (
+              <Text className="text-white text-center text-lg font-semibold">
+                Find Rides
+              </Text>
+            )}
           </Pressable>
         </View>
       </ScrollView>
