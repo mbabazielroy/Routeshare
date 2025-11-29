@@ -565,40 +565,35 @@ Apple Sign-In is available through Supabase and is **required** for iOS apps wit
 - Hide My Email feature for privacy
 - Face ID/Touch ID support
 
-### 7. Configure Google Sign-In 🔧 NEEDS SETUP
+### 7. Configure Google Sign-In 🔧 NEEDS ADDITIONAL REDIRECT URI
 
-Google Sign-In is fully implemented! Just needs to be configured in Supabase.
+Google Sign-In is fully implemented! Just needs one more redirect URI configured.
 
-**Current Status:** Code is ready ✅ | Supabase configuration needed ⚠️
+**Current Status:** Code is ready ✅ | Additional redirect URI needed ⚠️
 
-**Why you're seeing "Sign-in was cancelled":**
-The OAuth flow opens but immediately closes because Google OAuth credentials are missing in Supabase. Once configured, it will work perfectly!
+**Why you're seeing "Safari can't connect to server":**
+The OAuth flow needs a custom redirect URI (`routeshare://auth/callback`) to properly return to the app after authentication.
 
 **Setup Steps:**
 1. **Supabase Dashboard:**
-   - Go to Authentication > Providers
-   - Enable Google as a provider
-   - Copy the Redirect URL shown (looks like: `https://wftmjiiamhmemnchuxeu.supabase.co/auth/v1/callback`)
-
-2. **Google Cloud Console:**
-   - Go to [console.cloud.google.com](https://console.cloud.google.com)
-   - Create a new project (or select existing)
-   - Go to APIs & Services > Credentials
-   - Click "Create Credentials" > "OAuth 2.0 Client ID"
-   - Choose "Web application"
-   - Add your Supabase redirect URL to "Authorized redirect URIs"
-   - Copy the Client ID and Client Secret
-
-3. **Add to Supabase:**
-   - Go back to Supabase > Authentication > Providers > Google
-   - Paste your Google Client ID
-   - Paste your Google Client Secret
+   - Go to Authentication > Settings (or URL Configuration)
+   - Find "Redirect URLs" or "Additional Redirect URLs"
+   - Add this URL: `routeshare://auth/callback`
    - Click "Save"
 
-4. **Test It:**
-   - Open your app
+2. **Google Cloud Console (if not already done):**
+   - Go to [console.cloud.google.com](https://console.cloud.google.com)
+   - Navigate to your project > APIs & Services > Credentials
+   - Click on your OAuth 2.0 Client ID
+   - In "Authorized redirect URIs", ensure you have:
+     - `https://wftmjiiamhmemnchuxeu.supabase.co/auth/v1/callback` (Supabase callback)
+   - Click "Save"
+
+3. **Test It:**
+   - Reload your app (it should pick up the changes automatically)
    - Tap "Continue with Google"
    - Sign in with your Google account
+   - You'll be redirected back to the app
    - Your profile is automatically created! ✅
 
 **What's Already Implemented:**

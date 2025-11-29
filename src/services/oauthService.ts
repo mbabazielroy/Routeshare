@@ -39,10 +39,21 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
     console.log("Clearing existing session...");
     await supabase.auth.signOut();
 
+    // Get the redirect URL for OAuth
+    // Use 'routeshare' scheme for app compatibility
+    const redirectTo = makeRedirectUri({
+      scheme: 'routeshare',
+      path: 'auth/callback',
+    });
+
+    console.log("Google OAuth redirect URL:", redirectTo);
+
     // Start Google OAuth flow
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
+        redirectTo,
+        skipBrowserRedirect: false,
         // Use query params for better compatibility
         queryParams: {
           access_type: 'offline',
@@ -68,58 +79,78 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
     console.log("Opening OAuth URL in browser...");
     console.log("OAuth URL:", data.url);
 
-    // Open the OAuth URL in browser
-    const result = await WebBrowser.openAuthSessionAsync(data.url);
+    // Open the OAuth URL in browser with redirect handling
+    const result = await WebBrowser.openAuthSessionAsync(
+      data.url,
+      redirectTo
+    );
 
     console.log("WebBrowser closed with type:", result.type);
 
-    // Only check for session if the browser returned successfully or with an unknown status
-    // Don't check if user explicitly cancelled
+    // Handle the result
     if (result.type === 'cancel') {
       console.log("User cancelled Google Sign-In");
       throw new Error("Sign-in was cancelled");
     }
 
-    // Wait a moment for Supabase to establish the session
-    console.log("Waiting for session to establish...");
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (result.type === 'success' && result.url) {
+      console.log("OAuth success! Processing redirect URL...");
 
-    // Check if we have a NEW session after the browser closed
-    console.log("Checking for session...");
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      // Extract tokens from the redirect URL
+      const url = new URL(result.url);
+      const params = url.searchParams;
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
 
-    if (session && session.user) {
-      console.log("Session found! User authenticated:", session.user.id);
+      console.log("Access token found:", !!accessToken);
 
-      // Extract user info
-      const user = session.user;
-      const email = user.email || '';
-      const fullName = user.user_metadata?.full_name || user.user_metadata?.name || '';
-      const [firstName, ...lastNameParts] = fullName.split(' ');
-      const lastName = lastNameParts.join(' ');
+      if (accessToken) {
+        // Set the session with the tokens
+        console.log("Setting session with tokens...");
+        const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken || '',
+        });
 
-      console.log("Creating/updating user profile...");
+        if (sessionError) {
+          console.error("Session error:", sessionError);
+          throw sessionError;
+        }
 
-      // Update user profile in database
-      await updateUserProfile(user.id, {
-        email,
-        firstName: firstName || '',
-        lastName: lastName || '',
-        profilePhoto: user.user_metadata?.avatar_url || user.user_metadata?.picture,
-        authProvider: 'google',
-      });
+        const user = sessionData.user;
+        if (!user) throw new Error("No user data received from Google");
 
-      return {
-        uid: user.id,
-        email,
-        displayName: fullName,
-        photoURL: user.user_metadata?.avatar_url || user.user_metadata?.picture,
-        firstName: firstName || '',
-        lastName: lastName || '',
-      };
+        console.log("User authenticated:", user.id);
+
+        // Extract user info
+        const email = user.email || '';
+        const fullName = user.user_metadata?.full_name || user.user_metadata?.name || '';
+        const [firstName, ...lastNameParts] = fullName.split(' ');
+        const lastName = lastNameParts.join(' ');
+
+        console.log("Creating/updating user profile...");
+
+        // Update user profile in database
+        await updateUserProfile(user.id, {
+          email,
+          firstName: firstName || '',
+          lastName: lastName || '',
+          profilePhoto: user.user_metadata?.avatar_url || user.user_metadata?.picture,
+          authProvider: 'google',
+        });
+
+        return {
+          uid: user.id,
+          email,
+          displayName: fullName,
+          photoURL: user.user_metadata?.avatar_url || user.user_metadata?.picture,
+          firstName: firstName || '',
+          lastName: lastName || '',
+        };
+      }
     }
 
-    console.error("No session found after OAuth flow");
+    console.error("OAuth flow did not complete successfully");
     throw new Error("Google sign-in failed. Please try again.");
   } catch (error: any) {
     // Only log unexpected errors, not user cancellations
