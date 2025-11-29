@@ -5,18 +5,22 @@ import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import { useDriverStore } from "../state/driverStore";
+import { useAuthStore } from "../state/authStore";
 
 type Props = NativeStackScreenProps<RootStackParamList, "PublishRoute">;
 
 export default function PublishRouteScreen({ navigation }: Props) {
+  const user = useAuthStore((s) => s.user);
   const publishRoute = useDriverStore((s) => s.publishRoute);
   const [origin] = useState("Millville Town Center");
   const [destination] = useState("County Medical Center");
   const [availableSeats, setAvailableSeats] = useState(3);
   const [whenOption, setWhenOption] = useState<"now" | "later">("now");
 
-  const handlePublish = () => {
-    publishRoute({
+  const handlePublish = async () => {
+    if (!user?.id) return;
+
+    await publishRoute({
       origin: {
         latitude: 38.895,
         longitude: -77.037,
@@ -32,7 +36,7 @@ export default function PublishRouteScreen({ navigation }: Props) {
       isRecurring: false,
       estimatedDuration: 25,
       distance: 18.5,
-    });
+    }, user.id);
 
     navigation.goBack();
   };
