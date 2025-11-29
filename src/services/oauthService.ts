@@ -34,6 +34,11 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
   try {
     console.log("Starting Google Sign-In...");
 
+    // Clear any existing session before starting OAuth
+    // This prevents signing in with an old cached session
+    console.log("Clearing existing session...");
+    await supabase.auth.signOut();
+
     // Start Google OAuth flow
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -67,8 +72,18 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
 
     console.log("WebBrowser closed with type:", result.type);
 
-    // Check if we have a session after the browser closed
-    // The session might be established even if the browser just closed
+    // Only check for session if the browser returned successfully or with an unknown status
+    // Don't check if user explicitly cancelled
+    if (result.type === 'cancel') {
+      console.log("User cancelled Google Sign-In");
+      throw new Error("Sign-in was cancelled");
+    }
+
+    // Wait a moment for Supabase to establish the session
+    console.log("Waiting for session to establish...");
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Check if we have a NEW session after the browser closed
     console.log("Checking for session...");
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
@@ -101,12 +116,6 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
         firstName: firstName || '',
         lastName: lastName || '',
       };
-    }
-
-    // If no session was found, the user cancelled or it failed
-    if (result.type === 'cancel') {
-      console.log("User cancelled Google Sign-In");
-      throw new Error("Sign-in was cancelled");
     }
 
     console.error("No session found after OAuth flow");
