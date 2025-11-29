@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
-import { signInWithApple, signInWithGoogle, isAppleSignInAvailable } from "../services/oauthService";
+import { signInWithGoogle, signInWithApple, isAppleSignInAvailable } from "../services/oauthService";
 import { useAuthStore } from "../state/authStore";
 import { useToast } from "../components/Toast";
 import { getUserProfile } from "../services/supabaseAuth";
@@ -27,17 +27,39 @@ export default function WelcomeScreen({ navigation }: Props) {
     try {
       const result = await signInWithApple();
 
-      // Get full user profile from Firestore
+      // Get full user profile from Supabase
       const userProfile = await getUserProfile(result.uid);
 
-      if (userProfile) {
-        await setUser(userProfile as any, "apple");
+      if (userProfile && userProfile.userType) {
+        // User has complete profile, log them in
+        const completeUser = {
+          ...userProfile,
+          firstName: userProfile.firstName!,
+          lastName: userProfile.lastName!,
+          phone: userProfile.phone || '',
+          userType: userProfile.userType!,
+          verificationLevel: userProfile.verificationLevel || 'basic',
+          rating: userProfile.rating || 5.0,
+          totalTrips: userProfile.totalTrips || 0,
+        };
+        setUser(completeUser as any);
         showToast("Successfully signed in with Apple", "success");
       } else {
         // User needs to complete profile setup
-        navigation.navigate("UserTypeSelection");
+        showToast("Welcome! Please complete your profile", "success");
+        navigation.navigate("UserTypeSelection", {
+          phone: result.email,
+          isNewUser: true,
+          oauthData: {
+            email: result.email,
+            firstName: result.firstName,
+            lastName: result.lastName,
+            photoURL: result.photoURL,
+          }
+        });
       }
     } catch (error: any) {
+      console.error("Apple sign-in error:", error);
       showToast(error.message || "Failed to sign in with Apple", "error");
     } finally {
       setIsLoadingApple(false);
@@ -49,17 +71,39 @@ export default function WelcomeScreen({ navigation }: Props) {
     try {
       const result = await signInWithGoogle();
 
-      // Get full user profile from Firestore
+      // Get full user profile from Supabase
       const userProfile = await getUserProfile(result.uid);
 
-      if (userProfile) {
-        await setUser(userProfile as any, "google");
+      if (userProfile && userProfile.userType) {
+        // User has complete profile, log them in
+        const completeUser = {
+          ...userProfile,
+          firstName: userProfile.firstName!,
+          lastName: userProfile.lastName!,
+          phone: userProfile.phone || '',
+          userType: userProfile.userType!,
+          verificationLevel: userProfile.verificationLevel || 'basic',
+          rating: userProfile.rating || 5.0,
+          totalTrips: userProfile.totalTrips || 0,
+        };
+        setUser(completeUser as any);
         showToast("Successfully signed in with Google", "success");
       } else {
         // User needs to complete profile setup
-        navigation.navigate("UserTypeSelection");
+        showToast("Welcome! Please complete your profile", "success");
+        navigation.navigate("UserTypeSelection", {
+          phone: result.email,
+          isNewUser: true,
+          oauthData: {
+            email: result.email,
+            firstName: result.firstName,
+            lastName: result.lastName,
+            photoURL: result.photoURL,
+          }
+        });
       }
     } catch (error: any) {
+      console.error("Google sign-in error:", error);
       showToast(error.message || "Failed to sign in with Google", "error");
     } finally {
       setIsLoadingGoogle(false);

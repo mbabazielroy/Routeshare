@@ -3,7 +3,16 @@ export type RootStackParamList = {
   PhoneAuth: undefined;
   CountrySelection: { currentCountryCode?: string; onSelect?: (country: any) => void };
   OTPVerification: { phone: string };
-  UserTypeSelection: { phone?: string; isNewUser?: boolean } | undefined;
+  UserTypeSelection: {
+    phone?: string;
+    isNewUser?: boolean;
+    oauthData?: {
+      email: string;
+      firstName: string;
+      lastName: string;
+      photoURL?: string | null;
+    };
+  } | undefined;
   RiderTabs: undefined;
   DriverTabs: undefined;
   TripRequest: undefined;

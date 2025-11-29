@@ -289,11 +289,33 @@ RouteShare is a mobile-first ride-sharing platform designed specifically for rur
 
 ### Authentication Flow (New!)
 1. **Welcome** → Tap "Get Started" or "Sign In"
-2. **Phone Auth** → Enter 10-digit phone number with real-time formatting
-3. **OTP Verification** → Enter 6-digit code sent via SMS (60s resend timer)
-4. **User Type Selection** → Choose rider or driver (phone auto-filled and verified)
-5. **Complete Profile** → Enter first and last name
-6. **Navigate to App** → Enter rider or driver experience
+2. **Multiple Sign-In Options:**
+   - **Apple Sign-In (iOS only):** Tap "Continue with Apple" for secure native authentication
+   - **Google Sign-In:** Tap "Continue with Google" for OAuth authentication ✅ WORKING
+   - **Phone Auth:** Tap "Continue with Phone" for SMS verification ✅ WORKING
+3. **Apple Sign-In Flow:**
+   - Uses native iOS authentication
+   - Face ID/Touch ID verification
+   - Option to hide your email for privacy
+   - Automatically creates/updates your profile
+4. **Google Sign-In Flow:** ✅ IMPLEMENTED
+   - OAuth 2.0 secure authentication via Supabase
+   - One-tap sign-in if already logged into Google
+   - Multi-device support
+   - Automatically creates/updates your profile
+   - Profile photo imported from Google account
+5. **Phone Auth Flow:** ✅ WORKING
+   - Tap the country selector (shows 🇺🇸 +1 by default) to change country
+   - Select from 15+ countries including US, Canada, UK, India, and more
+   - Enter your phone number (format adjusts based on selected country)
+   - Real SMS sent via Supabase
+   - Enter the 6-digit code from your phone
+   - Watch auto-focus move through the OTP fields
+6. After verification (any method), choose rider or driver if new user
+7. Notice your information is pre-filled from the OAuth provider
+8. Complete your profile and continue
+9. **Security Notice:** See the green lock icon with privacy information
+10. Your sign-in method is remembered (shown in Account settings)
 
 ### Rider Flow
 1. **Rider Home** → Tap "Where to?"
@@ -543,31 +565,52 @@ Apple Sign-In is available through Supabase and is **required** for iOS apps wit
 - Hide My Email feature for privacy
 - Face ID/Touch ID support
 
-### 7. Configure Google Sign-In
+### 7. Configure Google Sign-In ✅ READY
 
-Google Sign-In through Supabase works across iOS and Android.
+Google Sign-In is implemented and ready to use! Just configure it in Supabase.
 
 **Steps:**
 1. **Supabase Dashboard:**
    - Go to Authentication > Providers
    - Enable Google as a provider
-   - Note the Redirect URL
+   - Copy the Redirect URL shown (should be: `https://[your-project].supabase.co/auth/v1/callback`)
 
 2. **Google Cloud Console:**
-   - Create a new project
-   - Enable Google+ API
-   - Create OAuth 2.0 credentials
-   - Add Supabase redirect URL to authorized URIs
+   - Go to [console.cloud.google.com](https://console.cloud.google.com)
+   - Create a new project (or select existing)
+   - Enable Google+ API (APIs & Services > Library > search "Google+ API")
+   - Go to APIs & Services > Credentials
+   - Click "Create Credentials" > "OAuth 2.0 Client ID"
+   - Choose "Web application"
+   - Add Supabase redirect URL to "Authorized redirect URIs"
+   - Copy the Client ID and Client Secret
 
 3. **Add to Supabase:**
-   - Enter your Google Client ID
-   - Enter your Google Client Secret
+   - Go back to Supabase > Authentication > Providers > Google
+   - Paste your Google Client ID
+   - Paste your Google Client Secret
+   - Click "Save"
+
+4. **Test It:**
+   - Open your app
+   - Tap "Continue with Google"
+   - Sign in with your Google account
+   - Your profile is automatically created!
+
+**What's Implemented:**
+- ✅ OAuth 2.0 flow with Supabase
+- ✅ Automatic user profile creation
+- ✅ Email and name extraction from Google
+- ✅ Profile photo from Google account
+- ✅ Secure token management
+- ✅ Works on both iOS and Android
 
 **Security Benefits:**
 - Industry-standard OAuth 2.0 protocol
 - Multi-device sign-in
 - Two-factor authentication support
 - Secure token management
+- No passwords stored in your app
 
 ### 8. Enable Real-time Features (Optional)
 

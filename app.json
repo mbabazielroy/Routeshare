@@ -2,7 +2,7 @@
   "expo": {
     "name": "vibecode",
     "slug": "vibecode",
-    "scheme": "vibecode",
+    "scheme": "routeshare",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
@@ -17,12 +17,14 @@
     ],
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.vibecode.routeshare",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "This app needs access to your location to show nearby drivers and track your trips."
       }
     },
     "android": {
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.vibecode.routeshare"
     }
   }
 }

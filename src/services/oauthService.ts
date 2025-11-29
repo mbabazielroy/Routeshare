@@ -1,13 +1,13 @@
 /**
  * OAuth Authentication Service
- * Handles Apple Sign-In and Google Sign-In with secure credential handling
+ * Handles Apple Sign-In and Google Sign-In with Supabase OAuth
  * Uses expo-auth-session for OAuth flows
  */
 
 import * as WebBrowser from "expo-web-browser";
-import * as AuthSession from "expo-auth-session";
+import { makeRedirectUri } from "expo-auth-session";
 import { supabase } from "../config/supabase";
-import { getUserProfile } from "./supabaseAuth";
+import { updateUserProfile } from "./supabaseAuth";
 import { Platform } from "react-native";
 
 // Required for expo-auth-session to work properly
@@ -24,8 +24,97 @@ export interface OAuthResult {
 }
 
 /**
- * Sign in with Apple using OAuth
- * This provides a secure authentication flow through Firebase
+ * Sign in with Google using Supabase OAuth
+ */
+export const signInWithGoogle = async (): Promise<OAuthResult> => {
+  if (!supabase) {
+    throw new Error("Supabase is not initialized. Please check your configuration.");
+  }
+
+  try {
+    // Get the redirect URL for OAuth
+    const redirectTo = makeRedirectUri({
+      scheme: 'routeshare',
+      path: 'auth/callback',
+    });
+
+    console.log("Google OAuth redirect URL:", redirectTo);
+
+    // Start Google OAuth flow
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo,
+        skipBrowserRedirect: false,
+      },
+    });
+
+    if (error) throw error;
+
+    // Open the OAuth URL in browser
+    if (data?.url) {
+      const result = await WebBrowser.openAuthSessionAsync(
+        data.url,
+        redirectTo
+      );
+
+      if (result.type === 'success') {
+        // Extract tokens from the URL
+        const url = result.url;
+        const params = new URL(url).searchParams;
+        const accessToken = params.get('access_token');
+        const refreshToken = params.get('refresh_token');
+
+        if (accessToken) {
+          // Set the session with the tokens
+          const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken || '',
+          });
+
+          if (sessionError) throw sessionError;
+
+          const user = sessionData.user;
+          if (!user) throw new Error("No user data received from Google");
+
+          // Extract user info
+          const email = user.email || '';
+          const fullName = user.user_metadata?.full_name || user.user_metadata?.name || '';
+          const [firstName, ...lastNameParts] = fullName.split(' ');
+          const lastName = lastNameParts.join(' ');
+
+          // Update user profile in database
+          await updateUserProfile(user.id, {
+            email,
+            firstName: firstName || '',
+            lastName: lastName || '',
+            profilePhoto: user.user_metadata?.avatar_url || user.user_metadata?.picture,
+            authProvider: 'google',
+          });
+
+          return {
+            uid: user.id,
+            email,
+            displayName: fullName,
+            photoURL: user.user_metadata?.avatar_url || user.user_metadata?.picture,
+            firstName: firstName || '',
+            lastName: lastName || '',
+          };
+        }
+      }
+
+      throw new Error("Google sign-in was cancelled or failed");
+    }
+
+    throw new Error("Failed to start Google sign-in");
+  } catch (error: any) {
+    console.error("Google sign-in error:", error);
+    throw error;
+  }
+};
+
+/**
+ * Sign in with Apple using Supabase OAuth
  */
 export const signInWithApple = async (): Promise<OAuthResult> => {
   // Apple Sign-In is only available on iOS
@@ -34,59 +123,91 @@ export const signInWithApple = async (): Promise<OAuthResult> => {
   }
 
   if (!supabase) {
-    throw new Error("Supabase Auth is not initialized");
+    throw new Error("Supabase is not initialized. Please check your configuration.");
   }
 
-  // Check if Supabase is properly configured
-  const isConfigured = process.env.EXPO_PUBLIC_SUPABASE_URL &&
-                       process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+  try {
+    // Get the redirect URL for OAuth
+    const redirectTo = makeRedirectUri({
+      scheme: 'routeshare',
+      path: 'auth/callback',
+    });
 
-  if (!isConfigured) {
-    throw new Error(
-      "Apple Sign-In requires Supabase configuration. Please add your Supabase credentials to enable this feature."
-    );
+    console.log("Apple OAuth redirect URL:", redirectTo);
+
+    // Start Apple OAuth flow
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'apple',
+      options: {
+        redirectTo,
+        skipBrowserRedirect: false,
+      },
+    });
+
+    if (error) throw error;
+
+    // Open the OAuth URL in browser
+    if (data?.url) {
+      const result = await WebBrowser.openAuthSessionAsync(
+        data.url,
+        redirectTo
+      );
+
+      if (result.type === 'success') {
+        // Extract tokens from the URL
+        const url = result.url;
+        const params = new URL(url).searchParams;
+        const accessToken = params.get('access_token');
+        const refreshToken = params.get('refresh_token');
+
+        if (accessToken) {
+          // Set the session with the tokens
+          const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken || '',
+          });
+
+          if (sessionError) throw sessionError;
+
+          const user = sessionData.user;
+          if (!user) throw new Error("No user data received from Apple");
+
+          // Extract user info
+          const email = user.email || '';
+          const fullName = user.user_metadata?.full_name || user.user_metadata?.name || '';
+          const [firstName, ...lastNameParts] = fullName.split(' ');
+          const lastName = lastNameParts.join(' ');
+
+          // Update user profile in database
+          await updateUserProfile(user.id, {
+            email,
+            firstName: firstName || '',
+            lastName: lastName || '',
+            profilePhoto: user.user_metadata?.avatar_url,
+            authProvider: 'apple',
+          });
+
+          return {
+            uid: user.id,
+            email,
+            displayName: fullName,
+            photoURL: user.user_metadata?.avatar_url,
+            firstName: firstName || '',
+            lastName: lastName || '',
+          };
+        }
+      }
+
+      throw new Error("Apple sign-in was cancelled or failed");
+    }
+
+    throw new Error("Failed to start Apple sign-in");
+  } catch (error: any) {
+    console.error("Apple sign-in error:", error);
+    throw error;
   }
-
-  // For now, show a user-friendly message that configuration is needed
-  // In production, this will use the actual OAuth flow
-  throw new Error(
-    "Apple Sign-In is not yet configured. Please contact support to enable this authentication method."
-  );
 };
 
-/**
- * Sign in with Google using OAuth
- * This provides a secure authentication flow through Firebase
- */
-export const signInWithGoogle = async (): Promise<OAuthResult> => {
-  if (!supabase) {
-    throw new Error("Supabase Auth is not initialized");
-  }
-
-  // Check if Supabase is properly configured
-  const isConfigured = process.env.EXPO_PUBLIC_SUPABASE_URL &&
-                       process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!isConfigured) {
-    throw new Error(
-      "Google Sign-In requires Supabase configuration. Please add your Supabase credentials to enable this feature."
-    );
-  }
-
-  // For now, show a user-friendly message that configuration is needed
-  // In production, this will use the actual OAuth flow
-  throw new Error(
-    "Google Sign-In is not yet configured. Please contact support to enable this authentication method."
-  );
-};
-
-/**
- * Check if OAuth sign-in providers are available
- */
-export const isOAuthAvailable = (): boolean => {
-  // OAuth is available on both iOS and Android
-  return true;
-};
 
 /**
  * Check if Apple Sign-In is available (iOS only)
