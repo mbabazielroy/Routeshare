@@ -33,8 +33,9 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
 
   try {
     // Get the redirect URL for OAuth
+    // Use 'vibecode' scheme for Vibecode environment compatibility
     const redirectTo = makeRedirectUri({
-      scheme: 'routeshare',
+      scheme: 'vibecode',
       path: 'auth/callback',
     });
 
@@ -50,6 +51,7 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
     });
 
     if (error) {
+      console.error("Supabase OAuth error:", error);
       // Check if it's a configuration error
       if (error.message?.includes('validation_failed') || error.message?.includes('OAuth secret')) {
         throw new Error(
@@ -61,17 +63,26 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
 
     // Open the OAuth URL in browser
     if (data?.url) {
+      console.log("Opening OAuth URL:", data.url);
+
       const result = await WebBrowser.openAuthSessionAsync(
         data.url,
         redirectTo
       );
 
+      console.log("WebBrowser result:", JSON.stringify(result, null, 2));
+
       if (result.type === 'success') {
         // Extract tokens from the URL
         const url = result.url;
+        console.log("Success URL:", url);
+
         const params = new URL(url).searchParams;
         const accessToken = params.get('access_token');
         const refreshToken = params.get('refresh_token');
+
+        console.log("Access token present:", !!accessToken);
+        console.log("Refresh token present:", !!refreshToken);
 
         if (accessToken) {
           // Set the session with the tokens
@@ -80,10 +91,15 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
             refresh_token: refreshToken || '',
           });
 
-          if (sessionError) throw sessionError;
+          if (sessionError) {
+            console.error("Session error:", sessionError);
+            throw sessionError;
+          }
 
           const user = sessionData.user;
           if (!user) throw new Error("No user data received from Google");
+
+          console.log("User authenticated:", user.id);
 
           // Extract user info
           const email = user.email || '';
@@ -108,10 +124,15 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
             firstName: firstName || '',
             lastName: lastName || '',
           };
+        } else {
+          throw new Error("No access token received from Google");
         }
+      } else if (result.type === 'cancel') {
+        throw new Error("Sign-in was cancelled");
+      } else {
+        console.error("WebBrowser result type:", result.type);
+        throw new Error("Google sign-in failed. Please try again.");
       }
-
-      throw new Error("Google sign-in was cancelled or failed");
     }
 
     throw new Error("Failed to start Google sign-in");
@@ -136,8 +157,9 @@ export const signInWithApple = async (): Promise<OAuthResult> => {
 
   try {
     // Get the redirect URL for OAuth
+    // Use 'vibecode' scheme for Vibecode environment compatibility
     const redirectTo = makeRedirectUri({
-      scheme: 'routeshare',
+      scheme: 'vibecode',
       path: 'auth/callback',
     });
 
