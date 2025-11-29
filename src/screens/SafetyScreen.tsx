@@ -24,14 +24,7 @@ interface EmergencyContact {
 export default function SafetyScreen({ navigation }: Props) {
   const showToast = useToast((s) => s.show);
 
-  const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContact[]>([
-    {
-      id: "1",
-      name: "Sarah Johnson",
-      phone: "+1 (555) 123-4567",
-      relationship: "Sister",
-    },
-  ]);
+  const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContact[]>([]);
 
   const [tripSharingEnabled, setTripSharingEnabled] = useState(true);
   const [showAddContactModal, setShowAddContactModal] = useState(false);

@@ -29,6 +29,23 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   setUser: async (user, provider = "phone") => {
     try {
+      // Check if this is a different user than the current one
+      const currentUser = get().user;
+      const isDifferentUser = currentUser && currentUser.id !== user.id;
+
+      if (isDifferentUser) {
+        console.log("Different user detected, clearing all persisted store data...");
+        // Clear all persisted store data for the previous user
+        await AsyncStorage.multiRemove([
+          'rider-store',
+          'driver-store',
+          'payment-store',
+          'messaging-store',
+          'offline-store',
+        ]);
+        console.log("Previous user data cleared");
+      }
+
       // Store user data in AsyncStorage (non-sensitive)
       await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(user));
 
@@ -54,9 +71,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         await supabase.auth.signOut();
       }
 
-      // Clear all stored data
-      await AsyncStorage.removeItem(USER_DATA_KEY);
-      await AsyncStorage.removeItem(AUTH_PROVIDER_KEY);
+      // Clear all stored data including persisted stores
+      console.log("Logging out - clearing all user data...");
+      await AsyncStorage.multiRemove([
+        USER_DATA_KEY,
+        AUTH_PROVIDER_KEY,
+        'rider-store',
+        'driver-store',
+        'payment-store',
+        'messaging-store',
+        'offline-store',
+      ]);
 
       // Clear secure storage
       try {
@@ -70,6 +95,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isAuthenticated: false,
         authProvider: null
       });
+
+      console.log("Logout complete - all data cleared");
     } catch (error) {
       console.error("Error during logout:", error);
       throw error;

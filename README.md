@@ -1060,7 +1060,49 @@ await AsyncStorage.clear(); // Nuclear option: clears everything
 
 ## 🔧 Recent Fixes
 
-### Fixed: Mock Profile Issue (2025-11-29)
+### Fixed: Persisted Store Data Across Users (2025-11-29) ⭐ LATEST
+
+**Problem:** New users were seeing previous user's data after signing in:
+- Mock saved locations ("123 Oak Street", "456 Main Street")
+- Previous user's trip history (trips with "John D.", "Sarah M.")
+- Mock emergency contacts ("Sarah Johnson, Sister")
+- Incorrect stats showing "2 Completed" trips for brand new users
+- Users couldn't re-login after logging out
+
+**Root Cause:** Zustand stores persist data to AsyncStorage, but this data was NOT being cleared when:
+- A different user signs in
+- A user logs out
+
+This caused new users to see the previous user's persisted data.
+
+**Solution:**
+1. **Clear stores on user switch** - `authStore.setUser()` now detects when a different user is signing in and clears all persisted store data
+2. **Clear all data on logout** - `authStore.logout()` now removes ALL AsyncStorage keys including persisted stores
+3. **Remove mock data** - Removed hardcoded mock emergency contact from SafetyScreen
+
+**Files Modified:**
+- `src/state/authStore.ts` - Added user switch detection and complete logout cleanup
+- `src/screens/SafetyScreen.tsx` - Removed mock emergency contact
+- `src/state/riderStore.ts` - Removed mock saved locations (previous fix)
+
+**Result:**
+- ✅ Each user gets a completely clean slate
+- ✅ No data bleeds between different users
+- ✅ Logout properly clears everything
+- ✅ Re-login works correctly
+- ✅ Only real Supabase data is shown
+
+**Testing:**
+1. Sign in as User A → Add some data → Logout
+2. Sign in as User B → Verify NO data from User A appears
+3. User B should see empty saved locations, trip history, emergency contacts
+4. Stats should show 0 trips, 5.0 rating for new user
+
+See [MOCK_PROFILE_FIX.md](./MOCK_PROFILE_FIX.md) for complete technical details.
+
+---
+
+### Fixed: Mock Profile Authentication (2025-11-29)
 
 **Problem:** Users signing in as riders were being shown mock profiles filled with their information instead of real Supabase data.
 
