@@ -30,9 +30,10 @@ interface RiderState {
   ) => Promise<void>;
   selectDriver: (routeId: string) => Promise<void>;
   cancelTrip: () => void;
-  completeTrip: () => void;
+  completeTrip: () => Promise<void>;
   addSavedLocation: (location: SavedLocation) => void;
   updateDriverLocation: (latitude: number, longitude: number) => void;
+  clearAllData: () => void; // NEW: Force clear all data
 }
 
 export const useRiderStore = create<RiderState>()(
@@ -270,6 +271,18 @@ export const useRiderStore = create<RiderState>()(
           }
         : null,
     }));
+  },
+
+  clearAllData: () => {
+    console.log("Clearing all rider data...");
+    set({
+      currentRequest: null,
+      currentTrip: null,
+      availableMatches: [],
+      savedLocations: [],
+      tripHistory: [],
+      isSearching: false,
+    });
   },
     }),
     {

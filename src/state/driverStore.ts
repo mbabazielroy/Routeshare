@@ -23,11 +23,12 @@ interface DriverState {
   acceptRider: (requestId: string) => void;
   declineRider: (requestId: string) => void;
   startTrip: (tripId: string) => void;
-  completeTrip: (tripId: string) => void;
+  completeTrip: (tripId: string) => Promise<void>;
   cancelRoute: () => void;
   toggleOnline: () => void;
   updateEarnings: (amount: number) => void;
   loadPendingRequests: (routeId: string) => Promise<void>;
+  clearAllData: () => void; // NEW: Force clear all data
 }
 
 export const useDriverStore = create<DriverState>()(
@@ -365,6 +366,23 @@ export const useDriverStore = create<DriverState>()(
         total: state.earnings.total + amount,
       },
     }));
+  },
+
+  clearAllData: () => {
+    console.log("Clearing all driver data...");
+    set({
+      currentRoute: null,
+      activeTrips: [],
+      pendingRequests: [],
+      earnings: {
+        today: 0,
+        week: 0,
+        month: 0,
+        total: 0,
+      },
+      tripHistory: [],
+      isOnline: false,
+    });
   },
     }),
     {

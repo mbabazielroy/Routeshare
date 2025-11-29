@@ -34,16 +34,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const isDifferentUser = currentUser && currentUser.id !== user.id;
 
       if (isDifferentUser) {
-        console.log("Different user detected, clearing all persisted store data...");
-        // Clear all persisted store data for the previous user
+        console.log("🚨 Different user detected! Clearing ALL persisted data...");
+
+        // Clear AsyncStorage keys
         await AsyncStorage.multiRemove([
-          'rider-store',
-          'driver-store',
+          'rider-storage',
+          'driver-storage',
           'payment-store',
           'messaging-store',
           'offline-store',
         ]);
-        console.log("Previous user data cleared");
+
+        // Also call store clear methods to force reset in-memory state
+        const { useRiderStore } = await import('./riderStore');
+        const { useDriverStore } = await import('./driverStore');
+
+        useRiderStore.getState().clearAllData();
+        useDriverStore.getState().clearAllData();
+
+        console.log("✅ Previous user data cleared completely");
       }
 
       // Store user data in AsyncStorage (non-sensitive)
@@ -58,6 +67,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isLoading: false,
         authProvider: provider
       });
+
+      console.log("✅ New user set:", user.id);
     } catch (error) {
       console.error("Error storing user data:", error);
       throw error;
@@ -66,22 +77,30 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   logout: async () => {
     try {
+      console.log("🚨 Logging out - clearing ALL user data...");
+
       // Sign out from Supabase
       if (supabase) {
         await supabase.auth.signOut();
       }
 
       // Clear all stored data including persisted stores
-      console.log("Logging out - clearing all user data...");
       await AsyncStorage.multiRemove([
         USER_DATA_KEY,
         AUTH_PROVIDER_KEY,
-        'rider-store',
-        'driver-store',
+        'rider-storage',
+        'driver-storage',
         'payment-store',
         'messaging-store',
         'offline-store',
       ]);
+
+      // Force clear in-memory store state
+      const { useRiderStore } = await import('./riderStore');
+      const { useDriverStore } = await import('./driverStore');
+
+      useRiderStore.getState().clearAllData();
+      useDriverStore.getState().clearAllData();
 
       // Clear secure storage
       try {
@@ -96,7 +115,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         authProvider: null
       });
 
-      console.log("Logout complete - all data cleared");
+      console.log("✅ Logout complete - all data cleared");
     } catch (error) {
       console.error("Error during logout:", error);
       throw error;
