@@ -219,9 +219,53 @@ export const useRiderStore = create<RiderState>()(
     set({ currentRequest: null, availableMatches: [] });
   },
 
-  completeTrip: () => {
+  completeTrip: async () => {
     const { currentTrip } = get();
-    if (currentTrip) {
+    if (!currentTrip) return;
+
+    try {
+      const completedTrip = {
+        ...currentTrip,
+        status: "completed" as const,
+        completedAt: new Date().toISOString(),
+      };
+
+      // Save trip to Supabase
+      if (supabase) {
+        console.log("Saving completed trip to Supabase...");
+        const { error } = await supabase
+          .from('trips')
+          .insert({
+            id: currentTrip.id,
+            riderId: currentTrip.riderId,
+            driverId: currentTrip.driverId,
+            pickup: currentTrip.pickup,
+            dropoff: currentTrip.dropoff,
+            fare: currentTrip.fare,
+            status: 'completed',
+            driverLocation: currentTrip.driverLocation,
+            passengers: 1, // Default to 1 if not specified
+            distance: null, // Can be calculated if needed
+            duration: null, // Can be calculated if needed
+            createdAt: currentTrip.createdAt,
+            updatedAt: new Date().toISOString(),
+          });
+
+        if (error) {
+          console.error("Error saving completed trip:", error);
+          // Continue anyway to update local state
+        } else {
+          console.log("Trip saved successfully to Supabase");
+        }
+      }
+
+      set({
+        tripHistory: [...get().tripHistory, completedTrip],
+        currentTrip: null,
+      });
+    } catch (error) {
+      console.error("Error in completeTrip:", error);
+      // Still update local state even if Supabase fails
       set({
         tripHistory: [
           ...get().tripHistory,

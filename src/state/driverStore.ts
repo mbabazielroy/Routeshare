@@ -270,29 +270,81 @@ export const useDriverStore = create<DriverState>()(
     }));
   },
 
-  completeTrip: (tripId) => {
+  completeTrip: async (tripId) => {
     const { activeTrips } = get();
     const trip = activeTrips.find((t) => t.id === tripId);
 
     if (!trip) return;
 
-    const completedTrip: Trip = {
-      ...trip,
-      status: "completed",
-      completedAt: new Date().toISOString(),
-    };
+    try {
+      const completedTrip: Trip = {
+        ...trip,
+        status: "completed",
+        completedAt: new Date().toISOString(),
+      };
 
-    set((state) => ({
-      activeTrips: state.activeTrips.filter((t) => t.id !== tripId),
-      tripHistory: [...state.tripHistory, completedTrip],
-      earnings: {
-        ...state.earnings,
-        today: state.earnings.today + trip.driverEarnings,
-        week: state.earnings.week + trip.driverEarnings,
-        month: state.earnings.month + trip.driverEarnings,
-        total: state.earnings.total + trip.driverEarnings,
-      },
-    }));
+      // Save trip to Supabase
+      if (supabase) {
+        console.log("Saving completed trip to Supabase...");
+        const { error } = await supabase
+          .from('trips')
+          .insert({
+            id: trip.id,
+            riderId: trip.riderId,
+            driverId: trip.driverId,
+            pickup: trip.pickup,
+            dropoff: trip.dropoff,
+            fare: trip.fare,
+            status: 'completed',
+            driverLocation: null,
+            passengers: 1, // Default to 1 if not specified
+            distance: null,
+            duration: null,
+            createdAt: trip.createdAt,
+            updatedAt: new Date().toISOString(),
+          });
+
+        if (error) {
+          console.error("Error saving completed trip:", error);
+          // Continue anyway to update local state and earnings
+        } else {
+          console.log("Trip saved successfully to Supabase");
+        }
+      }
+
+      // Update local state with real earnings calculated from the completed trip
+      set((state) => ({
+        activeTrips: state.activeTrips.filter((t) => t.id !== tripId),
+        tripHistory: [...state.tripHistory, completedTrip],
+        earnings: {
+          ...state.earnings,
+          today: state.earnings.today + trip.driverEarnings,
+          week: state.earnings.week + trip.driverEarnings,
+          month: state.earnings.month + trip.driverEarnings,
+          total: state.earnings.total + trip.driverEarnings,
+        },
+      }));
+    } catch (error) {
+      console.error("Error in completeTrip:", error);
+      // Still update local state even if Supabase fails
+      const completedTrip: Trip = {
+        ...trip,
+        status: "completed",
+        completedAt: new Date().toISOString(),
+      };
+
+      set((state) => ({
+        activeTrips: state.activeTrips.filter((t) => t.id !== tripId),
+        tripHistory: [...state.tripHistory, completedTrip],
+        earnings: {
+          ...state.earnings,
+          today: state.earnings.today + trip.driverEarnings,
+          week: state.earnings.week + trip.driverEarnings,
+          month: state.earnings.month + trip.driverEarnings,
+          total: state.earnings.total + trip.driverEarnings,
+        },
+      }));
+    }
   },
 
   cancelRoute: () => {
