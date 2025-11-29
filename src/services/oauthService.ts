@@ -66,6 +66,7 @@ export const signInWithGoogle = async (): Promise<OAuthResult> => {
     }
 
     console.log("Opening OAuth URL in browser...");
+    console.log("OAuth URL:", data.url);
 
     // Open the OAuth URL in browser
     const result = await WebBrowser.openAuthSessionAsync(data.url);
