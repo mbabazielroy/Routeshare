@@ -35,6 +35,7 @@
     "@shopify/react-native-skia": "v2.0.3",
     "@stripe/stripe-react-native": "^0.57.0",
     "@supabase/supabase-js": "^2.86.0",
+    "@vibecodeapp/sdk": "^0.4.3",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "expo": "53.0.9",
