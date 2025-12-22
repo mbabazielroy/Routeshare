@@ -1,10 +1,7 @@
 // Supabase configuration
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// Supabase configuration from environment variables
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+import { env } from "./env";
 
 // Track connection state
 let isSupabaseConnected = false;
@@ -13,8 +10,8 @@ let isSupabaseConnected = false;
 let supabase: SupabaseClient | null = null;
 
 // Create a minimal wrapper that prevents network errors from being thrown
-const createSafeSupabaseClient = () => {
-  if (!supabaseUrl || !supabaseAnonKey) {
+const createSafeSupabaseClient = (): SupabaseClient | null => {
+  if (!env.isSupabaseConfigured) {
     console.warn(
       "Supabase config values are missing. Please add EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY to your .env file."
     );
@@ -22,7 +19,7 @@ const createSafeSupabaseClient = () => {
   }
 
   try {
-    const client = createClient(supabaseUrl, supabaseAnonKey, {
+    const client = createClient(env.supabaseUrl!, env.supabaseAnonKey!, {
       auth: {
         storage: AsyncStorage,
         autoRefreshToken: false,
