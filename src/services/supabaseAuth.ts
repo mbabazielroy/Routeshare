@@ -53,6 +53,7 @@ export const verifyPhoneOTP = async (
     });
 
     if (error) throw error;
+    if (!data.user) throw new Error('No user returned from verification');
 
     // Get or create user profile
     const user = await getOrCreateUserProfile(data.user.id, {
