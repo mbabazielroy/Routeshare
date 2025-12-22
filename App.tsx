@@ -9,6 +9,14 @@ import { useEffect } from "react";
 import { useOfflineStore } from "./src/state/offlineStore";
 import { useThemeStore } from "./src/state/themeStore";
 import { useColorScheme } from "nativewind";
+import { LogBox } from "react-native";
+
+// Suppress network request failed errors in the UI (they're handled gracefully)
+LogBox.ignoreLogs([
+  "Network request failed",
+  "TypeError: Network request failed",
+  "AuthRetryableFetchError",
+]);
 
 /*
 IMPORTANT NOTICE: DO NOT REMOVE
