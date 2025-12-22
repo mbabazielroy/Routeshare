@@ -63,8 +63,18 @@ export const verifyPhoneOTP = async (
 
     return { success: true, user };
   } catch (error: any) {
-    console.error('Error verifying OTP:', error);
-    return { success: false, error: error.message };
+    // Log only in dev, not as error to avoid red screen
+    console.log('OTP verification failed:', error.message);
+
+    // Provide user-friendly error messages
+    let userMessage = error.message;
+    if (error.message?.includes('expired') || error.message?.includes('invalid')) {
+      userMessage = 'The verification code has expired or is invalid. Please request a new code.';
+    } else if (error.message?.includes('Network')) {
+      userMessage = 'Unable to verify code. Please check your internet connection.';
+    }
+
+    return { success: false, error: userMessage };
   }
 };
 
