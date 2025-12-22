@@ -138,14 +138,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   checkSession: async () => {
     try {
+      // Always try to load from local storage first for faster startup
+      const [storedUser, storedProvider] = await Promise.all([
+        AsyncStorage.getItem(USER_DATA_KEY),
+        AsyncStorage.getItem(AUTH_PROVIDER_KEY),
+      ]);
+
       if (!supabase) {
         console.log("Supabase not initialized, loading from local storage");
-        // Fall back to local storage if Supabase is not available
-        const [storedUser, storedProvider] = await Promise.all([
-          AsyncStorage.getItem(USER_DATA_KEY),
-          AsyncStorage.getItem(AUTH_PROVIDER_KEY),
-        ]);
-
         if (storedUser) {
           const user = JSON.parse(storedUser);
           const provider = (storedProvider as "phone" | "apple" | "google") || "phone";
@@ -162,13 +162,53 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
 
       console.log("Checking Supabase session...");
-      const { data: { session } } = await supabase.auth.getSession();
+
+      let session = null;
+      try {
+        const result = await supabase.auth.getSession();
+        session = result.data?.session;
+      } catch (networkError) {
+        console.log("Network error checking session, falling back to local storage");
+        // Network failed - use cached data if available
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          const provider = (storedProvider as "phone" | "apple" | "google") || "phone";
+          set({
+            user,
+            isAuthenticated: true,
+            isLoading: false,
+            authProvider: provider
+          });
+        } else {
+          set({ isLoading: false });
+        }
+        return;
+      }
 
       if (session?.user) {
         console.log("Active Supabase session found for user:", session.user.id);
 
         // Get the full user profile from database
-        const userProfile = await getUserProfile(session.user.id);
+        let userProfile = null;
+        try {
+          userProfile = await getUserProfile(session.user.id);
+        } catch (profileError) {
+          console.log("Network error fetching profile, using cached data");
+          // Fall back to cached user data
+          if (storedUser) {
+            const user = JSON.parse(storedUser);
+            const provider = (storedProvider as "phone" | "apple" | "google") || "phone";
+            set({
+              user,
+              isAuthenticated: true,
+              isLoading: false,
+              authProvider: provider
+            });
+          } else {
+            set({ isLoading: false });
+          }
+          return;
+        }
 
         if (userProfile && userProfile.userType) {
           console.log("User profile loaded from Supabase:", {
@@ -204,11 +244,26 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           });
         } else {
           console.log("User profile incomplete or not found in database");
-          // Clear invalid session
-          await supabase.auth.signOut();
-          await AsyncStorage.removeItem(USER_DATA_KEY);
-          await AsyncStorage.removeItem(AUTH_PROVIDER_KEY);
-          set({ isLoading: false });
+          // Use cached data if available, otherwise clear
+          if (storedUser) {
+            const user = JSON.parse(storedUser);
+            const provider = (storedProvider as "phone" | "apple" | "google") || "phone";
+            set({
+              user,
+              isAuthenticated: true,
+              isLoading: false,
+              authProvider: provider
+            });
+          } else {
+            try {
+              await supabase.auth.signOut();
+            } catch (e) {
+              // Ignore signOut errors
+            }
+            await AsyncStorage.removeItem(USER_DATA_KEY);
+            await AsyncStorage.removeItem(AUTH_PROVIDER_KEY);
+            set({ isLoading: false });
+          }
         }
       } else {
         console.log("No active Supabase session");
