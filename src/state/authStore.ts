@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
+import NetInfo from "@react-native-community/netinfo";
 import { User, UserType } from "../types/routeshare";
-import { supabase } from "../config/supabase";
+import { supabase, setSupabaseConnected } from "../config/supabase";
 import { getUserProfile } from "../services/supabaseAuth";
 
 interface AuthState {
@@ -34,25 +35,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const isDifferentUser = currentUser && currentUser.id !== user.id;
 
       if (isDifferentUser) {
-        console.log("🚨 Different user detected! Clearing ALL persisted data...");
+        console.log("Different user detected! Clearing ALL persisted data...");
 
         // Clear AsyncStorage keys
         await AsyncStorage.multiRemove([
-          'rider-storage',
-          'driver-storage',
-          'payment-store',
-          'messaging-store',
-          'offline-store',
+          "rider-storage",
+          "driver-storage",
+          "payment-store",
+          "messaging-store",
+          "offline-store",
         ]);
 
         // Also call store clear methods to force reset in-memory state
-        const { useRiderStore } = await import('./riderStore');
-        const { useDriverStore } = await import('./driverStore');
+        const { useRiderStore } = await import("./riderStore");
+        const { useDriverStore } = await import("./driverStore");
 
         useRiderStore.getState().clearAllData();
         useDriverStore.getState().clearAllData();
 
-        console.log("✅ Previous user data cleared completely");
+        console.log("Previous user data cleared completely");
       }
 
       // Store user data in AsyncStorage (non-sensitive)
@@ -68,7 +69,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         authProvider: provider
       });
 
-      console.log("✅ New user set:", user.id);
+      console.log("New user set:", user.id);
     } catch (error) {
       console.error("Error storing user data:", error);
       throw error;
@@ -77,11 +78,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   logout: async () => {
     try {
-      console.log("🚨 Logging out - clearing ALL user data...");
+      console.log("Logging out - clearing ALL user data...");
 
-      // Sign out from Supabase
+      // Sign out from Supabase (ignore errors if offline)
       if (supabase) {
-        await supabase.auth.signOut();
+        try {
+          await supabase.auth.signOut();
+        } catch {
+          // Ignore network errors during sign out
+        }
       }
 
       // Clear all stored data including persisted stores
@@ -115,7 +120,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         authProvider: null
       });
 
-      console.log("✅ Logout complete - all data cleared");
+      console.log("Logout complete - all data cleared");
     } catch (error) {
       console.error("Error during logout:", error);
       throw error;
@@ -144,8 +149,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         AsyncStorage.getItem(AUTH_PROVIDER_KEY),
       ]);
 
-      if (!supabase) {
-        console.log("Supabase not initialized, loading from local storage");
+      // Helper to load from cache
+      const loadFromCache = () => {
         if (storedUser) {
           const user = JSON.parse(storedUser);
           const provider = (storedProvider as "phone" | "apple" | "google") || "phone";
@@ -158,6 +163,22 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         } else {
           set({ isLoading: false });
         }
+      };
+
+      if (!supabase) {
+        console.log("Supabase not initialized, loading from local storage");
+        loadFromCache();
+        return;
+      }
+
+      // Check network connectivity BEFORE making any Supabase calls
+      const netInfo = await NetInfo.fetch();
+      const isOnline = netInfo.isConnected && netInfo.isInternetReachable !== false;
+
+      if (!isOnline) {
+        console.log("Device is offline, loading from local storage");
+        setSupabaseConnected(false);
+        loadFromCache();
         return;
       }
 
@@ -167,21 +188,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       try {
         const result = await supabase.auth.getSession();
         session = result.data?.session;
+        setSupabaseConnected(true);
       } catch (networkError) {
         console.log("Network error checking session, falling back to local storage");
-        // Network failed - use cached data if available
-        if (storedUser) {
-          const user = JSON.parse(storedUser);
-          const provider = (storedProvider as "phone" | "apple" | "google") || "phone";
-          set({
-            user,
-            isAuthenticated: true,
-            isLoading: false,
-            authProvider: provider
-          });
-        } else {
-          set({ isLoading: false });
-        }
+        setSupabaseConnected(false);
+        loadFromCache();
         return;
       }
 
@@ -194,19 +205,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           userProfile = await getUserProfile(session.user.id);
         } catch (profileError) {
           console.log("Network error fetching profile, using cached data");
-          // Fall back to cached user data
-          if (storedUser) {
-            const user = JSON.parse(storedUser);
-            const provider = (storedProvider as "phone" | "apple" | "google") || "phone";
-            set({
-              user,
-              isAuthenticated: true,
-              isLoading: false,
-              authProvider: provider
-            });
-          } else {
-            set({ isLoading: false });
-          }
+          loadFromCache();
           return;
         }
 
@@ -222,9 +221,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             ...userProfile,
             firstName: userProfile.firstName!,
             lastName: userProfile.lastName!,
-            phone: userProfile.phone || '',
+            phone: userProfile.phone || "",
             userType: userProfile.userType!,
-            verificationLevel: userProfile.verificationLevel || 'basic',
+            verificationLevel: userProfile.verificationLevel || "basic",
             rating: userProfile.rating || 5.0,
             totalTrips: userProfile.totalTrips || 0,
           };
@@ -244,36 +243,37 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           });
         } else {
           console.log("User profile incomplete or not found in database");
-          // Use cached data if available, otherwise clear
-          if (storedUser) {
-            const user = JSON.parse(storedUser);
-            const provider = (storedProvider as "phone" | "apple" | "google") || "phone";
-            set({
-              user,
-              isAuthenticated: true,
-              isLoading: false,
-              authProvider: provider
-            });
-          } else {
-            try {
-              await supabase.auth.signOut();
-            } catch (e) {
-              // Ignore signOut errors
-            }
-            await AsyncStorage.removeItem(USER_DATA_KEY);
-            await AsyncStorage.removeItem(AUTH_PROVIDER_KEY);
-            set({ isLoading: false });
-          }
+          loadFromCache();
         }
       } else {
         console.log("No active Supabase session");
-        // Clear local storage if no session
-        await AsyncStorage.removeItem(USER_DATA_KEY);
-        await AsyncStorage.removeItem(AUTH_PROVIDER_KEY);
-        set({ isLoading: false });
+        // Use cached data if available for offline support
+        if (storedUser) {
+          loadFromCache();
+        } else {
+          set({ isLoading: false });
+        }
       }
     } catch (error) {
-      console.error("Error checking session:", error);
+      console.log("Error checking session, using cached data");
+      // Try to load from cache on any error
+      try {
+        const storedUser = await AsyncStorage.getItem(USER_DATA_KEY);
+        const storedProvider = await AsyncStorage.getItem(AUTH_PROVIDER_KEY);
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          const provider = (storedProvider as "phone" | "apple" | "google") || "phone";
+          set({
+            user,
+            isAuthenticated: true,
+            isLoading: false,
+            authProvider: provider
+          });
+          return;
+        }
+      } catch {
+        // Ignore cache errors
+      }
       set({ isLoading: false });
     }
   },
